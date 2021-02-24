@@ -10,9 +10,19 @@ To get a copy of this repository, simply open up git bash in an empty folder and
 
 To run the interpreter, run interpreter/main.py. At the moment, it is configured to only parse in and interpret file contents, rather than an interactive console.
 
-## Available commands
+## Documentation
+
+### Available commands
 
 A list of the currently available Natscript commands can be found in the [wiki](https://github.com/rbaltrusch/python_interpreter/wiki).
+
+### Examples
+
+Examples can be found [here](https://github.com/rbaltrusch/python_interpreter/tree/main/examples).
+
+### Tutorials
+
+Tutorials will be written once more commands are supported by Natscript.
 
 ## Python
 
