@@ -26,7 +26,7 @@ Tutorials will be written once more commands are supported by Natscript.
 
 ## Python
 
-Written in Python 3.8.3
+Written in Python 3.8.3.
 
 ## License
 
