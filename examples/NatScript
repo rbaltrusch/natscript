@@ -1,0 +1,34 @@
+#function declarations
+define function_name(a) as								#keyword 
+	set a to 10 then return it							#keyword set is assignment operator, keyword then links two statements together on same line.
+														#keyword to specifies purpose or direction, 
+														#keyword it refers to last-referred variable
+
+#for-loops
+for each element_name in array_name do					#keyword each extracts elements from list separately and does something to each of them
+														#keyword do specifies action
+	if a is true then function_name(a) else do nothing 	#keyword nothing means empty statement
+
+do iterate(a) while some_condition is true				#keyword do is optional in an in-line loop statement but mandatory in a multiple line loop
+while some_condition is true do iterate(a)				#here the keyword do is required
+do iterate(a) until some_condition is false
+
+
+always do main()										#keyword always is the equivalent of while true
+	
+
+#The code below prints out all prime numbers between 3 and 10
+for counter from 3 to 10 do
+	if counter is even then skip, where even is true if counter & 0b01		#keyword skip skips execution of the loop to the next counter value
+	if counter is prime then write counter to console 
+		where prime is true if all in (counter / from 3 to counter/2-1) are true else false	
+		
+#The where clause could be written 	as: where prime is true if all x are true
+#									or: where prime is true if all x are (here are will take the previously used value stated after the is keyword
+#from 3 to x makes a list filled with vals [3, 4, 5, .... x-1, x]. Dividing int with list gives a list as output of operation
+#keyword all checks all elements in a list for a certain attribute. Another example: if all in list_ are int #checks if all elements are integer
+
+#Re-written prime number code
+for counter from 3 to 10 do
+	if counter & 0b01 is true then skip 
+	else write to console if all in (counter / from 3 to counter/2-1) are true

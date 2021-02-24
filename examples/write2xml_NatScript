@@ -1,0 +1,25 @@
+define write2xml(filename) as
+	"""this function writes to an xml at a user-specified place"""
+	open filename as file
+	read file as text 					#read returns file contents in a list (1 entry per line)
+	assign userinput to searched_tag	#reads in a string from console provided by the user and assigns it to the variable searched_tag
+	for line in text do
+		if searched_tag is in line then
+			assign userinput to text_to_write
+			set new_full_line to (line from 0 to end of "Value=") + text_to_write
+			set line to new_full_line
+	write text to file
+	close file
+
+#does the same thing but more concise
+define write2xml_concise(filename) as
+	open filename as file then read it as text
+	assign userinput to searched_tag
+	for line in text do set line to (line from 0 to end of "Value=") + userinput if searched_tag is in line
+	write text to file then close it
+
+
+#even shorter
+open filename as file then read it as text
+assign userinput to search_tag
+write ((line from 0 to end of "Value=") + userinput for line in text if searchtag is in line) to file then close it 
