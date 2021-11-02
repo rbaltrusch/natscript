@@ -49,7 +49,7 @@ class Block:
             if types == (ANYTYPE) or isinstance(token, types):
                 self._add_token(token)
             else:
-                raise ParseError(token) #Type error
+                raise ParseTypeError(token, types) #Type error
         else:
             raise ParseError(token) #shouldnt add more than length allows
 
@@ -63,7 +63,7 @@ class Block:
 
 class ParseError(Exception):
     def __init__(self, token):
-        self.message = f'The following token was not expected at this location: {token}!'
+        self.message = f'{token} was not expected at this location!'
         super().__init__(self.message)
 
 class Parser:
