@@ -99,11 +99,6 @@ class VARNAME(VALUE):
         interpreter.stack.append(self.value)
         interpreter.variables['it'] = self.value
 
-class NEW_BLOCK(Token):
-    @staticmethod
-    def expect():
-        return [(ANYTYPE)]
-
 class PRINT(Token):
 
     RESOLUTION_ORDER = [1, 0]

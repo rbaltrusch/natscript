@@ -7,7 +7,7 @@ Created on Fri Nov 20 14:34:15 2020
 
 from typing import List
 
-from token_ import ANYTYPE, NEW_BLOCK, LINEBREAK
+from token_ import ANYTYPE, LINEBREAK
 
 class Block:
     def __init__(self, parent=None):
@@ -36,21 +36,13 @@ class Block:
 
         types = self.expected_tokens.pop(0)
         if types == (ANYTYPE) or isinstance(token, types):
-            self._add_token(token)
+            self.tokens.append(token)
         else:
             raise ParseTypeError(token, types)
 
     def _add_initial_token(self, token):
         self.expected_tokens = token.expected_tokens
-        self._add_token(token)
-
-    def _add_token(self, token):
-        if isinstance(token, NEW_BLOCK):
-            block = Block(parent=self)
-            self.tokens.append(block)
-            block.add(token)
-        else:
-            self.tokens.append(token)
+        self.tokens.append(token)
 
     @property
     def full(self) -> bool:
