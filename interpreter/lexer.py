@@ -22,7 +22,7 @@ class Lexer:
     def lex(self, string):
         self.line_number = 0
         string = string.replace('\n',' \n ').strip()
-        split = string.split(' ')
+        split = [s for s in string.split(' ') if s != '']
         for token in split:
             if token in keys:
                 yield tokens[token](None)
