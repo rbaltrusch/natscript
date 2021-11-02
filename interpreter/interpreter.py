@@ -5,7 +5,6 @@ Created on Fri Nov 20 17:17:11 2020
 @author: Korean_Crimson
 """
 
-from token_ import resolution_order_dict
 from parser_ import Block
 
 class InterpreterError(Exception):
@@ -27,17 +26,10 @@ class Interpreter:
         blocks = [statement for statement in block if isinstance(statement, Block)]
         for block_ in blocks:
             self.interpret(block_)
-        resolution_order = self.determine_resolution_order(block)
-        statements = [block[i] for i in resolution_order]
+        statements = [block[i] for i in block.RESOLUTION_ORDER]
         for statement in statements:
             if not isinstance(statement, Block):
                 statement.run(self)
-
-    def determine_resolution_order(self, block):
-        try:
-            return resolution_order_dict[block.type]
-        except:
-            raise InterpreterError(block)
 
     def pop(self):
         if not self.stack:

@@ -7,7 +7,7 @@ Created on Fri Nov 20 13:54:34 2020
 
 class Token:
 
-    type = None
+    RESOLUTION_ORDER = []
 
     def __init__(self, value):
         self.value = value
@@ -32,7 +32,7 @@ class ANYTYPE(Token):
 
 class ASSIGN_L(Token):
 
-    type = "ASSIGN"
+    RESOLUTION_ORDER = [3, 1, 0]
 
     @staticmethod
     def expect():
@@ -105,7 +105,7 @@ class NEW_BLOCK(Token):
 
 class PRINT(Token):
 
-    type = "PRINT"
+    RESOLUTION_ORDER = [1, 0]
 
     @staticmethod
     def expect():
@@ -117,7 +117,7 @@ class PRINT(Token):
 
 class ADD(Token):
 
-    type = "ADD"
+    RESOLUTION_ORDER = [1, 3, 0]
 
     @staticmethod
     def expect():
@@ -131,7 +131,7 @@ class ADD(Token):
 
 class SUBTRACT(Token):
 
-    type = "SUBTRACT"
+    RESOLUTION_ORDER = [1, 3, 0]
 
     @staticmethod
     def expect():
@@ -145,7 +145,7 @@ class SUBTRACT(Token):
 
 class MULTIPLY(Token):
 
-    type = "MULTIPLY"
+    RESOLUTION_ORDER = [3, 1, 0]
 
     @staticmethod
     def expect():
@@ -159,7 +159,7 @@ class MULTIPLY(Token):
 
 class DIVIDE(Token):
 
-    type = "DIVIDE"
+    RESOLUTION_ORDER = [3, 1, 0]
 
     @staticmethod
     def expect():
@@ -210,11 +210,3 @@ regex_tokens = {r'^\d+$': INTEGER,
 
 keys = tokens.keys()
 regex_keys = regex_tokens.keys()
-
-resolution_order_dict = {"ASSIGN": [3, 1, 0],
-                         "PRINT": [1, 0],
-                         "ADD": [1, 3, 0],
-                         "SUBTRACT": [1, 3, 0],
-                         "MULTIPLY": [3, 1, 0],
-                         "DIVIDE": [3, 1, 0],
-                         }

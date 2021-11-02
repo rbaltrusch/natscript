@@ -5,6 +5,8 @@ Created on Fri Nov 20 14:34:15 2020
 @author: Korean_Crimson
 """
 
+from typing import List
+
 from token_ import ANYTYPE, NEW_BLOCK, LINEBREAK
 
 class Block:
@@ -14,7 +16,6 @@ class Block:
         self.length = None
         self.expected_tokens = None
         self.parent = parent
-        self.type = None
 
     def __repr__(self):
         type_ = 'Block' if self.parent else 'SyntaxTree'
@@ -41,7 +42,6 @@ class Block:
             #initial element add
             self.length = len(token.expected_tokens) + 1 #2 = 1 extra because of self
             self.expected_tokens = token.expected_tokens
-            self.type = token.type
             self._add_token(token)
         elif self.current_tokens < self.length:
             #subsequent elements
@@ -56,6 +56,10 @@ class Block:
     @property
     def full(self) -> bool:
         return len(self.tokens) == self.length if self.length else False
+
+    @property
+    def RESOLUTION_ORDER(self) -> List[int]:
+        return self.tokens[0].RESOLUTION_ORDER if self.tokens else None
 
 class ParseError(Exception):
     def __init__(self, token):
