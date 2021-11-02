@@ -14,7 +14,8 @@ class Token:
         self.expected_tokens = self.expect()
 
     def __repr__(self):
-        return f'Token({self.__class__.__name__}, {self.value})'
+        value = '' if self.value is None else f', {self.value}'
+        return f'Token({self.__class__.__name__}{value})'
 
     @staticmethod
     def expect():
