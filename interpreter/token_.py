@@ -49,6 +49,21 @@ class ASSIGN_R(Token):
     def expect():
         return [(VALUE)]
 
+class FROM(Token):
+    @staticmethod
+    def expect():
+        return [(VALUE)]
+
+class TIMES(Token):
+    @staticmethod
+    def expect():
+        return [(VALUE)]
+
+class BY(Token):
+    @staticmethod
+    def expect():
+        return [(VALUE)]
+
 class VALUE(Token):
     @staticmethod
     def expect():
@@ -90,6 +105,64 @@ class PRINT(Token):
         value = interpreter.pop()
         print(value)
 
+class ADD(Token):
+
+    type = "ADD"
+
+    @staticmethod
+    def expect():
+        list_of_expected_tokens = [(VALUE), (ASSIGN_R), (VARNAME)]
+        return list_of_expected_tokens
+
+    def run(self, interpreter):
+        varname = interpreter.stack.pop()
+        value = interpreter.pop()
+        interpreter.variables[varname] += value
+
+class SUBTRACT(Token):
+
+    type = "SUBTRACT"
+
+    @staticmethod
+    def expect():
+        list_of_expected_tokens = [(VALUE), (FROM), (VARNAME)]
+        return list_of_expected_tokens
+
+    def run(self, interpreter):
+        varname = interpreter.stack.pop()
+        value = interpreter.pop()
+        interpreter.variables[varname] -= value
+
+class MULTIPLY(Token):
+
+    type = "MULTIPLY"
+
+    @staticmethod
+    def expect():
+        list_of_expected_tokens = [(VARNAME), (TIMES), (VALUE)]
+        return list_of_expected_tokens
+
+    def run(self, interpreter):
+        varname = interpreter.stack.pop()
+        value = interpreter.stack.pop()
+        interpreter.variables[varname] *= value
+
+class DIVIDE(Token):
+
+    type = "DIVIDE"
+
+    @staticmethod
+    def expect():
+        list_of_expected_tokens = [(VARNAME), (BY), (VALUE)]
+        return list_of_expected_tokens
+
+    def run(self, interpreter):
+        varname = interpreter.stack.pop()
+        value = interpreter.stack.pop()
+        interpreter.variables[varname] /= value
+        if interpreter.variables[varname] == int(interpreter.variables[varname]):
+            interpreter.variables[varname] = int(interpreter.variables[varname])
+
 class IT(VALUE):
     def run(self, interpreter):
         variable = interpreter.variables['it']
@@ -103,7 +176,14 @@ class LINEBREAK(Token):
 
 tokens = {'set': ASSIGN_L,
           'to': ASSIGN_R,
+          'from': FROM,
+          'by': BY,
+          'times': TIMES,
           'print': PRINT,
+          'add': ADD,
+          'subtract': SUBTRACT,
+          'multiply': MULTIPLY,
+          'divide': DIVIDE,
           'it': IT,
           '\n': LINEBREAK}
 
@@ -114,4 +194,9 @@ keys = tokens.keys()
 regex_keys = regex_tokens.keys()
 
 resolution_order_dict = {"ASSIGN": [3, 1, 0],
-                         "PRINT": [1, 0]}
+                         "PRINT": [1, 0],
+                         "ADD": [1, 3, 0],
+                         "SUBTRACT": [1, 3, 0],
+                         "MULTIPLY": [3, 1, 0],
+                         "DIVIDE": [3, 1, 0],
+                         }
