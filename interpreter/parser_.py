@@ -18,8 +18,8 @@ class Block:
         self.filled = False
 
     def __repr__(self):
-        type_ = 'Block' if self.parent else 'Syntax Tree'
-        return f'{type_} containing {self.tokens}'
+        type_ = 'Block' if self.parent else 'SyntaxTree'
+        return f'{type_}{self.tokens}'
 
     def __iter__(self):
         for token in self.tokens:
