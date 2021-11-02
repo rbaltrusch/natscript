@@ -83,6 +83,16 @@ class INTEGER(VALUE):
     def value(self, value):
         self._value = int(value)
 
+class FLOAT(VALUE):
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, value):
+        self._value = float(value)
+
 class VARNAME(VALUE):
     def run(self, interpreter):
         interpreter.stack.append(self.value)
@@ -187,8 +197,10 @@ tokens = {'set': ASSIGN_L,
           'it': IT,
           '\n': LINEBREAK}
 
-regex_tokens = {'^\d+$': INTEGER,
-                '^\w+$': VARNAME}
+regex_tokens = {r'^\d+$': INTEGER,
+                r'^\w+$': VARNAME,
+                r'^\d+\.\d+': FLOAT,
+                }
 
 keys = tokens.keys()
 regex_keys = regex_tokens.keys()
