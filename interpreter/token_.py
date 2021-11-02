@@ -26,6 +26,9 @@ class Token:
     def run(self, interpreter):
         pass
 
+    def pop(self, tokens):
+        pass
+
 class ANYTYPE(Token):
     @staticmethod
     def expect():
@@ -179,6 +182,9 @@ class LINEBREAK(Token):
     @staticmethod
     def expect():
         return [(ANYTYPE)]
+
+    def pop(self, tokens):
+        tokens.pop(0)
 
 class AND(LINEBREAK):
     @staticmethod

@@ -7,7 +7,7 @@ Created on Fri Nov 20 14:34:15 2020
 
 from typing import List
 
-from token_ import ANYTYPE, LINEBREAK
+from token_ import ANYTYPE
 
 class Block:
     def __init__(self, parent=None):
@@ -64,20 +64,10 @@ class Parser:
     def __init__(self):
         self.blocks = []
 
-    @staticmethod
-    def _remove_leading_line_breaks(tokens):
-        while tokens:
-            #remove leading line breaks
-            if isinstance(tokens[0], LINEBREAK):
-                tokens.pop(0)
-            else:
-                break
-        return tokens
-
     def parse(self, tokens):
         current_block = Block()
         while tokens:
-            tokens = self._remove_leading_line_breaks(tokens)
+            self._pop_leading_tokens(tokens)
             while not current_block.full and tokens:
                 token = tokens.pop(0)
                 current_block.add(token)
@@ -85,3 +75,9 @@ class Parser:
                     current_block = current_block.parent
             yield current_block
             current_block = Block()
+
+    def _pop_leading_tokens(self, tokens):
+        while tokens:
+            popped_tokens = tokens[0].pop(tokens)
+            if not popped_tokens:
+                break
