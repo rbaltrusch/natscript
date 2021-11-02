@@ -10,17 +10,13 @@ from token_ import tokens, keys
 from token_ import regex_tokens, regex_keys
 
 class LexError(Exception):
-    def __init__(self, token):
-        self.message = f'{token} was not expected at this time!'
+    def __init__(self, line_number, token):
+        self.message = f'Line {line_number}: {token} was not expected at this time!'
         super().__init__(self.message)
 
 class Lexer:
     def __init__(self):
-        self.regex_patterns = list(zip(self.compile_regex_patterns(), regex_keys))
-
-    @staticmethod
-    def compile_regex_patterns():
-        return [re.compile(pattern) for pattern in regex_keys]
+        self.regex_patterns = [(re.compile(k), k) for k in regex_keys]
 
     def lex(self, string):
         string = string.replace('\n',' \n ')
