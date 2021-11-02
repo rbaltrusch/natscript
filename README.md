@@ -1,5 +1,37 @@
-Python Interpreter for custom interpreted language, Natscript, which is to be very close to natural English.
+# Natscript Interpreter
 
-To try out the current interpreter configuration, run interpreter/main.py. Note that test.nat is not provided anymore and needs to be provided by the user, written with the available commands. A list of the currently available Natscript commands can be found in the Wiki (soon).
+This is an interpreter written in Python for a custom interpreted language, Natscript, which is to be very close to natural English. It is currently still in development and supports very little functionality, but will receive more over time.
 
-Written in Python 3.8.3
+## Getting started
+
+To get a copy of this repository, simply open up git bash in an empty folder and use the command:
+
+		$ git clone https://github.com/rbaltrusch/python_interpreter
+
+To run the interpreter, run interpreter/main.py. At the moment, it is configured to only parse in and interpret file contents, rather than an interactive console.
+
+## Documentation
+
+### Available commands
+
+A list of the currently available Natscript commands can be found in the [wiki](https://github.com/rbaltrusch/python_interpreter/wiki).
+
+### Examples
+
+Examples can be found [here](https://github.com/rbaltrusch/python_interpreter/tree/main/examples).
+
+### Tutorials
+
+Tutorials will be written once more commands are supported by Natscript.
+
+## Python
+
+Written in Python 3.8.3.
+
+## License
+
+This repository is open-source software available under the [MIT license](https://github.com/rbaltrusch/python_interpreter/blob/main/LICENSE).
+
+## Contact
+
+Please raise an issue for code changes. To reach out, please send an email to richard@baltrusch.net.
