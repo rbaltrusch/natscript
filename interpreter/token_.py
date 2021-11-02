@@ -55,7 +55,8 @@ class VALUE(Token):
         return [(ANYTYPE)]
 
     def run(self, interpreter):
-        interpreter.stack.append(self.value)
+        value = interpreter.variables.get(self.value, self.value)
+        interpreter.stack.append(value)
 
 class INTEGER(VALUE):
 
@@ -69,11 +70,7 @@ class INTEGER(VALUE):
 
 class VARNAME(VALUE):
     def run(self, interpreter):
-        if self.value in interpreter.variables.keys():
-            value = interpreter.variables[self.value]
-            interpreter.stack.append(value)
-        else:
-            interpreter.stack.append(self.value)
+        interpreter.stack.append(self.value)
         interpreter.variables['it'] = self.value
 
 class NEW_BLOCK(Token):
@@ -90,7 +87,7 @@ class PRINT(Token):
         return [(ANYTYPE)]
 
     def run(self, interpreter):
-        value = interpreter.stack.pop()
+        value = interpreter.pop()
         print(value)
 
 class IT(VALUE):
