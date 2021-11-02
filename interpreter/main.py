@@ -20,9 +20,3 @@ with open(file, 'r') as f:
     tokens = list(lex.lex(file_contents))
     for syntax_block in parser.parse(tokens):
         inter.interpret(syntax_block)
-
-#with open(file, 'r') as f:
-#    file_contents = f.read()
-#    for token in lex.lex(file_contents):
-#        for syntax_block in parser.parse([token]):
-#            inter.interpret(syntax_block)
