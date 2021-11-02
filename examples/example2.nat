@@ -1,0 +1,10 @@
+set a to 1
+set b to 2
+add a to b
+add 1 to b
+print b
+subtract 6 from b
+print b
+multiply b times 4.1
+print it
+divide b by 2 and print it
