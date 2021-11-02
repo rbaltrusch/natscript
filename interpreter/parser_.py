@@ -15,7 +15,6 @@ class Block:
         self.expected_tokens = None
         self.parent = parent
         self.type = None
-        self.filled = False
 
     def __repr__(self):
         type_ = 'Block' if self.parent else 'SyntaxTree'
@@ -53,15 +52,10 @@ class Block:
                 raise ParseError(token) #Type error
         else:
             raise ParseError(token) #shouldnt add more than length allows
-        self.check_full()
 
-    def check_full(self):
-        if self.current_tokens == self.length:
-            self.filled = True
-            if self.parent is not None:
-                global current_block
-                current_block = self.parent
-                current_block.check_full()
+    @property
+    def full(self) -> bool:
+        return len(self.tokens) == self.length if self.length else False
 
 class ParseError(Exception):
     def __init__(self, token):
@@ -86,9 +80,11 @@ class Parser:
         global current_block
         while tokens:
             tokens = self._remove_leading_line_breaks(tokens)
-            while not current_block.filled and tokens:
+            while not current_block.full and tokens:
                 token = tokens.pop(0)
                 current_block.add(token)
+                if current_block.full and current_block.parent:
+                    current_block = current_block.parent
             yield current_block
             current_block = Block()
 
