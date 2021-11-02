@@ -184,6 +184,11 @@ class LINEBREAK(Token):
     def expect():
         return [(ANYTYPE)]
 
+class AND(LINEBREAK):
+    @staticmethod
+    def expect():
+        return [(ANYTYPE)]
+
 tokens = {'set': ASSIGN_L,
           'to': ASSIGN_R,
           'from': FROM,
@@ -195,6 +200,7 @@ tokens = {'set': ASSIGN_L,
           'multiply': MULTIPLY,
           'divide': DIVIDE,
           'it': IT,
+           'and': AND,
           '\n': LINEBREAK}
 
 regex_tokens = {r'^\d+$': INTEGER,
