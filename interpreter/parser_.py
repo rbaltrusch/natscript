@@ -66,6 +66,11 @@ class ParseError(Exception):
         self.message = f'{token} was not expected at this location!'
         super().__init__(self.message)
 
+class ParseTypeError(Exception):
+    def __init__(self, token, types):
+        self.message = f'Expected {types=}, but got {token}!'
+        super().__init__(self.message)
+
 class Parser:
     def __init__(self):
         self.blocks = []
