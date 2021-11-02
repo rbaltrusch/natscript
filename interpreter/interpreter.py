@@ -13,6 +13,11 @@ class InterpreterError(Exception):
         self.message = f'The following block had no type to be interpreted: {block}!'
         super().__init__(self.message)
 
+class EmptyStackError(Exception):
+    def __init__(self):
+        self.message = 'Could not pop value from empty stack!'
+        super().__init__(self.message)
+
 class Interpreter:
     def __init__(self):
         self.stack = []
@@ -33,3 +38,10 @@ class Interpreter:
             return resolution_order_dict[block.type]
         except:
             raise InterpreterError(block)
+
+    def pop(self):
+        if not self.stack:
+            raise EmptyStackError()
+
+        value = self.stack.pop()
+        return self.variables.get(value, value)
