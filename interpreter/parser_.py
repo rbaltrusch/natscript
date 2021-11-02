@@ -84,14 +84,12 @@ class Parser:
 
     def parse(self, tokens):
         global current_block
-        tokens = self._remove_leading_line_breaks(tokens)
         while tokens:
+            tokens = self._remove_leading_line_breaks(tokens)
             while not current_block.filled and tokens:
                 token = tokens.pop(0)
                 current_block.add(token)
             yield current_block
             current_block = Block()
-            if isinstance(tokens[0], LINEBREAK):
-                tokens.pop(0)
 
 current_block = Block()

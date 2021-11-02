@@ -17,9 +17,11 @@ class LexError(Exception):
 class Lexer:
     def __init__(self):
         self.regex_patterns = [(re.compile(k), k) for k in regex_keys]
+        self.line_count = 0
 
     def lex(self, string):
-        string = string.replace('\n',' \n ')
+        self.line_number = 0
+        string = string.replace('\n',' \n ').strip()
         split = string.split(' ')
         for token in split:
             if token in keys:
@@ -30,6 +32,6 @@ class Lexer:
                         yield regex_tokens[key](token)
                         break
                 else:
-                    if not token:
-                        continue
-                    raise LexError(token)
+                    raise LexError(self.line_number, token)
+            if token == '\n':
+                self.line_number += 1
