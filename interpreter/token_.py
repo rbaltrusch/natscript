@@ -186,6 +186,17 @@ class LINEBREAK(Token):
     def pop(self, tokens):
         tokens.pop(0)
 
+class COMMENT(Token):
+    @staticmethod
+    def expect():
+        return [(ANYTYPE)]
+
+    def pop(self, tokens):
+        while tokens:
+            token = tokens.pop(0)
+            if isinstance(token, LINEBREAK):
+                break
+
 class AND(LINEBREAK):
     @staticmethod
     def expect():
@@ -208,6 +219,7 @@ tokens = {'set': ASSIGN_L,
 regex_tokens = {r'^\d+$': INTEGER,
                 r'^\w+$': VARNAME,
                 r'^\d+\.\d+': FLOAT,
+                r'^#.+?': COMMENT,
                 }
 
 keys = tokens.keys()
