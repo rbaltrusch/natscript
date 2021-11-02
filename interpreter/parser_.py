@@ -75,7 +75,7 @@ class Parser:
         return tokens
 
     def parse(self, tokens):
-        global current_block
+        current_block = Block()
         while tokens:
             tokens = self._remove_leading_line_breaks(tokens)
             while not current_block.full and tokens:
@@ -85,5 +85,3 @@ class Parser:
                     current_block = current_block.parent
             yield current_block
             current_block = Block()
-
-current_block = Block()
