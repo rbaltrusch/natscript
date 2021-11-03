@@ -5,12 +5,13 @@ Created on Fri Nov 20 13:54:34 2020
 @author: Korean_Crimson
 """
 
-from typing import List
+from typing import List, Callable, Any
 
 class Token:
 
     RESOLUTION_ORDER: List[int] = []
     EXPECTED_TOKENS: List[tuple] = []
+    VALUE_FACTORY: Callable[[Any], Any] = None
 
     def __init__(self, value):
         self.value = value
@@ -28,6 +29,17 @@ class Token:
     def check_match(self, types) -> bool:
         return types == (ANYTYPE) or isinstance(self, types)
 
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, value):
+        if self.VALUE_FACTORY is not None:
+            self._value = self.VALUE_FACTORY(value)
+        else:
+            self._value = value
+
 class ANYTYPE(Token):
     EXPECTED_TOKENS = None
 
@@ -40,24 +52,10 @@ class VALUE(Token):
         interpreter.stack.append(value)
 
 class INTEGER(VALUE):
-
-    @property
-    def value(self):
-        return self._value
-
-    @value.setter
-    def value(self, value):
-        self._value = int(value)
+    VALUE_FACTORY = int
 
 class FLOAT(VALUE):
-
-    @property
-    def value(self):
-        return self._value
-
-    @value.setter
-    def value(self, value):
-        self._value = float(value)
+    VALUE_FACTORY = float
 
 class VARNAME(VALUE):
     def run(self, interpreter):
