@@ -5,23 +5,19 @@ Created on Fri Nov 20 13:54:34 2020
 @author: Korean_Crimson
 """
 
+from typing import List
+
 class Token:
 
-    RESOLUTION_ORDER = []
+    RESOLUTION_ORDER: List[int] = []
+    EXPECTED_TOKENS: List[tuple] = []
 
     def __init__(self, value):
         self.value = value
-        self.expected_tokens = self.expect()
 
     def __repr__(self):
         value = '' if self.value is None else f', {self.value}'
         return f'Token({self.__class__.__name__}{value})'
-
-    @staticmethod
-    def expect():
-        '''expected tokens is a list of lists: the primary list contains a list
-        of all possible subsequent expected tokens'''
-        return []
 
     def run(self, interpreter):
         pass
@@ -30,48 +26,11 @@ class Token:
         pass
 
 class ANYTYPE(Token):
-    @staticmethod
-    def expect():
-        raise NotImplementedError
-
-class ASSIGN_L(Token):
-
-    RESOLUTION_ORDER = [3, 1, 0]
-
-    @staticmethod
-    def expect():
-        list_of_expected_tokens = [(VARNAME), (ASSIGN_R), (VALUE)]
-        return list_of_expected_tokens
-
-    def run(self, interpreter):
-        varname = interpreter.stack.pop()
-        value = interpreter.stack.pop()
-        interpreter.variables[varname] = value
-
-class ASSIGN_R(Token):
-    @staticmethod
-    def expect():
-        return [(VALUE)]
-
-class FROM(Token):
-    @staticmethod
-    def expect():
-        return [(VALUE)]
-
-class TIMES(Token):
-    @staticmethod
-    def expect():
-        return [(VALUE)]
-
-class BY(Token):
-    @staticmethod
-    def expect():
-        return [(VALUE)]
+    EXPECTED_TOKENS = None
 
 class VALUE(Token):
-    @staticmethod
-    def expect():
-        return [(ANYTYPE)]
+
+    EXPECTED_TOKENS = [(ANYTYPE)]
 
     def run(self, interpreter):
         value = interpreter.variables.get(self.value, self.value)
@@ -102,13 +61,32 @@ class VARNAME(VALUE):
         interpreter.stack.append(self.value)
         interpreter.variables['it'] = self.value
 
+class ASSIGN_R(Token):
+    EXPECTED_TOKENS = [(VALUE)]
+
+class ASSIGN_L(Token):
+
+    RESOLUTION_ORDER = [3, 1, 0]
+    EXPECTED_TOKENS = [(VARNAME), (ASSIGN_R), (VALUE)]
+
+    def run(self, interpreter):
+        varname = interpreter.stack.pop()
+        value = interpreter.stack.pop()
+        interpreter.variables[varname] = value
+
+class FROM(Token):
+    EXPECTED_TOKENS = [(VALUE)]
+
+class TIMES(Token):
+    EXPECTED_TOKENS = [(VALUE)]
+
+class BY(Token):
+    EXPECTED_TOKENS = [(VALUE)]
+
 class PRINT(Token):
 
     RESOLUTION_ORDER = [1, 0]
-
-    @staticmethod
-    def expect():
-        return [(ANYTYPE)]
+    EXPECTED_TOKENS = [(ANYTYPE)]
 
     def run(self, interpreter):
         value = interpreter.pop()
@@ -117,11 +95,7 @@ class PRINT(Token):
 class ADD(Token):
 
     RESOLUTION_ORDER = [1, 3, 0]
-
-    @staticmethod
-    def expect():
-        list_of_expected_tokens = [(VALUE), (ASSIGN_R), (VARNAME)]
-        return list_of_expected_tokens
+    EXPECTED_TOKENS = [(VALUE), (ASSIGN_R), (VARNAME)]
 
     def run(self, interpreter):
         varname = interpreter.stack.pop()
@@ -131,11 +105,7 @@ class ADD(Token):
 class SUBTRACT(Token):
 
     RESOLUTION_ORDER = [1, 3, 0]
-
-    @staticmethod
-    def expect():
-        list_of_expected_tokens = [(VALUE), (FROM), (VARNAME)]
-        return list_of_expected_tokens
+    EXPECTED_TOKENS = [(VALUE), (FROM), (VARNAME)]
 
     def run(self, interpreter):
         varname = interpreter.stack.pop()
@@ -145,11 +115,7 @@ class SUBTRACT(Token):
 class MULTIPLY(Token):
 
     RESOLUTION_ORDER = [3, 1, 0]
-
-    @staticmethod
-    def expect():
-        list_of_expected_tokens = [(VARNAME), (TIMES), (VALUE)]
-        return list_of_expected_tokens
+    EXPECTED_TOKENS = [(VARNAME), (TIMES), (VALUE)]
 
     def run(self, interpreter):
         varname = interpreter.stack.pop()
@@ -159,11 +125,7 @@ class MULTIPLY(Token):
 class DIVIDE(Token):
 
     RESOLUTION_ORDER = [3, 1, 0]
-
-    @staticmethod
-    def expect():
-        list_of_expected_tokens = [(VARNAME), (BY), (VALUE)]
-        return list_of_expected_tokens
+    EXPECTED_TOKENS = [(VARNAME), (BY), (VALUE)]
 
     def run(self, interpreter):
         varname = interpreter.stack.pop()
@@ -179,17 +141,15 @@ class IT(VALUE):
         interpreter.stack.append(value)
 
 class LINEBREAK(Token):
-    @staticmethod
-    def expect():
-        return [(ANYTYPE)]
+
+    EXPECTED_TOKENS = [(ANYTYPE)]
 
     def pop(self, tokens):
         tokens.pop(0)
 
 class COMMENT(Token):
-    @staticmethod
-    def expect():
-        return [(ANYTYPE)]
+
+    EXPECTED_TOKENS = [(ANYTYPE)]
 
     def pop(self, tokens):
         while tokens:
@@ -198,9 +158,7 @@ class COMMENT(Token):
                 break
 
 class AND(LINEBREAK):
-    @staticmethod
-    def expect():
-        return [(ANYTYPE)]
+    EXPECTED_TOKENS = [(ANYTYPE)]
 
 tokens = {'set': ASSIGN_L,
           'to': ASSIGN_R,

@@ -41,7 +41,7 @@ class Block:
             raise ParseTypeError(token, types)
 
     def _add_initial_token(self, token):
-        self.expected_tokens = token.expected_tokens
+        self.expected_tokens = token.EXPECTED_TOKENS.copy()
         self.tokens.append(token)
 
     @property
