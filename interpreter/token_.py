@@ -25,6 +25,9 @@ class Token:
     def pop(self, tokens):
         pass
 
+    def check_match(self, types) -> bool:
+        return types == (ANYTYPE) or isinstance(self, types)
+
 class ANYTYPE(Token):
     EXPECTED_TOKENS = None
 

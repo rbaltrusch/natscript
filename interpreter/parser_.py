@@ -7,8 +7,6 @@ Created on Fri Nov 20 14:34:15 2020
 
 from typing import List
 
-from token_ import ANYTYPE
-
 class Block:
     def __init__(self, parent=None):
         self.tokens = []
@@ -37,10 +35,9 @@ class Block:
             return
 
         types = self.expected_tokens.pop(0)
-        if types == (ANYTYPE) or isinstance(token, types):
-            self.tokens.append(token)
-        else:
+        if not token.check_match(types):
             raise ParseTypeError(token, types)
+        self.tokens.append(token)
 
     def _add_initial_token(self, token):
         self.expected_tokens = token.EXPECTED_TOKENS.copy()
