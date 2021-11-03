@@ -51,6 +51,10 @@ class Block:
         return self.tokens and not self.expected_tokens
 
     @property
+    def parent_should_be_filled(self) -> bool:
+        return self.full and self.parent
+
+    @property
     def RESOLUTION_ORDER(self) -> List[int]:
         return self.tokens[0].RESOLUTION_ORDER if self.tokens else None
 
@@ -73,7 +77,7 @@ class Parser:
             while not current_block.full and tokens:
                 token = tokens.pop(0)
                 current_block.add(token)
-                if current_block.full and current_block.parent:
+                if current_block.parent_should_be_filled:
                     current_block = current_block.parent
             yield current_block
             current_block = Block()
