@@ -5,8 +5,6 @@ Created on Fri Nov 20 17:17:11 2020
 @author: Korean_Crimson
 """
 
-from parser_ import Block
-
 class InterpreterError(Exception):
     def __init__(self, block):
         self.message = f'The following block had no type to be interpreted: {block}!'
@@ -23,13 +21,7 @@ class Interpreter:
         self.variables = {}
 
     def interpret(self, block):
-        blocks = [statement for statement in block if isinstance(statement, Block)]
-        for block_ in blocks:
-            self.interpret(block_)
-        statements = [block[i] for i in block.RESOLUTION_ORDER]
-        for statement in statements:
-            if not isinstance(statement, Block):
-                statement.run(self)
+        block.run(self)
 
     def pop(self):
         if not self.stack:

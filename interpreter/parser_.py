@@ -20,11 +20,13 @@ class Block:
         return f'{type_}{self.tokens}'
 
     def __iter__(self):
-        for token in self.tokens:
+        tokens = (self.tokens[i] for i in self.RESOLUTION_ORDER) if self.RESOLUTION_ORDER else self.tokens
+        for token in tokens:
             yield token
 
-    def __getitem__(self, index):
-        return self.tokens[index]
+    def run(self, interpreter):
+        for token in self:
+            token.run(interpreter)
 
     def add(self, token):
         if self.full:
