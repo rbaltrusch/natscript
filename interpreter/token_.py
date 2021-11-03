@@ -90,7 +90,7 @@ class PRINT(Token):
     EXPECTED_TOKENS = [(ANYTYPE)]
 
     def run(self, interpreter):
-        value = interpreter.pop()
+        value = interpreter.stack_pop()
         print(value)
 
 class ADD(Token):
@@ -100,7 +100,7 @@ class ADD(Token):
 
     def run(self, interpreter):
         varname = interpreter.stack.pop()
-        value = interpreter.pop()
+        value = interpreter.stack_pop()
         interpreter.variables[varname] += value
 
 class SUBTRACT(Token):
@@ -110,7 +110,7 @@ class SUBTRACT(Token):
 
     def run(self, interpreter):
         varname = interpreter.stack.pop()
-        value = interpreter.pop()
+        value = interpreter.stack_pop()
         interpreter.variables[varname] -= value
 
 class MULTIPLY(Token):

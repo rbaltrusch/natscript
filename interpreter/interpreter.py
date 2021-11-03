@@ -15,7 +15,7 @@ class Interpreter:
     def interpret(self, block):
         block.run(self)
 
-    def pop(self):
+    def stack_pop(self):
         if not self.stack:
             raise internal.EmptyStackError()
 
