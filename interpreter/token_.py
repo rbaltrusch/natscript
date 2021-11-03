@@ -7,6 +7,21 @@ Created on Fri Nov 20 13:54:34 2020
 
 from typing import List, Callable, Any
 
+class Variable:
+    def __init__(self, name, value=None):
+        self.name = name
+        self.value = value
+
+    def __repr__(self):
+        return f'Variable({self.name}={self.value})'
+
+class Value:
+    def __init__(self, value):
+        self.value = value
+
+    def __repr__(self):
+        return f'Value({self.value})'
+
 class Token:
 
     RESOLUTION_ORDER: List[int] = []
@@ -48,8 +63,8 @@ class VALUE(Token):
     EXPECTED_TOKENS = [(ANYTYPE)]
 
     def run(self, interpreter):
-        value = interpreter.variables.get(self.value, self.value)
-        interpreter.stack.append(value)
+        value = Value(self.value)
+        interpreter.stack_append(value)
 
 class INTEGER(VALUE):
     VALUE_FACTORY = int
@@ -59,8 +74,13 @@ class FLOAT(VALUE):
 
 class VARNAME(VALUE):
     def run(self, interpreter):
-        interpreter.stack.append(self.value)
-        interpreter.variables['it'] = self.value
+        if interpreter.check_variable(self.value):
+            variable = interpreter.get_variable(self.value)
+        else:
+            variable = Variable(self.value)
+
+        interpreter.stack_append(variable)
+        interpreter.set_variable('it', variable)
 
 class ASSIGN_R(Token):
     EXPECTED_TOKENS = [(VALUE)]
@@ -71,9 +91,10 @@ class ASSIGN_L(Token):
     EXPECTED_TOKENS = [(VARNAME), (ASSIGN_R), (VALUE)]
 
     def run(self, interpreter):
-        varname = interpreter.stack.pop()
-        value = interpreter.stack.pop()
-        interpreter.variables[varname] = value
+        variable = interpreter.stack_pop()
+        value = interpreter.stack_pop()
+        variable.value = value.value
+        interpreter.set_variable(variable.name, variable)
 
 class FROM(Token):
     EXPECTED_TOKENS = [(VALUE)]
@@ -91,7 +112,7 @@ class PRINT(Token):
 
     def run(self, interpreter):
         value = interpreter.stack_pop()
-        print(value)
+        print(value.value)
 
 class ADD(Token):
 
@@ -99,9 +120,9 @@ class ADD(Token):
     EXPECTED_TOKENS = [(VALUE), (ASSIGN_R), (VARNAME)]
 
     def run(self, interpreter):
-        varname = interpreter.stack.pop()
+        variable = interpreter.stack_pop()
         value = interpreter.stack_pop()
-        interpreter.variables[varname] += value
+        variable.value += value.value
 
 class SUBTRACT(Token):
 
@@ -109,9 +130,9 @@ class SUBTRACT(Token):
     EXPECTED_TOKENS = [(VALUE), (FROM), (VARNAME)]
 
     def run(self, interpreter):
-        varname = interpreter.stack.pop()
+        variable = interpreter.stack_pop()
         value = interpreter.stack_pop()
-        interpreter.variables[varname] -= value
+        variable.value -= value.value
 
 class MULTIPLY(Token):
 
@@ -119,9 +140,9 @@ class MULTIPLY(Token):
     EXPECTED_TOKENS = [(VARNAME), (TIMES), (VALUE)]
 
     def run(self, interpreter):
-        varname = interpreter.stack.pop()
-        value = interpreter.stack.pop()
-        interpreter.variables[varname] *= value
+        variable = interpreter.stack_pop()
+        value = interpreter.stack_pop()
+        variable.value *= value.value
 
 class DIVIDE(Token):
 
@@ -129,17 +150,16 @@ class DIVIDE(Token):
     EXPECTED_TOKENS = [(VARNAME), (BY), (VALUE)]
 
     def run(self, interpreter):
-        varname = interpreter.stack.pop()
-        value = interpreter.stack.pop()
-        interpreter.variables[varname] /= value
-        if interpreter.variables[varname] == int(interpreter.variables[varname]):
-            interpreter.variables[varname] = int(interpreter.variables[varname])
+        variable = interpreter.stack_pop()
+        value = interpreter.stack_pop()
+        variable.value /= value.value
+        if variable.value == int(variable.value):
+            variable.value = int(variable.value)
 
 class IT(VALUE):
     def run(self, interpreter):
-        variable = interpreter.variables['it']
-        value = interpreter.variables[variable]
-        interpreter.stack.append(value)
+        variable = interpreter.get_variable('it')
+        interpreter.stack_append(variable)
 
 class LINEBREAK(Token):
 

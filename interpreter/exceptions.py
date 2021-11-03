@@ -13,3 +13,7 @@ class LexError(Exception):
 class ParseException(Exception):
     def __init__(self, token):
         super().__init__(f'{token} was not expected at this location!')
+
+class UndefinedVariableException(Exception):
+    def __init__(self, name):
+        super().__init__(f'Tried to access undefined variable {name}!')
