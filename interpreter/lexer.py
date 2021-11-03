@@ -6,13 +6,10 @@ Created on Fri Nov 20 13:51:53 2020
 """
 
 import re
+
+import exceptions
 from token_ import tokens, keys
 from token_ import regex_tokens, regex_keys
-
-class LexError(Exception):
-    def __init__(self, line_number, token):
-        self.message = f'Line {line_number}: {token} was not expected at this time!'
-        super().__init__(self.message)
 
 class Lexer:
     def __init__(self):
@@ -32,6 +29,6 @@ class Lexer:
                         yield regex_tokens[key](token)
                         break
                 else:
-                    raise LexError(self.line_number, token)
+                    raise exceptions.LexError(self.line_number, token)
             if token == '\n':
                 self.line_number += 1

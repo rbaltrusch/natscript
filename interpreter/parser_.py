@@ -7,6 +7,9 @@ Created on Fri Nov 20 14:34:15 2020
 
 from typing import List
 
+import internal
+import exceptions
+
 class Block:
     def __init__(self, parent=None):
         self.tokens = []
@@ -28,7 +31,7 @@ class Block:
 
     def add(self, token):
         if self.full:
-            raise ParseError(token)
+            raise internal.ParseError(token)
 
         if not self.tokens:
             self._add_initial_token(token)
@@ -36,7 +39,7 @@ class Block:
 
         types = self.expected_tokens.pop(0)
         if not token.check_match(types):
-            raise ParseTypeError(token, types)
+            raise exceptions.ParseTypeError(token, types)
         self.tokens.append(token)
 
     def _add_initial_token(self, token):
@@ -54,14 +57,6 @@ class Block:
     @property
     def RESOLUTION_ORDER(self) -> List[int]:
         return self.tokens[0].RESOLUTION_ORDER if self.tokens else None
-
-class ParseError(Exception):
-    def __init__(self, token):
-        super().__init__(f'{token} was not expected at this location!')
-
-class ParseTypeError(Exception):
-    def __init__(self, token, types):
-        super().__init__(f'Expected {types=}, but got {token}!')
 
 class Parser:
     def __init__(self):
