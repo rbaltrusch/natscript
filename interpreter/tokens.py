@@ -5,6 +5,7 @@ Created on Fri Nov 20 13:54:34 2020
 @author: Korean_Crimson
 """
 
+import exceptions
 from token_ import Token, ANYTYPE
 
 class VALUE(Token):
@@ -138,6 +139,12 @@ class COMMENT(Token):
 class AND(LINEBREAK):
     EXPECTED_TOKENS = [(ANYTYPE)]
 
+class TAB(Token):
+    EXPECTED_TOKENS = [(ANYTYPE)]
+
+    def run(self, interpreter):
+        raise exceptions.UnexpectedWhitespaceException(self)
+
 tokens = {'set': ASSIGN_L,
           'to': ASSIGN_R,
           'from': FROM,
@@ -152,7 +159,9 @@ tokens = {'set': ASSIGN_L,
            'and': AND,
            'true': TRUE,
            'false': FALSE,
-          '\n': LINEBREAK}
+          '\n': LINEBREAK,
+          '__tab__': TAB,
+          }
 
 regex_tokens = {r'^\d+$': INTEGER,
                 r'^\w+$': VARNAME,

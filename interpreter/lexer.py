@@ -14,6 +14,6 @@ class Lexer:
 
     @staticmethod
     def _split(string):
-        string = string.replace('\n',' \n ').strip()
+        string = string.replace('    ', '__tab__ ').replace('\n', ' \n ').strip()
         string_tokens = [s for s in string.split(' ') if s != '']
         return string_tokens
