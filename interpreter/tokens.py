@@ -5,14 +5,14 @@ Created on Fri Nov 20 13:54:34 2020
 @author: Korean_Crimson
 """
 
-from token_ import Token, Variable, Value, ANYTYPE
+from token_ import Token, ANYTYPE
 
 class VALUE(Token):
 
     EXPECTED_TOKENS = [(ANYTYPE)]
 
     def run(self, interpreter):
-        value = Value(self.value)
+        value = self.TOKEN_FACTORY.create_value(self.value)
         interpreter.stack_append(value)
 
 class INTEGER(VALUE):
@@ -34,7 +34,7 @@ class VARNAME(VALUE):
         if interpreter.check_variable(self.value):
             variable = interpreter.get_variable(self.value)
         else:
-            variable = Variable(self.value)
+            variable = self.TOKEN_FACTORY.create_variable(self.value)
 
         interpreter.stack_append(variable)
         interpreter.set_variable('it', variable)

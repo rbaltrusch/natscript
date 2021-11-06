@@ -10,7 +10,7 @@ class Lexer:
         self.token_factory = token_factory
 
     def lex(self, string):
-        return (self.token_factory.create(s) for s in self._split(string))
+        return (self.token_factory.create_token(s) for s in self._split(string))
 
     @staticmethod
     def _split(string):

@@ -11,20 +11,43 @@ from dataclasses import dataclass, field
 
 import exceptions
 
-@dataclass
-class Variable:
-    name: str
-    value: Any = None
 
 @dataclass
-class Value:
-    value: Any = None
+class TokenFactory:
+
+    tokens: dict = field(default_factory=dict)
+    regex_tokens: dict = field(default_factory=dict)
+
+    def __post_init__(self):
+        self.regex_patterns = [(re.compile(k), k) for k in self.regex_tokens.keys()]
+
+    def create_token(self, token: str):
+        if token in self.tokens:
+            token_type = self.tokens[token]
+            return token_type(value=None)
+
+        for pattern, key in self.regex_patterns:
+            if pattern.search(token):
+                token_type = self.regex_tokens[key]
+                return token_type(value=token)
+
+        raise exceptions.LexError(token)
+
+    @staticmethod
+    def create_variable(name: str):
+        return Variable(name)
+
+    @staticmethod
+    def create_value(value: Any):
+        return Value(value)
+
 
 class Token:
 
     RESOLUTION_ORDER: List[int] = []
     EXPECTED_TOKENS: List[tuple] = []
     VALUE_FACTORY: Callable[[Any], Any] = None
+    TOKEN_FACTORY: TokenFactory = TokenFactory()
 
     def __init__(self, value=None):
         self.value = value
@@ -57,24 +80,11 @@ class Token:
 class ANYTYPE(Token):
     EXPECTED_TOKENS = None
 
+@dataclass
+class Variable:
+    name: str
+    value: Any = None
 
 @dataclass
-class TokenFactory:
-
-    tokens: dict = field(default_factory=dict)
-    regex_tokens: dict = field(default_factory=dict)
-
-    def __post_init__(self):
-        self.regex_patterns = [(re.compile(k), k) for k in self.regex_tokens.keys()]
-
-    def create(self, token: str) -> Token:
-        if token in self.tokens:
-            token_type = self.tokens[token]
-            return token_type(value=None)
-
-        for pattern, key in self.regex_patterns:
-            if pattern.search(token):
-                token_type = self.regex_tokens[key]
-                return token_type(value=token)
-
-        raise exceptions.LexError(token)
+class Value:
+    value: Any = None
