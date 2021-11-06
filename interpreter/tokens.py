@@ -6,12 +6,9 @@ Created on Fri Nov 20 13:54:34 2020
 """
 
 import exceptions
-from token_ import Token, ANYTYPE
+from token_ import Token
 
 class VALUE(Token):
-
-    EXPECTED_TOKENS = [(ANYTYPE)]
-
     def _run(self, interpreter):
         value = self.TOKEN_FACTORY.create_value(self.value)
         interpreter.stack_append(value)
@@ -41,7 +38,7 @@ class VARNAME(VALUE):
         interpreter.set_variable('it', variable)
 
 class ASSIGN_R(Token):
-    EXPECTED_TOKENS = [(VALUE)]
+    pass
 
 class ASSIGN_L(Token):
 
@@ -55,18 +52,18 @@ class ASSIGN_L(Token):
         interpreter.set_variable(variable.name, variable)
 
 class FROM(Token):
-    EXPECTED_TOKENS = [(VALUE)]
+    pass
 
 class TIMES(Token):
-    EXPECTED_TOKENS = [(VALUE)]
+    pass
 
 class BY(Token):
-    EXPECTED_TOKENS = [(VALUE)]
+    pass
 
 class PRINT(Token):
 
     RESOLUTION_ORDER = [1, 0]
-    EXPECTED_TOKENS = [(ANYTYPE)]
+    EXPECTED_TOKENS = [(Token)]
 
     def _run(self, interpreter):
         value = interpreter.stack_pop()
@@ -120,9 +117,6 @@ class IT(VALUE):
         interpreter.stack_append(variable)
 
 class LINEBREAK(Token):
-
-    EXPECTED_TOKENS = [(ANYTYPE)]
-
     def pop_tokens(self, tokens):
         tokens.pop(0)
 
@@ -137,11 +131,9 @@ class COMMENT(Token):
                 break
 
 class AND(LINEBREAK):
-    EXPECTED_TOKENS = [(ANYTYPE)]
+    pass
 
 class TAB(Token):
-    EXPECTED_TOKENS = [(ANYTYPE)]
-
     def run(self, interpreter):
         raise exceptions.UnexpectedWhitespaceException(self)
 
