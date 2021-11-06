@@ -118,17 +118,17 @@ class IT(VALUE):
 
 class LINEBREAK(Token):
     def pop_tokens(self, tokens):
-        tokens.pop(0)
+        return tokens.pop(0)
 
 class COMMENT(Token):
-
-    EXPECTED_TOKENS = [(ANYTYPE)]
-
     def pop_tokens(self, tokens):
+        popped_tokens = []
         while tokens:
             token = tokens.pop(0)
+            popped_tokens.append(token)
             if isinstance(token, LINEBREAK):
                 break
+        return popped_tokens
 
 class AND(LINEBREAK):
     pass
