@@ -8,7 +8,7 @@ Created on Fri Nov 20 17:17:11 2020
 from typing import List, Dict, Any
 
 import exceptions
-from interfaces import Value, Variable, Block
+from interfaces import Value, Variable, Token
 
 class Interpreter:
     """Interprets blocks and keeps track of the program state"""
@@ -17,9 +17,9 @@ class Interpreter:
         self._stack: List[Value] = []
         self._variables: Dict[str, Variable] = {}
 
-    def interpret(self, block: Block) -> None:
+    def interpret(self, token: Token) -> None:
         """Runs the current block"""
-        block.run(self)
+        token.run(self)
 
     def stack_pop(self) -> Value:
         """Pops and returns the last value on the stack.
