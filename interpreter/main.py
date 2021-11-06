@@ -13,10 +13,10 @@ lex = Lexer()
 parser = Parser()
 inter = Interpreter()
 
-file = 'test.nat'
+filename = 'test.nat'
 
-with open(file, 'r') as f:
-    file_contents = f.read()
+with open(filename) as file:
+    file_contents = file.read()
     tokens = list(lex.lex(file_contents))
     for syntax_block in parser.parse(tokens):
         inter.interpret(syntax_block)
