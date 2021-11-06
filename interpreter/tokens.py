@@ -139,7 +139,7 @@ class AND(Token):
 
 class TAB(Token):
     def run(self, interpreter):
-        raise exceptions.UnexpectedWhitespaceException(self)
+        raise exceptions.UnexpectedIndentationException(self)
 
 tokens = {'set': ASSIGN_L,
           'to': ASSIGN_R,

@@ -19,9 +19,9 @@ class SyntaxException(Exception):
         missing_tokens = [t.__name__ for t in token.EXPECTED_TOKENS[len(token.tokens):]]
         super().__init__(f'{token} cannot be run: missing expected tokens {missing_tokens}')
 
-class UnexpectedWhitespaceException(Exception):
+class UnexpectedIndentationException(Exception):
     def __init__(self, token):
-        super().__init__(f'Unexpected whitespace at location {token}!')
+        super().__init__(f'Unexpected indentation at location {token}!')
 
 class UndefinedVariableException(Exception):
     def __init__(self, name):
