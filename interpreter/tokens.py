@@ -133,8 +133,9 @@ class COMMENT(Token):
                 break
         return popped_tokens
 
-class AND(LINEBREAK):
-    pass
+class AND(Token):
+    def pop_tokens(self, tokens):
+        return tokens.pop(0)
 
 class TAB(Token):
     def run(self, interpreter):
