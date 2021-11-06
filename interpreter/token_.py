@@ -11,22 +11,14 @@ from dataclasses import dataclass, field
 
 import exceptions
 
+@dataclass
 class Variable:
-    def __init__(self, name, value=None):
-        self.name = name
-        self.value = value
+    name: str
+    value: Any = None
 
-    def __repr__(self):
-        return f'Variable({self.name}={self.value})'
-
-
+@dataclass
 class Value:
-    def __init__(self, value):
-        self.value = value
-
-    def __repr__(self):
-        return f'Value({self.value})'
-
+    value: Any = None
 
 class Token:
 
