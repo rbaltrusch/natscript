@@ -6,8 +6,8 @@ Created on Wed Nov  3 22:59:11 2021
 """
 
 class LexError(Exception):
-    def __init__(self, line_number, token):
-        self.message = f'Line {line_number}: {token} was not expected at this time!'
+    def __init__(self, token):
+        self.message = f'{token} was not expected at this time!'
         super().__init__(self.message)
 
 class ParseException(Exception):
