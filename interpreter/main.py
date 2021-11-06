@@ -5,13 +5,16 @@ Created on Fri Nov 20 13:54:26 2020
 @author: Korean_Crimson
 """
 
-from lexer import Lexer
-from parser_ import Parser
-from interpreter import Interpreter
+import token_
+import tokens
+import lexer
+import parsing
+import interpreter
 
-lex = Lexer()
-parser = Parser()
-inter = Interpreter()
+token_factory = token_.TokenFactory(tokens.tokens, tokens.regex_tokens)
+lex = lexer.Lexer(token_factory)
+parser = parsing.Parser()
+inter = interpreter.Interpreter()
 
 filename = 'test.nat'
 
