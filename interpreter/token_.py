@@ -6,7 +6,7 @@ Created on Sat Nov  6 12:04:45 2021
 """
 
 import re
-from typing import List, Callable, Any
+from typing import List, Any
 from dataclasses import dataclass, field
 
 import exceptions
@@ -46,7 +46,7 @@ class Token:
 
     RESOLUTION_ORDER: List[int] = []
     EXPECTED_TOKENS: List[tuple] = []
-    VALUE_FACTORY: Callable[[Any], Any] = None
+    VALUE_FACTORY: callable = None
     TOKEN_FACTORY: TokenFactory = TokenFactory()
 
     def __init__(self, value=None):
