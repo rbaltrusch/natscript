@@ -33,5 +33,5 @@ class Interpreter:
             raise exceptions.UndefinedVariableException(name)
         return value
 
-    def set_variable(self, variable, value):
-        self._variables[variable] = value
+    def set_variable(self, name, value):
+        self._variables[name] = value
