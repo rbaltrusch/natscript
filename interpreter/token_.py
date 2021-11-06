@@ -51,13 +51,29 @@ class Token:
 
     def __init__(self, value=None):
         self.value = value
+        self.tokens = []
 
     def __repr__(self):
         value = '' if self.value is None else f', {self.value}'
-        return f'Token({self.__class__.__name__}{value})'
+        type_ = 'Token' if not self.tokens else 'SyntaxTree'
+        return f'{type_}({self.__class__.__name__}{value})'
 
     def run(self, interpreter):
+        for function in self.run_functions:
+            function(interpreter)
+
+    def _run(self, interpreter):
         pass
+
+    def add_token(self, token):
+        if self.full:
+            raise exceptions.InternalParseError(token)
+
+        index = len(self.tokens)
+        types = self.EXPECTED_TOKENS[index]
+        if not token.check_match(types):
+            raise exceptions.InternalParseTypeError(token, types)
+        self.tokens.append(token)
 
     def pop_tokens(self, tokens):
         pass
@@ -75,6 +91,22 @@ class Token:
             self._value = self.VALUE_FACTORY(value)
         else:
             self._value = value
+
+    @property
+    def full(self) -> bool:
+        return len(self.tokens) == len(self.EXPECTED_TOKENS)
+
+    @property
+    def run_functions(self) -> List[callable]:
+        if not self.RESOLUTION_ORDER:
+            return [self._run]
+
+        if not len(self.tokens) == len(self.EXPECTED_TOKENS):
+            raise exceptions.SyntaxException(self)
+
+        tokens = [self] + self.tokens
+        ordered = [tokens[i] for i in self.RESOLUTION_ORDER]
+        return [t._run if t is self else t.run for t in ordered]
 
 
 class ANYTYPE(Token):
