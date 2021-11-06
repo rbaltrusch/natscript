@@ -11,28 +11,6 @@ from dataclasses import dataclass, field
 
 import exceptions
 
-@dataclass
-class TokenFactory:
-
-    tokens: dict = field(default_factory=dict)
-    regex_tokens: dict = field(default_factory=dict)
-
-    def __post_init__(self):
-        self.regex_patterns = [(re.compile(k), k) for k in self.regex_tokens.keys()]
-
-    def create(self, token: str):
-        if token in self.tokens:
-            token_type = self.tokens[token]
-            return token_type(value=None)
-
-        for pattern, key in self.regex_patterns:
-            if pattern.search(token):
-                token_type = self.regex_tokens[key]
-                return token_type(value=token)
-
-        raise exceptions.LexError(token)
-
-
 class Variable:
     def __init__(self, name, value=None):
         self.name = name
@@ -86,3 +64,25 @@ class Token:
 
 class ANYTYPE(Token):
     EXPECTED_TOKENS = None
+
+
+@dataclass
+class TokenFactory:
+
+    tokens: dict = field(default_factory=dict)
+    regex_tokens: dict = field(default_factory=dict)
+
+    def __post_init__(self):
+        self.regex_patterns = [(re.compile(k), k) for k in self.regex_tokens.keys()]
+
+    def create(self, token: str) -> Token:
+        if token in self.tokens:
+            token_type = self.tokens[token]
+            return token_type(value=None)
+
+        for pattern, key in self.regex_patterns:
+            if pattern.search(token):
+                token_type = self.regex_tokens[key]
+                return token_type(value=token)
+
+        raise exceptions.LexError(token)
