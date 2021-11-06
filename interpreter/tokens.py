@@ -122,14 +122,14 @@ class LINEBREAK(Token):
 
     EXPECTED_TOKENS = [(ANYTYPE)]
 
-    def pop(self, tokens):
+    def pop_tokens(self, tokens):
         tokens.pop(0)
 
 class COMMENT(Token):
 
     EXPECTED_TOKENS = [(ANYTYPE)]
 
-    def pop(self, tokens):
+    def pop_tokens(self, tokens):
         while tokens:
             token = tokens.pop(0)
             if isinstance(token, LINEBREAK):

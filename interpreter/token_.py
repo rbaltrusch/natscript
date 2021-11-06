@@ -59,7 +59,7 @@ class Token:
     def run(self, interpreter):
         pass
 
-    def pop(self, tokens):
+    def pop_tokens(self, tokens):
         pass
 
     def check_match(self, types) -> bool:

@@ -75,6 +75,6 @@ class Parser:
 
     def _pop_leading_tokens(self, tokens):
         while tokens:
-            popped_tokens = tokens[0].pop(tokens)
+            popped_tokens = tokens[0].pop_tokens(tokens)
             if not popped_tokens:
                 break

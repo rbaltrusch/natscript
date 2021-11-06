@@ -20,7 +20,7 @@ class Token(Protocol):
     def run(self, interpreter: Interpreter) -> None:
         ...
 
-    def pop(self, tokens: List[Token]) -> None:
+    def pop_tokens(self, tokens: List[Token]) -> None:
         ...
 
     def check_match(self, types: List[type]) -> bool:
