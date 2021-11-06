@@ -21,6 +21,14 @@ class INTEGER(VALUE):
 class FLOAT(VALUE):
     VALUE_FACTORY = float
 
+class TRUE(VALUE):
+    def __init__(self, *_, **__):
+        super().__init__(value=1)
+
+class FALSE(VALUE):
+    def __init__(self, *_, **__):
+        super().__init__(value=0)
+
 class VARNAME(VALUE):
     def run(self, interpreter):
         if interpreter.check_variable(self.value):
@@ -142,6 +150,8 @@ tokens = {'set': ASSIGN_L,
           'divide': DIVIDE,
           'it': IT,
            'and': AND,
+           'true': TRUE,
+           'false': FALSE,
           '\n': LINEBREAK}
 
 regex_tokens = {r'^\d+$': INTEGER,
