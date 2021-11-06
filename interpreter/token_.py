@@ -20,16 +20,17 @@ class TokenFactory:
 
     def __post_init__(self):
         self.regex_patterns = [(re.compile(k), k) for k in self.regex_tokens.keys()]
+        self.line_number = 0
 
     def create_token(self, token: str):
         if token in self.tokens:
             token_type = self.tokens[token]
-            return token_type(value=None)
+            return token_type(value=None, line=self.line_number)
 
         for pattern, key in self.regex_patterns:
             if pattern.search(token):
                 token_type = self.regex_tokens[key]
-                return token_type(value=token)
+                return token_type(value=token, line=self.line_number)
 
         raise exceptions.LexError(token)
 
@@ -49,14 +50,15 @@ class Token:
     VALUE_FACTORY: callable = None
     TOKEN_FACTORY: TokenFactory = TokenFactory()
 
-    def __init__(self, value=None):
+    def __init__(self, value=None, line: int = 0):
         self.value = value
+        self.line = line
         self.tokens = []
 
     def __repr__(self):
         value = '' if self.value is None else f', {self.value}'
         type_ = 'Token' if not self.tokens else 'SyntaxTree'
-        return f'{type_}({self.__class__.__name__}{value})'
+        return f'Line {self.line}: {type_}({self.__class__.__name__}{value})'
 
     def run(self, interpreter):
         for function in self.run_functions:
@@ -76,6 +78,9 @@ class Token:
         self.tokens.append(token)
 
     def pop_tokens(self, tokens):
+        pass
+
+    def update_token_factory(self, token_factory):
         pass
 
     def check_match(self, types) -> bool:

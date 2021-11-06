@@ -120,6 +120,9 @@ class LINEBREAK(Token):
     def pop_tokens(self, tokens):
         return tokens.pop(0)
 
+    def update_token_factory(self, token_factory):
+        token_factory.line_number += 1
+
 class COMMENT(Token):
     def pop_tokens(self, tokens):
         popped_tokens = []
