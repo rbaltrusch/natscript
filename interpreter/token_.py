@@ -20,7 +20,7 @@ class TokenFactory:
 
     def __post_init__(self):
         self.regex_patterns = [(re.compile(k), k) for k in self.regex_tokens.keys()]
-        self.line_number = 0
+        self.line_number = 1
 
     def create_token(self, token: str):
         if token in self.tokens:
