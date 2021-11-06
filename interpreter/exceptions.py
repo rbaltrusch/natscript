@@ -17,3 +17,12 @@ class ParseException(Exception):
 class UndefinedVariableException(Exception):
     def __init__(self, name):
         super().__init__(f'Tried to access undefined variable {name}!')
+
+class InternalParseTypeError(Exception):
+    def __init__(self, token, types):
+        super().__init__(f'Expected {types=}, but got {token}!')
+
+class InternalEmptyStackError(Exception):
+    def __init__(self):
+        self.message = 'Could not pop value from empty stack!'
+        super().__init__(self.message)

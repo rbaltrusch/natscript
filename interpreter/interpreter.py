@@ -5,7 +5,6 @@ Created on Fri Nov 20 17:17:11 2020
 @author: Korean_Crimson
 """
 
-import internal
 import exceptions
 
 class Interpreter:
@@ -18,7 +17,7 @@ class Interpreter:
 
     def stack_pop(self):
         if not self._stack:
-            raise internal.EmptyStackError()
+            raise exceptions.InternalEmptyStackError()
         return self._stack.pop()
 
     def stack_append(self, value):
@@ -30,8 +29,8 @@ class Interpreter:
     def get_variable(self, name):
         try:
             value = self._variables[name]
-        except KeyError as e:
-            raise exceptions.UndefinedVariableException(name) from e
+        except KeyError:
+            raise exceptions.UndefinedVariableException(name)
         return value
 
     def set_variable(self, variable, value):

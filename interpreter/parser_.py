@@ -7,7 +7,6 @@ Created on Fri Nov 20 14:34:15 2020
 
 from typing import List
 
-import internal
 import exceptions
 
 class Block:
@@ -31,7 +30,7 @@ class Block:
 
     def add(self, token):
         if self.full:
-            raise internal.ParseError(token)
+            raise exceptions.InternalParseError(token)
 
         if not self.tokens:
             self._add_initial_token(token)
