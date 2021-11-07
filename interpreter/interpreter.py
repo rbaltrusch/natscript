@@ -19,7 +19,11 @@ class Interpreter:
 
     def interpret(self, token: Token) -> None:
         """Runs the current token"""
-        token.run(self)
+        try:
+            token.run(self)
+        except exceptions.RunTimeException as e:
+            e.line = token.line
+            raise e
 
     def add_stack(self) -> None:
         """Adds a stack to the stack of stacks"""

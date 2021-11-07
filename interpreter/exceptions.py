@@ -13,18 +13,35 @@ class ParseException(Exception):
     def __init__(self, token):
         super().__init__(f'{token} was not expected at this location!')
 
-class SyntaxException(Exception):
+
+class RunTimeException(Exception):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.line = 1
+
+    def __str__(self):
+        return self.line_text + super().__str__()
+
+    def __repr__(self):
+        return self.line_text + super().__repr__()
+
+    @property
+    def line_text(self):
+        return f'Line {self.line}: '
+
+class SyntaxException(RunTimeException):
     def __init__(self, token):
         missing_tokens = [t.__name__ for t in token.EXPECTED_TOKENS[len(token.tokens):]]
         super().__init__(f'{token} cannot be run: missing expected tokens {missing_tokens}')
 
-class UnexpectedIndentationException(Exception):
+class UnexpectedIndentationException(RunTimeException):
     def __init__(self, token):
         super().__init__(f'Unexpected indentation at location {token}!')
 
-class UndefinedVariableException(Exception):
+class UndefinedVariableException(RunTimeException):
     def __init__(self, name):
         super().__init__(f'Tried to access undefined variable {name}!')
+
 
 class InternalParseTypeError(Exception):
     def __init__(self, token, types):
