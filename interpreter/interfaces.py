@@ -12,6 +12,7 @@ from typing import Protocol, List, Dict, Optional, Any
 
 class Token(Protocol):
     value: Any
+    full: bool
     RESOLUTION_ORDER: List[int]
     EXPECTED_TOKENS: List[tuple]
     VALUE_FACTORY: Optional[callable]
@@ -26,10 +27,14 @@ class Token(Protocol):
     def pop_tokens(self, tokens: List[Token]) -> None:
         ...
 
-    def check_match(self, types: List[type]) -> bool:
+    def update_token_factory(self, token_factory: TokenFactory) -> None:
         ...
 
-    def update_token_factory(self, token_factory: TokenFactory) -> None:
+
+class Value(Protocol):
+    value: Any
+
+    def get_value(self) -> Any:
         ...
 
 
@@ -37,9 +42,8 @@ class Variable(Protocol):
     value: Any
     name: str
 
-
-class Value(Protocol):
-    value: Any
+    def get_value(self) -> Any:
+        ...
 
 
 class TokenFactory(Protocol):
@@ -60,6 +64,12 @@ class TokenFactory(Protocol):
 
 class Interpreter(Protocol):
     def interpret(self, token: Token) -> None:
+        ...
+
+    def add_stack(self) -> None:
+        ...
+
+    def remove_stack(self) -> None:
         ...
 
     def stack_pop(self) -> Any:
