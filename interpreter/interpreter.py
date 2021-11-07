@@ -14,29 +14,39 @@ class Interpreter:
     """Interprets blocks and keeps track of the program state"""
 
     def __init__(self):
-        self._stack: List[Value] = []
-        self._variables: Dict[str, Variable] = {}
+        self._stacks: List[List[Value]] = [[]]
+        self._variables: List[Dict[str, Variable]] = [{}]
 
     def interpret(self, token: Token) -> None:
         """Runs the current block"""
         token.run(self)
+
+    def add_stack(self) -> None:
+        """Adds a stack to the stack of stacks"""
+        self._stacks.append([])
+        self._variables.append({})
+
+    def remove_stack(self) -> None:
+        """Removes the last stack from the stack of stacks"""
+        self._stacks.pop()
+        self._variables.pop()
 
     def stack_pop(self) -> Value:
         """Pops and returns the last value on the stack.
 
         Raises an InternalEmptyStackError if the stack is empty.
         """
-        if not self._stack:
+        if not self._stacks or not self._stacks[-1]:
             raise exceptions.InternalEmptyStackError()
-        return self._stack.pop()
+        return self._stacks[-1].pop()
 
     def stack_append(self, value: Value) -> None:
         """Appends the passed Value to the stack"""
-        self._stack.append(value)
+        self._stacks[-1].append(value)
 
     def check_variable(self, name: str) -> bool:
         """Returns True if the passed name is in the variables list"""
-        return name in self._variables
+        return name in self._variables[-1]
 
     def get_variable(self, name: str) -> Variable:
         """Returns a Variable if it can be looked up by name.
@@ -45,7 +55,7 @@ class Interpreter:
         """
 
         try:
-            value = self._variables[name]
+            value = self._variables[-1][name]
         except KeyError:
             #pylint: disable=raise-missing-from
             raise exceptions.UndefinedVariableException(name)
@@ -53,4 +63,4 @@ class Interpreter:
 
     def set_variable(self, name: str, value: Any) -> None:
         """Sets the value of the variable identified by name to the specified value."""
-        self._variables[name] = value
+        self._variables[-1][name] = value
