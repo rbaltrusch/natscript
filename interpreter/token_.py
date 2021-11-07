@@ -125,8 +125,7 @@ class ClauseToken(Token):
 
 
 @dataclass
-class Variable:
-    name: str
+class Value:
     value: Any = None
 
     def get_value(self):
@@ -134,6 +133,9 @@ class Variable:
             raise exceptions.UndefinedVariableException(self)
         return self.value
 
-@dataclass
-class Value:
-    value: Any = None
+class Variable(Value):
+    def __init__(self, name: str):
+        self.name = name
+
+    def __repr__(self):
+        return f'{self.name}'

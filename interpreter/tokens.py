@@ -47,7 +47,7 @@ class ASSIGN_L(Token):
     def _run(self, interpreter):
         variable = interpreter.stack_pop()
         value = interpreter.stack_pop()
-        variable.value = value.value
+        variable.value = value.get_value()
         interpreter.set_variable(variable.name, variable)
 
 class FROM(Token):
@@ -69,7 +69,7 @@ class PRINT(Token):
 
     def _run(self, interpreter):
         value = interpreter.stack_pop()
-        print(value.value)
+        print(value.get_value())
 
 class ADD(Token):
 
@@ -79,7 +79,7 @@ class ADD(Token):
     def _run(self, interpreter):
         variable = interpreter.stack_pop()
         value = interpreter.stack_pop()
-        variable.value = variable.get_value() + value.value
+        variable.value = variable.get_value() + value.get_value()
 
 class SUBTRACT(Token):
 
@@ -89,7 +89,7 @@ class SUBTRACT(Token):
     def _run(self, interpreter):
         variable = interpreter.stack_pop()
         value = interpreter.stack_pop()
-        variable.value = variable.get_value() - value.value
+        variable.value = variable.get_value() - value.get_value()
 
 class MULTIPLY(Token):
 
@@ -99,7 +99,7 @@ class MULTIPLY(Token):
     def _run(self, interpreter):
         variable = interpreter.stack_pop()
         value = interpreter.stack_pop()
-        variable.value = variable.get_value() * value.value
+        variable.value = variable.get_value() * value.get_value()
 
 class DIVIDE(Token):
 
@@ -109,7 +109,7 @@ class DIVIDE(Token):
     def _run(self, interpreter):
         variable = interpreter.stack_pop()
         value = interpreter.stack_pop()
-        variable.value = variable.get_value() / value.value
+        variable.value = variable.get_value() / value.get_value()
         if variable.value == int(variable.value):
             variable.value = int(variable.value)
 
@@ -157,7 +157,7 @@ class FUNCTION(Token):
     def _run(self, interpreter):
         function = interpreter.stack_pop()
         code = interpreter.stack_pop()
-        function.value = code.value
+        function.value = code.get_value()
         interpreter.set_variable(function.name, function)
 
 class DEFINE(Token):
@@ -184,8 +184,8 @@ class IF(Token):
     def _run(self, interpreter):
         value = interpreter.stack_pop()
         clause = interpreter.stack_pop()
-        if value.value == 1:
-            clause.value(interpreter)
+        if value.get_value() == 1:
+            clause.get_value()(interpreter)
 
 tokens = {'set': ASSIGN_L,
           'to': ASSIGN_R,
