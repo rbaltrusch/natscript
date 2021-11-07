@@ -159,8 +159,8 @@ class FUNCTION(Token):
         interpreter.set_variable(function.name, code)
 
 class DEFINE(Token):
-    RESOLUTION_ORDER = [5, 4, 3, 2, 1]
-    EXPECTED_TOKENS = [(FUNCTION, ), (VARNAME, ), (AS, ), (LINEBREAK, ), (CLAUSE, )]
+    RESOLUTION_ORDER = [4, 3, 2, 1]
+    EXPECTED_TOKENS = [(FUNCTION, ), (VARNAME, ), (AS, ), (CLAUSE, )]
 
 class CALL(Token):
     RESOLUTION_ORDER = [1, 0]
