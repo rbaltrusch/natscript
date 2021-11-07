@@ -45,6 +45,7 @@ class TokenFactory:
 @dataclass
 class ExpectedToken:
     types: Tuple[type]
+    run_order: int = 0
     optional: bool = False
 
 class Token:
@@ -58,6 +59,7 @@ class Token:
         self.value = value
         self.line = line
         self.tokens = []
+        self.run_order = 0
         self.expected_tokens = self.EXPECTED_TOKENS.copy()
 
     def __repr__(self):
@@ -107,15 +109,7 @@ class Token:
 
     @property
     def run_functions(self) -> List[callable]:
-        if not self.RESOLUTION_ORDER:
-            return [self._run]
-
-        if not len(self.tokens) == len(self.EXPECTED_TOKENS):
-            raise exceptions.SyntaxException(self)
-
-        tokens = [self] + self.tokens
-        ordered = [tokens[i] for i in self.RESOLUTION_ORDER]
-        return [t._run if t is self else t.run for t in ordered]
+        return [t.run for t in sorted(self.tokens, key=lambda x: x.run_order)] + [self._run]
 
 
 class ClauseToken(Token):

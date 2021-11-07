@@ -41,10 +41,9 @@ class ASSIGN_R(Token):
 
 class ASSIGN_L(Token):
 
-    RESOLUTION_ORDER = [3, 1, 0]
-    EXPECTED_TOKENS = [ExpectedToken((VARNAME, )),
-                       ExpectedToken((ASSIGN_R, )),
-                       ExpectedToken((VALUE, )),
+    EXPECTED_TOKENS = [ExpectedToken((VARNAME, ), 2),
+                       ExpectedToken((ASSIGN_R, ), 1),
+                       ExpectedToken((VALUE, ), 0),
                        ]
 
     def _run(self, interpreter):
@@ -67,7 +66,6 @@ class AS(Token):
 
 class PRINT(Token):
 
-    RESOLUTION_ORDER = [1, 0]
     EXPECTED_TOKENS = [ExpectedToken((Token, ))]
 
     def _run(self, interpreter):
@@ -76,10 +74,9 @@ class PRINT(Token):
 
 class ADD(Token):
 
-    RESOLUTION_ORDER = [1, 3, 0]
-    EXPECTED_TOKENS = [ExpectedToken((VALUE, )),
-                       ExpectedToken((ASSIGN_R, )),
-                       ExpectedToken((VARNAME, )),
+    EXPECTED_TOKENS = [ExpectedToken((VALUE, ), 0),
+                       ExpectedToken((ASSIGN_R, ), 1),
+                       ExpectedToken((VARNAME, ), 2),
                        ]
 
     def _run(self, interpreter):
@@ -89,10 +86,9 @@ class ADD(Token):
 
 class SUBTRACT(Token):
 
-    RESOLUTION_ORDER = [1, 3, 0]
-    EXPECTED_TOKENS = [ExpectedToken((VALUE, )),
-                       ExpectedToken((FROM, )),
-                       ExpectedToken((VARNAME, )),
+    EXPECTED_TOKENS = [ExpectedToken((VALUE, ), 0),
+                       ExpectedToken((FROM, ), 1),
+                       ExpectedToken((VARNAME, ), 2),
                        ]
 
     def _run(self, interpreter):
@@ -102,10 +98,9 @@ class SUBTRACT(Token):
 
 class MULTIPLY(Token):
 
-    RESOLUTION_ORDER = [3, 1, 0]
-    EXPECTED_TOKENS = [ExpectedToken((VARNAME, )),
-                       ExpectedToken((TIMES, )),
-                       ExpectedToken((VALUE, )),
+    EXPECTED_TOKENS = [ExpectedToken((VARNAME, ), 2),
+                       ExpectedToken((TIMES, ), 1),
+                       ExpectedToken((VALUE, ), 0),
                        ]
 
     def _run(self, interpreter):
@@ -115,10 +110,9 @@ class MULTIPLY(Token):
 
 class DIVIDE(Token):
 
-    RESOLUTION_ORDER = [3, 1, 0]
-    EXPECTED_TOKENS = [ExpectedToken((VARNAME, )),
-                       ExpectedToken((BY, )),
-                       ExpectedToken((VALUE, )),
+    EXPECTED_TOKENS = [ExpectedToken((VARNAME, ), 2),
+                       ExpectedToken((BY, ), 1),
+                       ExpectedToken((VALUE, ), 0),
                        ]
 
     def _run(self, interpreter):
@@ -179,15 +173,13 @@ class FUNCTION(Token):
         interpreter.set_variable(function.name, function)
 
 class DEFINE(Token):
-    RESOLUTION_ORDER = [4, 3, 2, 1]
-    EXPECTED_TOKENS = [ExpectedToken((FUNCTION, )),
-                       ExpectedToken((VARNAME, )),
-                       ExpectedToken((AS, )),
-                       ExpectedToken((CLAUSE, )),
+    EXPECTED_TOKENS = [ExpectedToken((FUNCTION, ), 3),
+                       ExpectedToken((VARNAME, ), 2),
+                       ExpectedToken((AS, ), 1),
+                       ExpectedToken((CLAUSE, ), 0),
                        ]
 
 class CALL(Token):
-    RESOLUTION_ORDER = [1, 0]
     EXPECTED_TOKENS = [ExpectedToken((VARNAME, ))]
 
     def _run(self, interpreter):
@@ -200,10 +192,10 @@ class THEN(Token):
     pass
 
 class IF(Token):
-    RESOLUTION_ORDER = [3, 2, 1, 0]
-    EXPECTED_TOKENS = [ExpectedToken((VALUE, )),
-                       ExpectedToken((THEN, )),
-                       ExpectedToken((CLAUSE, )),
+    EXPECTED_TOKENS = [ExpectedToken((VALUE, ), 0),
+                       ExpectedToken((THEN, ), 1),
+                       ExpectedToken((CLAUSE, ), 3),
+                       ExpectedToken((ELSE, ), 2, optional=True),
                        ]
 
     def _run(self, interpreter):
