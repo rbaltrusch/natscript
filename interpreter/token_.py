@@ -84,7 +84,7 @@ class Token:
         pass
 
     def check_match(self, types) -> bool:
-        return types == (Token) or isinstance(self, types)
+        return isinstance(self, types)
 
     @property
     def value(self):
