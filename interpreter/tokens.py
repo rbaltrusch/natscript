@@ -191,6 +191,20 @@ class CALL(Token):
 class THEN(Token):
     pass
 
+class ELSE(Token):
+    EXPECTED_TOKENS = [ExpectedToken((CLAUSE, ))]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.executed = False
+
+    def _run(self, interpreter):
+        else_clause = interpreter.stack_pop()
+        value = interpreter.stack_pop()
+        if value.get_value() == 0:
+            else_clause.get_value()(interpreter)
+            self.executed = True
+
 class IF(Token):
     EXPECTED_TOKENS = [ExpectedToken((VALUE, ), 0),
                        ExpectedToken((THEN, ), 1),
@@ -199,10 +213,13 @@ class IF(Token):
                        ]
 
     def _run(self, interpreter):
-        value = interpreter.stack_pop()
-        clause = interpreter.stack_pop()
-        if value.get_value() == 1:
-            clause.get_value()(interpreter)
+        if_clause = interpreter.stack_pop()
+        if not self.else_executed:
+            if_clause.get_value()(interpreter)
+
+    @property
+    def else_executed(self) -> bool:
+        return isinstance(self.tokens[-1], ELSE) and self.tokens[-1].executed
 
 tokens = {'set': ASSIGN_L,
           'to': ASSIGN_R,
@@ -227,6 +244,7 @@ tokens = {'set': ASSIGN_L,
           'call': CALL,
           'if': IF,
           'then': THEN,
+          'else': ELSE,
           '#': COMMENT,
           }
 
