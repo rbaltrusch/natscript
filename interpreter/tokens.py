@@ -188,11 +188,11 @@ tokens = {'set': ASSIGN_L,
            'true': TRUE,
            'false': FALSE,
           '\n': LINEBREAK,
-          '__tab__': CLAUSE,
           'define': DEFINE,
           'function': FUNCTION,
           'as': AS,
-          'end': END,
+          '{': CLAUSE,
+          '}': END,
           'call': CALL,
           }
 
