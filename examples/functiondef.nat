@@ -1,7 +1,7 @@
-
 define function test as {
     set a to 23 and multiply it times 2 and print it
     define function test2 as { set b to 24 and print it } and call it
 }
-
 call test
+
+set a to {print 1} and call it
