@@ -129,6 +129,11 @@ class Variable:
     name: str
     value: Any = None
 
+    def get_value(self):
+        if self.value is None:
+            raise exceptions.UndefinedVariableException(self)
+        return self.value
+
 @dataclass
 class Value:
     value: Any = None

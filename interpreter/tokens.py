@@ -79,7 +79,7 @@ class ADD(Token):
     def _run(self, interpreter):
         variable = interpreter.stack_pop()
         value = interpreter.stack_pop()
-        variable.value += value.value
+        variable.value = variable.get_value() + value.value
 
 class SUBTRACT(Token):
 
@@ -89,7 +89,7 @@ class SUBTRACT(Token):
     def _run(self, interpreter):
         variable = interpreter.stack_pop()
         value = interpreter.stack_pop()
-        variable.value -= value.value
+        variable.value = variable.get_value() - value.value
 
 class MULTIPLY(Token):
 
@@ -99,7 +99,7 @@ class MULTIPLY(Token):
     def _run(self, interpreter):
         variable = interpreter.stack_pop()
         value = interpreter.stack_pop()
-        variable.value *= value.value
+        variable.value = variable.get_value() * value.value
 
 class DIVIDE(Token):
 
@@ -109,7 +109,7 @@ class DIVIDE(Token):
     def _run(self, interpreter):
         variable = interpreter.stack_pop()
         value = interpreter.stack_pop()
-        variable.value /= value.value
+        variable.value = variable.get_value() / value.value
         if variable.value == int(variable.value):
             variable.value = int(variable.value)
 
@@ -170,7 +170,7 @@ class CALL(Token):
     def _run(self, interpreter):
         function = interpreter.stack_pop()
         interpreter.add_stack()
-        function.value(interpreter)
+        function.get_value()(interpreter)
         interpreter.remove_stack()
 
 tokens = {'set': ASSIGN_L,
