@@ -68,22 +68,23 @@ class Token:
         return f'Line {self.line}: {type_}({self.__class__.__name__}{value})'
 
     def run(self, interpreter):
+        if not self.satisfied:
+            raise exceptions.SyntaxException(self)
+
         for function in self.run_functions:
             function(interpreter)
 
     def _run(self, interpreter):
         pass
 
-    def check_optional_match(self, token) -> bool:
-        return 
+    def check_optional_token(self, token) -> bool:
+        all_types = tuple(t for token in self.expected_tokens for t in token.types)
+        return isinstance(token, all_types)
 
     def add_token(self, token):
         if self.full:
             raise exceptions.InternalParseError(token)
-
-        expected_token = self.expected_tokens.pop(0)
-        if not isinstance(token, expected_token.types):
-            raise exceptions.InternalParseTypeError(token, expected_token.types)
+        self._check_types(token)
         self.tokens.append(token)
 
     def pop_tokens(self, tokens):
@@ -91,6 +92,17 @@ class Token:
 
     def update_token_factory(self, token_factory):
         pass
+
+    def _check_types(self, token):
+        while self.expected_tokens:
+            expected_token = self.expected_tokens.pop(0)
+            if isinstance(token, expected_token.types):
+                token.run_order = expected_token.run_order
+                return
+
+            if not expected_token.optional:
+                break
+        raise exceptions.InternalParseTypeError(token, expected_token.types)
 
     @property
     def value(self):
@@ -108,6 +120,11 @@ class Token:
         return not self.expected_tokens
 
     @property
+    def satisfied(self) -> bool:
+        mandatory_tokens = [token for token in self.expected_tokens if not token.optional]
+        return not mandatory_tokens
+
+    @property
     def run_functions(self) -> List[callable]:
         return [t.run for t in sorted(self.tokens, key=lambda x: x.run_order)] + [self._run]
 
@@ -120,6 +137,10 @@ class ClauseToken(Token):
     @property
     def full(self) -> bool:
         return self.tokens and isinstance(self.tokens[-1], self.CLOSE_TOKEN)
+
+    @property
+    def satisfied(self) -> bool:
+        return self.full
 
 
 @dataclass
