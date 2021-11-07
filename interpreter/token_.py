@@ -84,7 +84,7 @@ class Token:
         pass
 
     def check_match(self, types) -> bool:
-        return types == (ANYTYPE) or isinstance(self, types)
+        return types == (Token) or isinstance(self, types)
 
     @property
     def value(self):
@@ -112,10 +112,6 @@ class Token:
         tokens = [self] + self.tokens
         ordered = [tokens[i] for i in self.RESOLUTION_ORDER]
         return [t._run if t is self else t.run for t in ordered]
-
-
-class ANYTYPE(Token):
-    EXPECTED_TOKENS = None
 
 @dataclass
 class Variable:
