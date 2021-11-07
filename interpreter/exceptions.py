@@ -7,8 +7,7 @@ Created on Wed Nov  3 22:59:11 2021
 
 class LexError(Exception):
     def __init__(self, string, line_number):
-        self.message = f'Line {line_number}: {string} was not expected at this time!'
-        super().__init__(self.message)
+        super().__init__(f'Line {line_number}: {string} was not expected at this time!')
 
 class ParseException(Exception):
     def __init__(self, token):
@@ -33,5 +32,4 @@ class InternalParseTypeError(Exception):
 
 class InternalEmptyStackError(Exception):
     def __init__(self):
-        self.message = 'Could not pop value from empty stack!'
-        super().__init__(self.message)
+        super().__init__('Could not pop value from empty stack!')
