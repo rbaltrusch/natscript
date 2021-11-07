@@ -210,10 +210,10 @@ tokens = {'set': ASSIGN_L,
           'call': CALL,
           'if': IF,
           'then': THEN,
+          '#': COMMENT,
           }
 
 regex_tokens = {r'^\d+$': INTEGER,
                 r'^\w+$': VARNAME,
                 r'^\d+\.\d+': FLOAT,
-                r'^#.+?': COMMENT,
                 }
