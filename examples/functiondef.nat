@@ -1,0 +1,6 @@
+
+define function test as
+    set a to 23 and multiply it times 2 and print it
+end
+
+call test
