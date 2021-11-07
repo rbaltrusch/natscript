@@ -58,6 +58,7 @@ class Token:
         self.value = value
         self.line = line
         self.tokens = []
+        self.expected_tokens = self.EXPECTED_TOKENS.copy()
 
     def __repr__(self):
         value = '' if self.value is None else f', {self.value}'
@@ -71,12 +72,14 @@ class Token:
     def _run(self, interpreter):
         pass
 
+    def check_optional_match(self, token) -> bool:
+        return 
+
     def add_token(self, token):
         if self.full:
             raise exceptions.InternalParseError(token)
 
-        index = len(self.tokens)
-        expected_token = self.EXPECTED_TOKENS[index]
+        expected_token = self.expected_tokens.pop(0)
         if not isinstance(token, expected_token.types):
             raise exceptions.InternalParseTypeError(token, expected_token.types)
         self.tokens.append(token)
@@ -100,14 +103,7 @@ class Token:
 
     @property
     def full(self) -> bool:
-        required_tokens = [token for token in self.EXPECTED_TOKENS if not token.optional]
-        for token in self.tokens:
-            if not required_tokens:
-                return True
-
-            if isinstance(token, required_tokens[0].types):
-                required_tokens.pop(0)
-        return not required_tokens
+        return not self.expected_tokens
 
     @property
     def run_functions(self) -> List[callable]:
