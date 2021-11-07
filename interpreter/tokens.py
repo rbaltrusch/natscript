@@ -156,7 +156,8 @@ class FUNCTION(Token):
     def _run(self, interpreter):
         function = interpreter.stack_pop()
         code = interpreter.stack_pop()
-        interpreter.set_variable(function.name, code)
+        function.value = code
+        interpreter.set_variable(function.name, function)
 
 class DEFINE(Token):
     RESOLUTION_ORDER = [4, 3, 2, 1]
@@ -168,7 +169,9 @@ class CALL(Token):
 
     def _run(self, interpreter):
         function = interpreter.stack_pop()
-        function(interpreter)
+        interpreter.add_stack()
+        function.value(interpreter)
+        interpreter.remove_stack()
 
 tokens = {'set': ASSIGN_L,
           'to': ASSIGN_R,
