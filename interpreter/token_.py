@@ -73,7 +73,7 @@ class Token:
 
         index = len(self.tokens)
         types = self.EXPECTED_TOKENS[index]
-        if not token.check_match(types):
+        if not isinstance(token, types):
             raise exceptions.InternalParseTypeError(token, types)
         self.tokens.append(token)
 
@@ -82,9 +82,6 @@ class Token:
 
     def update_token_factory(self, token_factory):
         pass
-
-    def check_match(self, types) -> bool:
-        return isinstance(self, types)
 
     @property
     def value(self):
