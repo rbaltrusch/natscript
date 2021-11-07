@@ -6,7 +6,7 @@ Created on Sat Nov  6 12:04:45 2021
 """
 
 import re
-from typing import List, Any
+from typing import List, Tuple, Any
 from dataclasses import dataclass, field
 
 import exceptions
@@ -42,11 +42,15 @@ class TokenFactory:
     def create_value(value: Any):
         return Value(value)
 
+@dataclass
+class ExpectedToken:
+    types: Tuple[type]
+    optional: bool = False
 
 class Token:
 
     RESOLUTION_ORDER: List[int] = []
-    EXPECTED_TOKENS: List[tuple] = []
+    EXPECTED_TOKENS: List[ExpectedToken] = []
     VALUE_FACTORY: callable = None
     TOKEN_FACTORY: TokenFactory = TokenFactory()
 
@@ -72,9 +76,9 @@ class Token:
             raise exceptions.InternalParseError(token)
 
         index = len(self.tokens)
-        types = self.EXPECTED_TOKENS[index]
-        if not isinstance(token, types):
-            raise exceptions.InternalParseTypeError(token, types)
+        expected_token = self.EXPECTED_TOKENS[index]
+        if not isinstance(token, expected_token.types):
+            raise exceptions.InternalParseTypeError(token, expected_token.types)
         self.tokens.append(token)
 
     def pop_tokens(self, tokens):
@@ -96,7 +100,14 @@ class Token:
 
     @property
     def full(self) -> bool:
-        return len(self.tokens) == len(self.EXPECTED_TOKENS)
+        required_tokens = [token for token in self.EXPECTED_TOKENS if not token.optional]
+        for token in self.tokens:
+            if not required_tokens:
+                return True
+
+            if isinstance(token, required_tokens[0].types):
+                required_tokens.pop(0)
+        return not required_tokens
 
     @property
     def run_functions(self) -> List[callable]:
@@ -114,7 +125,7 @@ class Token:
 class ClauseToken(Token):
 
     CLOSE_TOKEN = Token
-    EXPECTED_TOKENS = [(Token, )] * 1000
+    EXPECTED_TOKENS = [ExpectedToken((Token, ))] * 1000
 
     @property
     def full(self) -> bool:

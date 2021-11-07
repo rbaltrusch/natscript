@@ -31,7 +31,7 @@ class RunTimeException(Exception):
 
 class SyntaxException(RunTimeException):
     def __init__(self, token):
-        missing_tokens = [t.__name__ for t in token.EXPECTED_TOKENS[len(token.tokens):]]
+        missing_tokens = [t.__name__ for exp in token.EXPECTED_TOKENS[len(token.tokens):] for t in exp.types]
         super().__init__(f'{token} cannot be run: missing expected tokens {missing_tokens}')
 
 class UnexpectedIndentationException(RunTimeException):
