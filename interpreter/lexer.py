@@ -5,6 +5,8 @@ Created on Fri Nov 20 13:51:53 2020
 @author: Korean_Crimson
 """
 
+import re
+
 class Lexer:
     def __init__(self, token_factory):
         self.token_factory = token_factory
@@ -17,6 +19,10 @@ class Lexer:
 
     @staticmethod
     def _split(string):
-        string = string.replace('\n', ' \n ').strip()
+        string = string.replace('\n', ' \n ')
+
+        #matches non-word characters (i.e. punctuation) and adds whitespace around them
+        string = re.sub('(?P<match>\W)', ' \g<match> ', string).strip()
+
         string_tokens = [s for s in string.split(' ') if s != '']
         return string_tokens
