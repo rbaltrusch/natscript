@@ -8,6 +8,7 @@ Created on Fri Nov 20 14:34:15 2020
 class Parser:
     def __init__(self):
         self.blocks = []
+        self.token_stack = []
 
     def parse(self, tokens):
         while tokens:
@@ -15,13 +16,20 @@ class Parser:
             if not tokens:
                 return
 
-            current_token = tokens[0]
-            tokens.pop(0)
+            current_token = tokens.pop(0)
+            self.token_stack.append(current_token)
 
-            while not current_token.full and tokens:
+            while self.token_stack and not self.token_stack[-1].full and tokens:
                 token = tokens.pop(0)
-                current_token.add_token(token)
-            yield current_token
+                self.token_stack[-1].add_token(token)
+                if not token.full:
+                    self.token_stack.append(token)
+
+                while self.token_stack and self.token_stack[-1].full:
+                    token = self.token_stack.pop()
+                    if not self.token_stack:
+                        yield token
+                        break
 
     def _pop_leading_tokens(self, tokens):
         while tokens:
