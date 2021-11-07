@@ -113,7 +113,7 @@ class DIVIDE(Token):
         if variable.value == int(variable.value):
             variable.value = int(variable.value)
 
-class IT(VALUE):
+class IT(VARNAME):
     def _run(self, interpreter):
         variable = interpreter.get_variable('it')
         interpreter.stack_append(variable)
