@@ -113,6 +113,17 @@ class Token:
         ordered = [tokens[i] for i in self.RESOLUTION_ORDER]
         return [t._run if t is self else t.run for t in ordered]
 
+
+class ClauseToken(Token):
+
+    CLOSE_TOKEN = Token
+    EXPECTED_TOKENS = [(Token, )] * 1000
+
+    @property
+    def full(self) -> bool:
+        return self.tokens and isinstance(self.tokens[-1], self.CLOSE_TOKEN)
+
+
 @dataclass
 class Variable:
     name: str
