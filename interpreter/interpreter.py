@@ -11,14 +11,14 @@ import exceptions
 from interfaces import Value, Variable, Token
 
 class Interpreter:
-    """Interprets blocks and keeps track of the program state"""
+    """Interprets tokens and keeps track of the program state"""
 
     def __init__(self):
         self._stacks: List[List[Value]] = [[]]
         self._variables: List[Dict[str, Variable]] = [{}]
 
     def interpret(self, token: Token) -> None:
-        """Runs the current block"""
+        """Runs the current token"""
         token.run(self)
 
     def add_stack(self) -> None:
