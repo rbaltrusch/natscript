@@ -1,0 +1,6 @@
+set condition to true
+if condition then {
+    set b to 3
+    multiply it times 2
+    print it
+}
