@@ -5,8 +5,7 @@ Created on Fri Nov 20 13:54:34 2020
 @author: Korean_Crimson
 """
 
-import exceptions
-from token_ import Token
+from token_ import Token, ClauseToken
 
 class VALUE(Token):
     def _run(self, interpreter):
@@ -58,6 +57,9 @@ class TIMES(Token):
     pass
 
 class BY(Token):
+    pass
+
+class AS(Token):
     pass
 
 class PRINT(Token):
@@ -137,9 +139,36 @@ class AND(Token):
     def pop_tokens(self, tokens):
         return tokens.pop(0)
 
-class TAB(Token):
-    def run(self, interpreter):
-        raise exceptions.UnexpectedIndentationException(self)
+class END(Token):
+    pass
+
+class CLAUSE(ClauseToken):
+
+    CLOSE_TOKEN = END
+
+    def _run(self, interpreter):
+        def run_tokens(interpreter):
+            for token in self.tokens:
+                token.run(interpreter)
+        interpreter.stack_append(run_tokens)
+
+class FUNCTION(Token):
+    def _run(self, interpreter):
+        function = interpreter.stack_pop()
+        code = interpreter.stack_pop()
+        interpreter.set_variable(function.name, code)
+
+class DEFINE(Token):
+    RESOLUTION_ORDER = [5, 4, 3, 2, 1]
+    EXPECTED_TOKENS = [(FUNCTION, ), (VARNAME, ), (AS, ), (LINEBREAK, ), (CLAUSE, )]
+
+class CALL(Token):
+    RESOLUTION_ORDER = [1, 0]
+    EXPECTED_TOKENS = [(VARNAME, )]
+
+    def _run(self, interpreter):
+        function = interpreter.stack_pop()
+        function(interpreter)
 
 tokens = {'set': ASSIGN_L,
           'to': ASSIGN_R,
@@ -156,7 +185,12 @@ tokens = {'set': ASSIGN_L,
            'true': TRUE,
            'false': FALSE,
           '\n': LINEBREAK,
-          '__tab__': TAB,
+          '__tab__': CLAUSE,
+          'define': DEFINE,
+          'function': FUNCTION,
+          'as': AS,
+          'end': END,
+          'call': CALL,
           }
 
 regex_tokens = {r'^\d+$': INTEGER,
