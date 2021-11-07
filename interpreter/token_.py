@@ -32,7 +32,7 @@ class TokenFactory:
                 token_type = self.regex_tokens[key]
                 return token_type(value=token, line=self.line_number)
 
-        raise exceptions.LexError(token)
+        raise exceptions.LexError(token, self.line_number)
 
     @staticmethod
     def create_variable(name: str):
