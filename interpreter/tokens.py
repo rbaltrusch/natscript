@@ -142,7 +142,7 @@ class AND(Token):
 class END(Token):
     pass
 
-class CLAUSE(ClauseToken):
+class CLAUSE(VALUE, ClauseToken):
 
     CLOSE_TOKEN = END
 
