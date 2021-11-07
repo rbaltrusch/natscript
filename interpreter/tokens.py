@@ -42,7 +42,7 @@ class ASSIGN_R(Token):
 class ASSIGN_L(Token):
 
     RESOLUTION_ORDER = [3, 1, 0]
-    EXPECTED_TOKENS = [(VARNAME), (ASSIGN_R), (VALUE)]
+    EXPECTED_TOKENS = [(VARNAME, ), (ASSIGN_R, ), (VALUE, )]
 
     def _run(self, interpreter):
         variable = interpreter.stack_pop()
@@ -65,7 +65,7 @@ class AS(Token):
 class PRINT(Token):
 
     RESOLUTION_ORDER = [1, 0]
-    EXPECTED_TOKENS = [(Token)]
+    EXPECTED_TOKENS = [(Token, )]
 
     def _run(self, interpreter):
         value = interpreter.stack_pop()
@@ -74,7 +74,7 @@ class PRINT(Token):
 class ADD(Token):
 
     RESOLUTION_ORDER = [1, 3, 0]
-    EXPECTED_TOKENS = [(VALUE), (ASSIGN_R), (VARNAME)]
+    EXPECTED_TOKENS = [(VALUE, ), (ASSIGN_R, ), (VARNAME, )]
 
     def _run(self, interpreter):
         variable = interpreter.stack_pop()
@@ -84,7 +84,7 @@ class ADD(Token):
 class SUBTRACT(Token):
 
     RESOLUTION_ORDER = [1, 3, 0]
-    EXPECTED_TOKENS = [(VALUE), (FROM), (VARNAME)]
+    EXPECTED_TOKENS = [(VALUE, ), (FROM, ), (VARNAME, )]
 
     def _run(self, interpreter):
         variable = interpreter.stack_pop()
@@ -94,7 +94,7 @@ class SUBTRACT(Token):
 class MULTIPLY(Token):
 
     RESOLUTION_ORDER = [3, 1, 0]
-    EXPECTED_TOKENS = [(VARNAME), (TIMES), (VALUE)]
+    EXPECTED_TOKENS = [(VARNAME, ), (TIMES, ), (VALUE, )]
 
     def _run(self, interpreter):
         variable = interpreter.stack_pop()
@@ -104,7 +104,7 @@ class MULTIPLY(Token):
 class DIVIDE(Token):
 
     RESOLUTION_ORDER = [3, 1, 0]
-    EXPECTED_TOKENS = [(VARNAME), (BY), (VALUE)]
+    EXPECTED_TOKENS = [(VARNAME, ), (BY, ), (VALUE, )]
 
     def _run(self, interpreter):
         variable = interpreter.stack_pop()
