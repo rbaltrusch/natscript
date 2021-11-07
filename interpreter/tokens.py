@@ -174,6 +174,19 @@ class CALL(Token):
         function.get_value()(interpreter)
         interpreter.remove_stack()
 
+class THEN(Token):
+    pass
+
+class IF(Token):
+    RESOLUTION_ORDER = [3, 2, 1, 0]
+    EXPECTED_TOKENS = [(VALUE, ), (THEN, ), (CLAUSE, )]
+
+    def _run(self, interpreter):
+        value = interpreter.stack_pop()
+        clause = interpreter.stack_pop()
+        if value.value == 1:
+            clause.value(interpreter)
+
 tokens = {'set': ASSIGN_L,
           'to': ASSIGN_R,
           'from': FROM,
@@ -195,6 +208,8 @@ tokens = {'set': ASSIGN_L,
           '{': CLAUSE,
           '}': END,
           'call': CALL,
+          'if': IF,
+          'then': THEN,
           }
 
 regex_tokens = {r'^\d+$': INTEGER,
