@@ -150,13 +150,14 @@ class CLAUSE(VALUE, ClauseToken):
         def run_tokens(interpreter):
             for token in self.tokens:
                 token.run(interpreter)
-        interpreter.stack_append(run_tokens)
+        value = self.TOKEN_FACTORY.create_value(run_tokens)
+        interpreter.stack_append(value)
 
 class FUNCTION(Token):
     def _run(self, interpreter):
         function = interpreter.stack_pop()
         code = interpreter.stack_pop()
-        function.value = code
+        function.value = code.value
         interpreter.set_variable(function.name, function)
 
 class DEFINE(Token):
