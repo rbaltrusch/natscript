@@ -101,8 +101,8 @@ class Token:
                 return
 
             if not expected_token.optional:
-                break
-        raise exceptions.InternalParseTypeError(token, expected_token.types)
+                raise exceptions.InternalParseTypeError(token, expected_token.types)
+        raise exceptions.ParseException(token)
 
     @property
     def value(self):
