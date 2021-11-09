@@ -12,9 +12,11 @@ To run the interpreter, run interpreter/main.py. At the moment, it is configured
 
 ## Documentation
 
-### Available commands
+### Available functionality
 
-A list of the currently available Natscript commands can be found in the [wiki](https://github.com/rbaltrusch/python_interpreter/wiki).
+A list of the currently available Natscript commands will be found in the [wiki](https://github.com/rbaltrusch/python_interpreter/wiki).
+
+Available functionality includes variables, conditionals, function and lambda definitions, as well as scope and nesting.
 
 ### Examples
 
