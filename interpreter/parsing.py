@@ -33,7 +33,7 @@ class Parser:
                         yield token
                         break
 
-        while self.token_stack and self.token_stack[1].satisfied:
+        while self.token_stack:
             yield self.token_stack.pop()
 
     @staticmethod
