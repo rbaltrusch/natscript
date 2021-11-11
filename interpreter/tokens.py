@@ -214,12 +214,21 @@ class IF(Token):
 
     def _run(self, interpreter):
         if_clause = interpreter.stack_pop()
-        if not self.else_executed:
-            if_clause.get_value()(interpreter)
+        if self.has_else:
+            if not self.else_executed:
+                if_clause.get_value()(interpreter)
+        else:
+            value = interpreter.stack_pop()
+            if value.get_value() == 1:
+                if_clause.get_value()(interpreter)
 
     @property
     def else_executed(self) -> bool:
-        return isinstance(self.tokens[-1], ELSE) and self.tokens[-1].executed
+        return self.has_else and self.tokens[-1].executed
+
+    @property
+    def has_else(self) -> bool:
+        return isinstance(self.tokens[-1], ELSE)
 
 tokens = {'set': ASSIGN_L,
           'to': ASSIGN_R,
