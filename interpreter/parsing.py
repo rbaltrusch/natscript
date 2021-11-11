@@ -13,25 +13,24 @@ class Parser:
         while tokens:
             self._pop_leading_tokens(tokens)
             if not tokens:
-                return
+                break
 
-            current_token = tokens.pop(0)
-            self.token_stack.append(current_token)
-
-            while tokens and self.token_stack:
-                token = tokens.pop(0)
-
-                if not self.token_stack[-1].satisfied or self.token_stack[-1].check_optional_token(token):
-                    self.token_stack[-1].add_token(token)
-                else:
-                    yield self.token_stack.pop()
+            token = tokens.pop(0)
+            if not self.token_stack:
                 self.token_stack.append(token)
+                continue
 
-                while self.token_stack and self.token_stack[-1].full:
-                    token = self.token_stack.pop()
-                    if not self.token_stack:
-                        yield token
-                        break
+            if self._can_add(token):
+                self.token_stack[-1].add_token(token)
+            else:
+                yield self.token_stack.pop()
+            self.token_stack.append(token)
+
+            while self.token_stack and self.token_stack[-1].full:
+                token = self.token_stack.pop()
+                if not self.token_stack:
+                    yield token
+                    break
 
         while self.token_stack:
             yield self.token_stack.pop()
@@ -43,3 +42,6 @@ class Parser:
             popped_tokens = current_token.pop_tokens(tokens)
             if not popped_tokens:
                 break
+
+    def _can_add(self, token):
+        return not self.token_stack[-1].satisfied or self.token_stack[-1].check_optional_token(token)
