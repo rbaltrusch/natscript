@@ -38,7 +38,8 @@ class Parser:
         while self.token_stack and self.token_stack[1].satisfied:
             yield self.token_stack.pop()
 
-    def _pop_leading_tokens(self, tokens):
+    @staticmethod
+    def _pop_leading_tokens(tokens):
         while tokens:
             current_token = tokens[0]
             popped_tokens = current_token.pop_tokens(tokens)
