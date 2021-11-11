@@ -26,7 +26,7 @@ class Parser:
                 yield self.token_stack.pop()
             self.token_stack.append(token)
 
-            while self.token_stack and self.token_stack[-1].full:
+            while self.token_stack[-1].full:
                 token = self.token_stack.pop()
                 if not self.token_stack:
                     yield token
