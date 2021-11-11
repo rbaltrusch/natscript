@@ -7,7 +7,6 @@ Created on Fri Nov 20 14:34:15 2020
 
 class Parser:
     def __init__(self):
-        self.blocks = []
         self.token_stack = []
 
     def parse(self, tokens):
