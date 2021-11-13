@@ -50,7 +50,6 @@ class ExpectedToken:
 
 class Token:
 
-    RESOLUTION_ORDER: List[int] = []
     EXPECTED_TOKENS: List[ExpectedToken] = []
     VALUE_FACTORY: callable = None
     TOKEN_FACTORY: TokenFactory = TokenFactory()
