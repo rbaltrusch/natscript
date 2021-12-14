@@ -1,3 +1,6 @@
+[![Unit tests](https://github.com/rbaltrusch/python_interpreter/actions/workflows/pytest-unit-tests.yml/badge.svg)](https://github.com/rbaltrusch/python_interpreter/actions/workflows/pytest-unit-tests.yml)
+[![Pylint](https://github.com/rbaltrusch/python_interpreter/actions/workflows/pylint.yml/badge.svg)](https://github.com/rbaltrusch/python_interpreter/actions/workflows/pylint.yml)
+
 # Natscript Interpreter
 
 This is an interpreter written in Python for a custom interpreted language, Natscript, which is to be very close to natural English. It is currently still in development and supports very little functionality, but will receive more over time.
