@@ -4,10 +4,13 @@ Created on Sat Nov  6 13:44:51 2021
 
 @author: richa
 """
-
 from __future__ import annotations
 
-from typing import Protocol, List, Dict, Optional, Any
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Optional
+from typing import Protocol
 
 
 class Token(Protocol):

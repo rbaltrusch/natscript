@@ -4,12 +4,11 @@ Created on Tue Dec 14 21:51:28 2021
 
 @author: richa
 """
-
-import token_
-import tokens
-import lexer
-import parsing
-import interpreter
+from interpreter import interpreter
+from interpreter import lexer
+from interpreter import parsing
+from interpreter import token_
+from tokens_ import tokens
 
 
 def interpret(code: str):

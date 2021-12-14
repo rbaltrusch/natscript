@@ -4,8 +4,9 @@ Created on Fri Nov 20 13:54:34 2020
 
 @author: Korean_Crimson
 """
-
-from token_ import Token, ClauseToken, ExpectedToken
+from interpreter.token_ import ClauseToken
+from interpreter.token_ import ExpectedToken
+from interpreter.token_ import Token
 
 class VALUE(Token):
     def _run(self, interpreter):

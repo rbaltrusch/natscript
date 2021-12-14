@@ -4,7 +4,6 @@ Created on Fri Nov 20 13:51:53 2020
 
 @author: Korean_Crimson
 """
-
 import re
 
 class Lexer:

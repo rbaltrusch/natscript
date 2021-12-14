@@ -4,11 +4,14 @@ Created on Fri Nov 20 17:17:11 2020
 
 @author: Korean_Crimson
 """
+from typing import Any
+from typing import Dict
+from typing import List
 
-from typing import List, Dict, Any
-
-import exceptions
-from interfaces import Value, Variable, Token
+from interpreter import exceptions
+from interpreter.interfaces import Token
+from interpreter.interfaces import Value
+from interpreter.interfaces import Variable
 
 class Interpreter:
     """Interprets tokens and keeps track of the program state"""
