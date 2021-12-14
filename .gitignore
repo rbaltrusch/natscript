@@ -1,3 +1,6 @@
 **/__pycache__/
 **/.pylint.d/
 interpreter/*.nat
+**/.coverage
+tests/reports/
+tests/htmlcov/

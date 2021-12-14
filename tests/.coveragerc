@@ -1,0 +1,5 @@
+# .coveragerc to control coverage.py (pytest-cov)
+
+[run]
+omit =
+    ../interpreter/main.py,
