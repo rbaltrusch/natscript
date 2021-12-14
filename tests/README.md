@@ -14,7 +14,7 @@ Run tests using the run_tests.py module:
 
 ## Run all tests
 
-To include all tests (include slow and unreliable) run:
+To include all tests (include slow) run:
 
     cd tests
     python run_tests.py --all
