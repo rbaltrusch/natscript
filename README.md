@@ -29,6 +29,10 @@ Examples can be found [here](https://github.com/rbaltrusch/python_interpreter/tr
 
 Tutorials will be written once more commands are supported by Natscript.
 
+## Contributions
+
+Contributions are welcome! For more details, please read the [contribution guidelines](CONTRIBUTING.md).
+
 ## Python
 
 Written in Python 3.8.3.
