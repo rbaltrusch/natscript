@@ -1,4 +1,4 @@
-# Contributions to Natscript Interpreter
+# Contributions to the Natscript Interpreter
 
 Welcome to the Natscript Interpreter and thanks for considering to contribute to this repository! Every contribution is welcome, no matter how small or large.
 
