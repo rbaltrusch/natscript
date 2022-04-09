@@ -271,18 +271,93 @@ class IF(Token):
         return isinstance(self.tokens[-1], ELSE)
 
 
-class COLLECTION_R(Token):
+class COLLECTION_END(Token):
     pass
 
 
-class COLLECTION_L(VALUE, ClauseToken):
+class COLLECTION(VALUE, ClauseToken):
 
-    CLOSE_TOKEN = COLLECTION_R
+    CLOSE_TOKEN = COLLECTION_END
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._constructed = False
 
     def _run(self, interpreter):
-        # ignore last token, which closes the collection (COLLECTION_R)
-        self.value = [token.value for token in self.tokens][:-1]
+        if self._constructed:
+            return
+
+        # ignore last token, which closes the collection (COLLECTION_END)
+        self.value = []
+        for _ in self.tokens[:-1]:
+            value = interpreter.stack_pop()
+            self.value.append(value)
+        self.value.reverse()
+
         super()._run(interpreter)
+        self._constructed = True
+
+
+class IN(Token):
+    def _run(self, interpreter):
+        variable = interpreter.stack_pop()
+        value = interpreter.stack_pop()
+        variable.value = value.get_value()
+        interpreter.set_variable(variable.name, variable)
+
+
+class EACH(Token):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._index = 0
+        self.collection = None
+
+    # run order is ignored by EACH.run method
+    EXPECTED_TOKENS = [
+        ExpectedToken((VARNAME,), 1),
+        ExpectedToken((IN,), 2),
+        ExpectedToken((COLLECTION, VARNAME), 0),
+    ]
+
+    def run(self, interpreter):
+        if self.collection is None:
+            self.tokens[-1].run(interpreter)
+            self.collection = interpreter.stack_pop().get_value()
+
+        if self.exhausted:
+            return
+
+        value = self.collection[self._index]
+        interpreter.stack_append(value)
+        self._index += 1
+
+        # ignore collection (last token), as it was previously run
+        for token in self.tokens[:-1]:
+            token.run(interpreter)
+
+    @property
+    def exhausted(self) -> bool:
+        if self.collection is None:
+            return False
+        return self._index >= len(self.collection)
+
+class FOR(Token):
+
+    EXPECTED_TOKENS = [
+        ExpectedToken((EACH,), 0),
+        ExpectedToken((CLAUSE,), 1),
+    ]
+
+    def run(self, interpreter):
+        while not self.extractor.exhausted:
+            for token in self.tokens:
+                token.run(interpreter)
+            clause = interpreter.stack_pop()
+            clause.get_value()(interpreter)
+
+    @property
+    def extractor(self) -> EACH:
+        return self.tokens[0]
 
 
 tokens = {
@@ -302,8 +377,8 @@ tokens = {
     "false": FALSE,
     "\n": LINEBREAK,
     ",": COMMA,
-    "[": COLLECTION_L,
-    "]": COLLECTION_R,
+    "[": COLLECTION,
+    "]": COLLECTION_END,
     "define": DEFINE,
     "function": FUNCTION,
     "as": AS,
@@ -314,6 +389,9 @@ tokens = {
     "then": THEN,
     "else": ELSE,
     "#": COMMENT,
+    "for": FOR,
+    "each": EACH,
+    "in": IN,
 }
 
 regex_tokens = {
