@@ -259,12 +259,15 @@ class CONDITION(VALUE, ClauseToken):
         interpreter.stack_append(value)
 
 
-class CHECK(Token):
+class CHECK(VALUE):
 
     EXPECTED_TOKENS = [
         ExpectedToken((VALUE,), 0),
         ExpectedToken((CONDITION,), 1),
     ]
+
+    def _run(self, interpreter):
+        pass
 
 
 class IF(Token):
