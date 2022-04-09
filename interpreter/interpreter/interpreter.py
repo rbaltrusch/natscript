@@ -23,6 +23,8 @@ class Interpreter:
     def interpret(self, token: Token) -> None:
         """Runs the current token"""
         try:
+            if not token.satisfied:
+                raise exceptions.SyntaxException(token)
             token.run(self)
         except exceptions.RunTimeException as e:
             e.line = token.line
