@@ -434,6 +434,11 @@ class LESS(CONDITION):
     ]
 
 
+class THE(Token):
+    def pop_tokens(self, tokens):
+        return tokens.pop(0)
+
+
 tokens = {
     "set": ASSIGN_L,
     "to": ASSIGN_R,
@@ -471,6 +476,7 @@ tokens = {
     "less": LESS,
     "greater": GREATER,
     "than": THAN,
+    "the": THE,
 }
 
 regex_tokens = {
