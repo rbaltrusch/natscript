@@ -274,6 +274,20 @@ class IF(Token):
         return isinstance(self.tokens[-1], ELSE)
 
 
+class COLLECTION_R(Token):
+    pass
+
+
+class COLLECTION_L(VALUE, ClauseToken):
+
+    CLOSE_TOKEN = COLLECTION_R
+
+    def _run(self, interpreter):
+        # ignore last token, which closes the collection (COLLECTION_R)
+        self.value = [token.value for token in self.tokens][:-1]
+        super()._run(interpreter)
+
+
 tokens = {
     "set": ASSIGN_L,
     "to": ASSIGN_R,
@@ -291,6 +305,8 @@ tokens = {
     "false": FALSE,
     "\n": LINEBREAK,
     ",": COMMA,
+    "[": COLLECTION_L,
+    "]": COLLECTION_R,
     "define": DEFINE,
     "function": FUNCTION,
     "as": AS,
