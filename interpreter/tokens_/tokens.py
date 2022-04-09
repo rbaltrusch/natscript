@@ -8,24 +8,30 @@ from interpreter.token_ import ClauseToken
 from interpreter.token_ import ExpectedToken
 from interpreter.token_ import Token
 
+
 class VALUE(Token):
     def _run(self, interpreter):
         value = self.TOKEN_FACTORY.create_value(self.value)
         interpreter.stack_append(value)
 
+
 class INTEGER(VALUE):
     VALUE_FACTORY = int
 
+
 class FLOAT(VALUE):
     VALUE_FACTORY = float
+
 
 class TRUE(VALUE):
     def __init__(self, *_, **__):
         super().__init__(value=1)
 
+
 class FALSE(VALUE):
     def __init__(self, *_, **__):
         super().__init__(value=0)
+
 
 class VARNAME(VALUE):
     def _run(self, interpreter):
@@ -35,17 +41,20 @@ class VARNAME(VALUE):
             variable = self.TOKEN_FACTORY.create_variable(self.value)
 
         interpreter.stack_append(variable)
-        interpreter.set_variable('it', variable)
+        interpreter.set_variable("it", variable)
+
 
 class ASSIGN_R(Token):
     pass
 
+
 class ASSIGN_L(Token):
 
-    EXPECTED_TOKENS = [ExpectedToken((VARNAME, ), 2),
-                       ExpectedToken((ASSIGN_R, ), 1),
-                       ExpectedToken((VALUE, ), 0),
-                       ]
+    EXPECTED_TOKENS = [
+        ExpectedToken((VARNAME,), 2),
+        ExpectedToken((ASSIGN_R,), 1),
+        ExpectedToken((VALUE,), 0),
+    ]
 
     def _run(self, interpreter):
         variable = interpreter.stack_pop()
@@ -53,68 +62,81 @@ class ASSIGN_L(Token):
         variable.value = value.get_value()
         interpreter.set_variable(variable.name, variable)
 
+
 class FROM(Token):
     pass
+
 
 class TIMES(Token):
     pass
 
+
 class BY(Token):
     pass
+
 
 class AS(Token):
     pass
 
+
 class PRINT(Token):
 
-    EXPECTED_TOKENS = [ExpectedToken((Token, ))]
+    EXPECTED_TOKENS = [ExpectedToken((Token,))]
 
     def _run(self, interpreter):
         value = interpreter.stack_pop()
         print(value.get_value())
 
+
 class ADD(Token):
 
-    EXPECTED_TOKENS = [ExpectedToken((VALUE, ), 0),
-                       ExpectedToken((ASSIGN_R, ), 1),
-                       ExpectedToken((VARNAME, ), 2),
-                       ]
+    EXPECTED_TOKENS = [
+        ExpectedToken((VALUE,), 0),
+        ExpectedToken((ASSIGN_R,), 1),
+        ExpectedToken((VARNAME,), 2),
+    ]
 
     def _run(self, interpreter):
         variable = interpreter.stack_pop()
         value = interpreter.stack_pop()
         variable.value = variable.get_value() + value.get_value()
 
+
 class SUBTRACT(Token):
 
-    EXPECTED_TOKENS = [ExpectedToken((VALUE, ), 0),
-                       ExpectedToken((FROM, ), 1),
-                       ExpectedToken((VARNAME, ), 2),
-                       ]
+    EXPECTED_TOKENS = [
+        ExpectedToken((VALUE,), 0),
+        ExpectedToken((FROM,), 1),
+        ExpectedToken((VARNAME,), 2),
+    ]
 
     def _run(self, interpreter):
         variable = interpreter.stack_pop()
         value = interpreter.stack_pop()
         variable.value = variable.get_value() - value.get_value()
 
+
 class MULTIPLY(Token):
 
-    EXPECTED_TOKENS = [ExpectedToken((VARNAME, ), 2),
-                       ExpectedToken((TIMES, ), 1),
-                       ExpectedToken((VALUE, ), 0),
-                       ]
+    EXPECTED_TOKENS = [
+        ExpectedToken((VARNAME,), 2),
+        ExpectedToken((TIMES,), 1),
+        ExpectedToken((VALUE,), 0),
+    ]
 
     def _run(self, interpreter):
         variable = interpreter.stack_pop()
         value = interpreter.stack_pop()
         variable.value = variable.get_value() * value.get_value()
 
+
 class DIVIDE(Token):
 
-    EXPECTED_TOKENS = [ExpectedToken((VARNAME, ), 2),
-                       ExpectedToken((BY, ), 1),
-                       ExpectedToken((VALUE, ), 0),
-                       ]
+    EXPECTED_TOKENS = [
+        ExpectedToken((VARNAME,), 2),
+        ExpectedToken((BY,), 1),
+        ExpectedToken((VALUE,), 0),
+    ]
 
     def _run(self, interpreter):
         variable = interpreter.stack_pop()
@@ -123,10 +145,12 @@ class DIVIDE(Token):
         if variable.value == int(variable.value):
             variable.value = int(variable.value)
 
+
 class IT(VARNAME):
     def _run(self, interpreter):
-        variable = interpreter.get_variable('it')
+        variable = interpreter.get_variable("it")
         interpreter.stack_append(variable)
+
 
 class LINEBREAK(Token):
     def pop_tokens(self, tokens):
@@ -134,6 +158,7 @@ class LINEBREAK(Token):
 
     def update_token_factory(self, token_factory):
         token_factory.line_number += 1
+
 
 class COMMENT(Token):
     def pop_tokens(self, tokens):
@@ -145,12 +170,15 @@ class COMMENT(Token):
                 break
         return popped_tokens
 
+
 class AND(Token):
     def pop_tokens(self, tokens):
         return tokens.pop(0)
 
+
 class END(Token):
     pass
+
 
 class CLAUSE(VALUE, ClauseToken):
 
@@ -163,8 +191,10 @@ class CLAUSE(VALUE, ClauseToken):
         def run_tokens(interpreter):
             for token in self.tokens:
                 token.run(interpreter)
+
         value = self.TOKEN_FACTORY.create_value(run_tokens)
         interpreter.stack_append(value)
+
 
 class FUNCTION(Token):
     def _run(self, interpreter):
@@ -173,15 +203,18 @@ class FUNCTION(Token):
         function.value = code.get_value()
         interpreter.set_variable(function.name, function)
 
+
 class DEFINE(Token):
-    EXPECTED_TOKENS = [ExpectedToken((FUNCTION, ), 3),
-                       ExpectedToken((VARNAME, ), 2),
-                       ExpectedToken((AS, ), 1),
-                       ExpectedToken((CLAUSE, ), 0),
-                       ]
+    EXPECTED_TOKENS = [
+        ExpectedToken((FUNCTION,), 3),
+        ExpectedToken((VARNAME,), 2),
+        ExpectedToken((AS,), 1),
+        ExpectedToken((CLAUSE,), 0),
+    ]
+
 
 class CALL(Token):
-    EXPECTED_TOKENS = [ExpectedToken((VARNAME, ))]
+    EXPECTED_TOKENS = [ExpectedToken((VARNAME,))]
 
     def _run(self, interpreter):
         function = interpreter.stack_pop()
@@ -189,11 +222,13 @@ class CALL(Token):
         function.get_value()(interpreter)
         interpreter.remove_stack()
 
+
 class THEN(Token):
     pass
 
+
 class ELSE(Token):
-    EXPECTED_TOKENS = [ExpectedToken((CLAUSE, ))]
+    EXPECTED_TOKENS = [ExpectedToken((CLAUSE,))]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -206,12 +241,14 @@ class ELSE(Token):
             else_clause.get_value()(interpreter)
             self.executed = True
 
+
 class IF(Token):
-    EXPECTED_TOKENS = [ExpectedToken((VALUE, ), 0),
-                       ExpectedToken((THEN, ), 1),
-                       ExpectedToken((CLAUSE, ), 3),
-                       ExpectedToken((ELSE, ), 2, optional=True),
-                       ]
+    EXPECTED_TOKENS = [
+        ExpectedToken((VALUE,), 0),
+        ExpectedToken((THEN,), 1),
+        ExpectedToken((CLAUSE,), 3),
+        ExpectedToken((ELSE,), 2, optional=True),
+    ]
 
     def _run(self, interpreter):
         if_clause = interpreter.stack_pop()
@@ -231,34 +268,37 @@ class IF(Token):
     def has_else(self) -> bool:
         return isinstance(self.tokens[-1], ELSE)
 
-tokens = {'set': ASSIGN_L,
-          'to': ASSIGN_R,
-          'from': FROM,
-          'by': BY,
-          'times': TIMES,
-          'print': PRINT,
-          'add': ADD,
-          'subtract': SUBTRACT,
-          'multiply': MULTIPLY,
-          'divide': DIVIDE,
-          'it': IT,
-           'and': AND,
-           'true': TRUE,
-           'false': FALSE,
-          '\n': LINEBREAK,
-          'define': DEFINE,
-          'function': FUNCTION,
-          'as': AS,
-          '{': CLAUSE,
-          '}': END,
-          'call': CALL,
-          'if': IF,
-          'then': THEN,
-          'else': ELSE,
-          '#': COMMENT,
-          }
 
-regex_tokens = {r'^\d+$': INTEGER,
-                r'^\w+$': VARNAME,
-                r'^\d+\.\d+': FLOAT,
-                }
+tokens = {
+    "set": ASSIGN_L,
+    "to": ASSIGN_R,
+    "from": FROM,
+    "by": BY,
+    "times": TIMES,
+    "print": PRINT,
+    "add": ADD,
+    "subtract": SUBTRACT,
+    "multiply": MULTIPLY,
+    "divide": DIVIDE,
+    "it": IT,
+    "and": AND,
+    "true": TRUE,
+    "false": FALSE,
+    "\n": LINEBREAK,
+    "define": DEFINE,
+    "function": FUNCTION,
+    "as": AS,
+    "{": CLAUSE,
+    "}": END,
+    "call": CALL,
+    "if": IF,
+    "then": THEN,
+    "else": ELSE,
+    "#": COMMENT,
+}
+
+regex_tokens = {
+    r"^\d+$": INTEGER,
+    r"^\w+$": VARNAME,
+    r"^\d+\.\d+": FLOAT,
+}
