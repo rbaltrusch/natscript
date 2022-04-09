@@ -1,0 +1,18 @@
+define function main as {
+    # this function calculates the sum of an array of numbers
+    # multipled with itself and filtered by a threshold and a target
+
+    set the threshold to 1
+    set the target to 2
+    set the numbers to [1 2 3]
+
+    set the total to 0
+    for each num in numbers greater than threshold {
+        for each num2 in numbers equal to target {
+            multiply num2 times num and add it to the total
+        }
+    }
+    print total
+}
+
+call main
