@@ -4,6 +4,8 @@ Created on Fri Nov 20 13:54:34 2020
 
 @author: Korean_Crimson
 """
+
+import operator
 from interpreter.token_ import ClauseToken
 from interpreter.token_ import ExpectedToken
 from interpreter.token_ import Token
@@ -244,9 +246,30 @@ class ELSE(Token):
             self.executed = True
 
 
-class IF(Token):
+class CONDITION(VALUE, ClauseToken):
+
+    OPERATOR = operator.eq
+    CLOSE_TOKEN = VALUE
+
+    def _run(self, interpreter):
+        second_value = interpreter.stack_pop().get_value()
+        first_value = interpreter.stack_pop().get_value()
+        condition_result = self.OPERATOR(first_value, second_value)
+        value = self.TOKEN_FACTORY.create_value(condition_result)
+        interpreter.stack_append(value)
+
+
+class CHECK(Token):
+
     EXPECTED_TOKENS = [
         ExpectedToken((VALUE,), 0),
+        ExpectedToken((CONDITION,), 1),
+    ]
+
+
+class IF(Token):
+    EXPECTED_TOKENS = [
+        ExpectedToken((VALUE, CHECK), 0),
         ExpectedToken((THEN,), 1),
         ExpectedToken((CLAUSE,), 3),
         ExpectedToken((ELSE,), 2, optional=True),
@@ -360,6 +383,31 @@ class FOR(Token):
         return self.tokens[0]
 
 
+class THAN(Token):
+    pass
+
+
+class GREATER(CONDITION):
+    OPERATOR = operator.gt
+    EXPECTED_TOKENS = [
+        ExpectedToken((THAN,), 0),
+        ExpectedToken((VALUE,), 1),
+    ]
+
+class EQUALS(CONDITION):
+    OPERATOR = operator.eq
+    EXPECTED_TOKENS = [
+        ExpectedToken((VALUE,), 0),
+    ]
+
+class LESS(CONDITION):
+    OPERATOR = operator.lt
+    EXPECTED_TOKENS = [
+        ExpectedToken((THAN,), 0),
+        ExpectedToken((VALUE,), 1),
+    ]
+
+
 tokens = {
     "set": ASSIGN_L,
     "to": ASSIGN_R,
@@ -392,6 +440,11 @@ tokens = {
     "for": FOR,
     "each": EACH,
     "in": IN,
+    "check": CHECK,
+    "equals": EQUALS,
+    "less": LESS,
+    "greater": GREATER,
+    "than": THAN,
 }
 
 regex_tokens = {
