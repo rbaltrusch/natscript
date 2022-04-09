@@ -216,7 +216,7 @@ class DEFINE(Token):
 
 
 class CALL(Token):
-    EXPECTED_TOKENS = [ExpectedToken((VARNAME,))]
+    EXPECTED_TOKENS = [ExpectedToken((VARNAME, CLAUSE))]
 
     def _run(self, interpreter):
         function = interpreter.stack_pop()
