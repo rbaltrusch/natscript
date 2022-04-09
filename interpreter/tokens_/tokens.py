@@ -208,6 +208,43 @@ class FUNCTION(Token):
         interpreter.set_variable(function.name, function)
 
 
+class COLLECTION_END(Token):
+    pass
+
+
+class COLLECTION(VALUE, ClauseToken):
+
+    CLOSE_TOKEN = COLLECTION_END
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._constructed = False
+
+    def _run(self, interpreter):
+        if self._constructed:
+            return
+
+        # ignore last token, which closes the collection (COLLECTION_END)
+        self.value = []
+        for _ in self.tokens[:-1]:
+            value = interpreter.stack_pop()
+            self.value.append(value)
+        self.value.reverse()
+
+        super()._run(interpreter)
+        self._constructed = True
+
+
+class EXPECTING(Token):
+    EXPECTED_TOKENS = [
+        ExpectedToken((COLLECTION,), 0)
+    ]
+
+
+class WITH(Token):
+    EXPECTED_TOKENS = [ExpectedToken((COLLECTION,), 0)]
+
+
 class DEFINE(Token):
     EXPECTED_TOKENS = [
         ExpectedToken((FUNCTION,), 3),
@@ -295,33 +332,6 @@ class IF(Token):
     @property
     def has_else(self) -> bool:
         return isinstance(self.tokens[-1], ELSE)
-
-
-class COLLECTION_END(Token):
-    pass
-
-
-class COLLECTION(VALUE, ClauseToken):
-
-    CLOSE_TOKEN = COLLECTION_END
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._constructed = False
-
-    def _run(self, interpreter):
-        if self._constructed:
-            return
-
-        # ignore last token, which closes the collection (COLLECTION_END)
-        self.value = []
-        for _ in self.tokens[:-1]:
-            value = interpreter.stack_pop()
-            self.value.append(value)
-        self.value.reverse()
-
-        super()._run(interpreter)
-        self._constructed = True
 
 
 class IN(Token):
@@ -477,6 +487,8 @@ tokens = {
     "greater": GREATER,
     "than": THAN,
     "the": THE,
+    "expecting": EXPECTING,
+    "with": WITH,
 }
 
 regex_tokens = {

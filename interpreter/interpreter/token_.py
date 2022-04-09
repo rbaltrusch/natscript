@@ -163,6 +163,7 @@ class Value:
 class Variable(Value):
     def __init__(self, name: str):
         self.name = name
+        self.inputs = []
 
     def __repr__(self):
         return f'{self.name}'
