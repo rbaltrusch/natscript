@@ -153,6 +153,9 @@ class Value:
             raise exceptions.UndefinedVariableException(self)
         return self.value
 
+    def __repr__(self):
+        return str(self.value)
+
 class Variable(Value):
     def __init__(self, name: str):
         self.name = name
