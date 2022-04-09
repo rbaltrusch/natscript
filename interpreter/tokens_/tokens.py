@@ -190,9 +190,6 @@ class CLAUSE(VALUE, ClauseToken):
     CLOSE_TOKEN = END
 
     def run(self, interpreter):
-        self._run(interpreter)
-
-    def _run(self, interpreter):
         def run_tokens(interpreter):
             for token in self.tokens:
                 token.run(interpreter)
