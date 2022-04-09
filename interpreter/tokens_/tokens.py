@@ -361,6 +361,9 @@ class EACH(Token):
         for token in self.tokens[:-1]:
             token.run(interpreter)
 
+    def reset(self):
+        self._index = 0
+
     @property
     def exhausted(self) -> bool:
         if self.collection is None:
@@ -380,6 +383,7 @@ class FOR(Token):
                 token.run(interpreter)
             clause = interpreter.stack_pop()
             clause.get_value()(interpreter)
+        self.extractor.reset()
 
     @property
     def extractor(self) -> EACH:
