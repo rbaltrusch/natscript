@@ -61,6 +61,7 @@ class Token:
         self.line = line
         self.tokens = []
         self.run_order = 0
+        self.parent = None
         self.expected_tokens = self.EXPECTED_TOKENS.copy()
 
     def __repr__(self):
@@ -87,6 +88,7 @@ class Token:
             raise exceptions.InternalParseError(token)
         self._check_types(token)
         self.tokens.append(token)
+        token.parent = self
 
     def pop_tokens(self, tokens):
         pass
@@ -104,6 +106,10 @@ class Token:
             if not expected_token.optional:
                 raise exceptions.InternalParseTypeError(token, expected_token.types)
         raise exceptions.ParseException(token)
+
+    @property
+    def is_subtoken(self) -> bool:
+        return self.parent is not None
 
     @property
     def value(self):

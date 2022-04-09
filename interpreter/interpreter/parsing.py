@@ -20,10 +20,16 @@ class Parser:
                 self.token_stack.append(token)
                 continue
 
-            if self._can_add(token):
-                self.token_stack[-1].add_token(token)
-            else:
-                yield self.token_stack.pop()
+            while self.token_stack and not self._can_add(token) and self.token_stack[-1].is_subtoken:
+                self.token_stack.pop()
+
+            if self.token_stack:
+                if self._can_add(token):
+                    self.token_stack[-1].add_token(token)
+                else:
+                    popped_token = self.token_stack.pop()
+                    if not popped_token.is_subtoken:
+                        yield popped_token
             self.token_stack.append(token)
 
             while self.token_stack[-1].full:
