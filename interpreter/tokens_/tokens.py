@@ -160,6 +160,11 @@ class LINEBREAK(Token):
         token_factory.line_number += 1
 
 
+class COMMA(Token):
+    def pop_tokens(self, tokens):
+        return tokens.pop(0)
+
+
 class COMMENT(Token):
     def pop_tokens(self, tokens):
         popped_tokens = []
@@ -285,6 +290,7 @@ tokens = {
     "true": TRUE,
     "false": FALSE,
     "\n": LINEBREAK,
+    ",": COMMA,
     "define": DEFINE,
     "function": FUNCTION,
     "as": AS,
