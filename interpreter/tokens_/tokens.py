@@ -419,10 +419,11 @@ class GREATER(CONDITION):
         ExpectedToken((VALUE,), 1),
     ]
 
-class EQUALS(CONDITION):
+class EQUAL(CONDITION):
     OPERATOR = operator.eq
     EXPECTED_TOKENS = [
-        ExpectedToken((VALUE,), 0),
+        ExpectedToken((ASSIGN_R,), 0),
+        ExpectedToken((VALUE,), 1),
     ]
 
 class LESS(CONDITION):
@@ -466,7 +467,7 @@ tokens = {
     "each": EACH,
     "in": IN,
     "check": CHECK,
-    "equals": EQUALS,
+    "equal": EQUAL,
     "less": LESS,
     "greater": GREATER,
     "than": THAN,
