@@ -5,6 +5,7 @@ Created on Fri Nov 20 13:54:34 2020
 @author: Korean_Crimson
 """
 import operator
+from typing import Optional
 from interpreter.token_ import ClauseToken
 from interpreter.token_ import ExpectedToken
 from interpreter.token_ import Token
@@ -360,6 +361,10 @@ class EACH(Token):
         for token in self.tokens[:-1]:
             token.run(interpreter)
 
+        # append it again, this value can be consumed by optional for-each
+        # condition, or needs to be thrown away by for-each loop if no condition
+        interpreter.stack_append(value)
+
     def reset(self):
         self._index = 0
 
@@ -373,7 +378,8 @@ class FOR(Token):
 
     EXPECTED_TOKENS = [
         ExpectedToken((EACH,), 0),
-        ExpectedToken((CLAUSE,), 1),
+        ExpectedToken((CONDITION,), 1, optional=True),
+        ExpectedToken((CLAUSE,), 2),
     ]
 
     def run(self, interpreter):
@@ -381,12 +387,25 @@ class FOR(Token):
             for token in self.tokens:
                 token.run(interpreter)
             clause = interpreter.stack_pop()
-            clause.get_value()(interpreter)
+            if self._check_condition(interpreter):
+                clause.get_value()(interpreter)
         self.extractor.reset()
+
+    def _check_condition(self, interpreter) -> bool:
+        value = interpreter.stack_pop()
+        if self.condition is None:
+            return True
+        return value.get_value()
 
     @property
     def extractor(self) -> EACH:
         return self.tokens[0]
+
+    @property
+    def condition(self) -> Optional[CONDITION]:
+        if not isinstance(self.tokens[1], CONDITION):
+            return None
+        return self.tokens[1]
 
 
 class THAN(Token):
