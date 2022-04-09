@@ -204,7 +204,9 @@ class FUNCTION(Token):
     def _run(self, interpreter):
         function = interpreter.stack_pop()
         code = interpreter.stack_pop()
+        input_parameters = interpreter.stack_pop().get_value()
         function.value = code.get_value()
+        function.inputs = input_parameters
         interpreter.set_variable(function.name, function)
 
 
@@ -247,19 +249,33 @@ class WITH(Token):
 
 class DEFINE(Token):
     EXPECTED_TOKENS = [
-        ExpectedToken((FUNCTION,), 3),
-        ExpectedToken((VARNAME,), 2),
-        ExpectedToken((AS,), 1),
-        ExpectedToken((CLAUSE,), 0),
+        ExpectedToken((FUNCTION,), 4),
+        ExpectedToken((VARNAME,), 3),
+        ExpectedToken((EXPECTING,), 0, optional=True),
+        ExpectedToken((AS,), 2),
+        ExpectedToken((CLAUSE,), 1),
     ]
+
+    def run(self, interpreter):
+        if not self.has_all_optionals:
+            value = self.TOKEN_FACTORY.create_value(value=[])
+            interpreter.stack_append(value)
+        super().run(interpreter)
 
 
 class CALL(Token):
-    EXPECTED_TOKENS = [ExpectedToken((VARNAME, CLAUSE))]
+    EXPECTED_TOKENS = [
+        ExpectedToken((VARNAME, CLAUSE), 1),
+        ExpectedToken((WITH,), 0, optional=True)
+    ]
 
     def _run(self, interpreter):
         function = interpreter.stack_pop()
+        inputs = interpreter.stack_pop().get_value() if self.has_all_optionals else []
         interpreter.add_stack()
+        # take input parameters from stack
+        for value, variable in zip(inputs, function.inputs):
+            interpreter.set_variable(variable.name, value)
         function.get_value()(interpreter)
         interpreter.remove_stack()
 

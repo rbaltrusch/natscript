@@ -152,6 +152,9 @@ class ClauseToken(Token):
 class Value:
     value: Any = None
 
+    def __post_init__(self):
+        self.inputs = []
+
     def get_value(self):
         if self.value is None:
             raise exceptions.UndefinedVariableException(self)
