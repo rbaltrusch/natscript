@@ -4,3 +4,4 @@ interpreter/*.nat
 **/.coverage
 tests/reports/
 tests/htmlcov/
+.vscode/
