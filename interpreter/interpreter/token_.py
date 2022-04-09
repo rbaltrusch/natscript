@@ -126,6 +126,10 @@ class Token:
         return not mandatory_tokens
 
     @property
+    def has_all_optionals(self) -> bool:
+        return len(self.tokens) == len(self.EXPECTED_TOKENS)
+
+    @property
     def run_functions(self) -> List[callable]:
         return [t.run for t in sorted(self.tokens, key=lambda x: x.run_order)] + [self._run]
 
