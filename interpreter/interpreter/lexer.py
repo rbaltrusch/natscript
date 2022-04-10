@@ -21,7 +21,7 @@ class Lexer:
         string = string.replace('\n', ' \n ')
 
         #matches non-word characters (i.e. punctuation) and adds whitespace around them
-        string = re.sub('(?P<match>[^\w\.])', ' \g<match> ', string).strip()
-
+        # ignore dot (.) and quotation marks (""), needed for float and string values.
+        string = re.sub('(?P<match>[^\w\."])', ' \g<match> ', string).strip()
         string_tokens = [s for s in string.split(' ') if s != '']
         return string_tokens

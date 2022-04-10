@@ -25,6 +25,11 @@ class FLOAT(VALUE):
     VALUE_FACTORY = float
 
 
+class STRING(VALUE):
+    # for whatever reason python is passing self as first arg
+    VALUE_FACTORY = lambda _, x: str(x.strip('"'))
+
+
 class TRUE(VALUE):
     def __init__(self, *_, **__):
         super().__init__(value=1)
@@ -509,6 +514,7 @@ tokens = {
 
 regex_tokens = {
     r"^\d+$": INTEGER,
+    r'^"\w*"': STRING,
     r"^\w+$": VARNAME,
     r"^\d+\.\d+": FLOAT,
 }
