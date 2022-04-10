@@ -44,7 +44,12 @@ class TokenFactory:
     def create_value(value: Any):
         if value is None:
             return NoneValue()
-        return Value(value)
+
+        try:
+            iter(value)
+            return IterableValue(value)
+        except TypeError:
+            return Value(value)
 
 @dataclass
 class ExpectedToken:
@@ -170,6 +175,11 @@ class Value:
 
     def __repr__(self):
         return str(self.value)
+
+
+class IterableValue(Value):
+    def get_value(self):
+        return [x.get_value() for x in self.value]
 
 
 class NoneValue(Value):
