@@ -305,17 +305,6 @@ class THEN(Token):
 class ELSE(Token):
     EXPECTED_TOKENS = [ExpectedToken((CLAUSE,))]
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.executed = False
-
-    def _run(self, interpreter):
-        else_clause = interpreter.stack_pop()
-        value = interpreter.stack_pop()
-        if value.get_value() == 0:
-            else_clause.get_value()(interpreter)
-            self.executed = True
-
 
 class CONDITION(VALUE, ClauseToken):
 
@@ -327,6 +316,15 @@ class CONDITION(VALUE, ClauseToken):
         first_value = interpreter.stack_pop().get_value()
         condition_result = self.OPERATOR(first_value, second_value)
         value = self.TOKEN_FACTORY.create_value(condition_result)
+        interpreter.stack_append(value)
+
+
+class NOT(CONDITION):
+    EXPECTED_TOKENS = [ExpectedToken((CONDITION,))]
+
+    def _run(self, interpreter):
+        value = interpreter.stack_pop()
+        value.negate_value()
         interpreter.stack_append(value)
 
 
@@ -343,21 +341,23 @@ class CHECK(VALUE):
 
 class IF(Token):
     EXPECTED_TOKENS = [
-        ExpectedToken((VALUE, CHECK), 0),
-        ExpectedToken((THEN,), 1),
+        ExpectedToken((VALUE, CHECK), 2),
+        ExpectedToken((THEN,), 0),
         ExpectedToken((CLAUSE,), 3),
-        ExpectedToken((ELSE,), 2, optional=True),
+        ExpectedToken((ELSE,), 1, optional=True),
     ]
+
+    def run(self, interpreter):
+        super().run(interpreter)
 
     def _run(self, interpreter):
         if_clause = interpreter.stack_pop()
-        if self.has_else:
-            if not self.else_executed:
-                if_clause.get_value()(interpreter)
-        else:
-            value = interpreter.stack_pop()
-            if value.get_value() == 1:
-                if_clause.get_value()(interpreter)
+        condition_value = interpreter.stack_pop()
+        else_clause = interpreter.stack_pop() if self.has_all_optionals else None
+        if condition_value.get_value() == 1:
+            if_clause.get_value()(interpreter)
+        elif else_clause is not None:
+            else_clause.get_value()(interpreter)
 
     @property
     def else_executed(self) -> bool:
@@ -547,6 +547,7 @@ tokens = {
     "expecting": EXPECTING,
     "with": WITH,
     "while": WHILE,
+    "not": NOT,
 }
 
 regex_tokens = {
