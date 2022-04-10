@@ -55,20 +55,18 @@ class Interpreter:
 
     def check_variable(self, name: str) -> bool:
         """Returns True if the passed name is in the variables list"""
-        return name in self._variables[-1]
+        return any(name in variables for variables in self._variables)
 
     def get_variable(self, name: str) -> Variable:
         """Returns a Variable if it can be looked up by name.
 
         Raises an UndefinedVariableException if variable cannot be found.
         """
-
-        try:
-            value = self._variables[-1][name]
-        except KeyError:
-            #pylint: disable=raise-missing-from
-            raise exceptions.UndefinedVariableException(name)
-        return value
+        for variables in self._variables[::-1]:
+            value = variables.get(name)
+            if value is not None:
+                return value
+        raise exceptions.UndefinedVariableException(name)
 
     def set_variable(self, name: str, value: Any) -> None:
         """Sets the value of the variable identified by name to the specified value."""
