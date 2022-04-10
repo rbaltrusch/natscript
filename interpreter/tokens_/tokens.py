@@ -40,6 +40,10 @@ class FALSE(VALUE):
         super().__init__(value=0)
 
 
+class NOTHING(VALUE):
+    VALUE_FACTORY = lambda *_: None
+
+
 class VARNAME(VALUE):
     def _run(self, interpreter):
         if interpreter.check_variable(self.value):
@@ -200,6 +204,10 @@ class CLAUSE(VALUE, ClauseToken):
         def run_tokens(interpreter):
             for token in self.tokens:
                 token.run(interpreter)
+                if isinstance(token, RETURN):
+                    break
+            else:
+                interpreter.stack_append(self.TOKEN_FACTORY.create_value(value=None))
 
         value = self.TOKEN_FACTORY.create_value(run_tokens)
         interpreter.stack_append(value)
@@ -268,6 +276,9 @@ class DEFINE(Token):
         super().run(interpreter)
 
 
+class RETURN(Token):
+    EXPECTED_TOKENS = [ExpectedToken((VALUE,), 0)]
+
 class CALL(Token):
     EXPECTED_TOKENS = [
         ExpectedToken((VARNAME, CLAUSE), 1),
@@ -282,7 +293,9 @@ class CALL(Token):
         for value, variable in zip(inputs, function.inputs):
             interpreter.set_variable(variable.name, value)
         function.get_value()(interpreter)
+        return_value = interpreter.stack_pop()
         interpreter.remove_stack()
+        interpreter.set_variable('result', return_value)
 
 
 class THEN(Token):
@@ -495,6 +508,8 @@ tokens = {
     "as": AS,
     "{": CLAUSE,
     "}": END,
+    "return": RETURN,
+    "nothing": NOTHING,
     "call": CALL,
     "if": IF,
     "then": THEN,

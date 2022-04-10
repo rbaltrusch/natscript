@@ -42,6 +42,8 @@ class TokenFactory:
 
     @staticmethod
     def create_value(value: Any):
+        if value is None:
+            return NoneValue()
         return Value(value)
 
 @dataclass
@@ -168,6 +170,12 @@ class Value:
 
     def __repr__(self):
         return str(self.value)
+
+
+class NoneValue(Value):
+    def get_value(self):
+        return None
+
 
 class Variable(Value):
     def __init__(self, name: str):
