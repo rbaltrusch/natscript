@@ -45,6 +45,9 @@ class TokenFactory:
         if value is None:
             return NoneValue()
 
+        if isinstance(value, str):
+            return Value(value)
+
         try:
             iter(value)
             return IterableValue(value)
