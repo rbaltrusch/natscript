@@ -166,7 +166,7 @@ class Value:
     value: Any = None
 
     def __post_init__(self):
-        self.inputs = []
+        self.inputs = None
 
     def get_value(self):
         if self.value is None:
@@ -182,7 +182,14 @@ class Value:
 
 class IterableValue(Value):
     def get_value(self):
-        return [x.get_value() for x in self.value]
+        values = []
+        for value in self.value:
+            try:
+                val = value.get_value()
+            except AttributeError:
+                val = value
+            values.append(val)
+        return values
 
 
 class NoneValue(Value):

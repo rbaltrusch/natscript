@@ -311,10 +311,13 @@ class CALL(Token):
         function = interpreter.stack_pop()
         inputs = interpreter.stack_pop().get_value() if self.has_all_optionals else []
         interpreter.add_stack()
-        # take input parameters from stack
-        for input_, variable in zip(inputs, function.inputs.value):
-            value = self.TOKEN_FACTORY.create_value(value=input_)
-            interpreter.set_variable(variable.name, value)
+
+        # some functions dont have inputs
+        if function.inputs:
+            # take input parameters from stack
+            for input_, variable in zip(inputs, function.inputs.value):
+                value = self.TOKEN_FACTORY.create_value(value=input_)
+                interpreter.set_variable(variable.name, value)
         function.get_value()(interpreter)
         return_value = interpreter.stack_pop()
         interpreter.remove_stack()
@@ -420,7 +423,9 @@ class EACH(Token):
         if self.exhausted:
             return
 
-        value = self.collection[self._index]
+        value = self.TOKEN_FACTORY.create_value(
+            value=self.collection[self._index]
+        )
         interpreter.stack_append(value)
         self._index += 1
 
