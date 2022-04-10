@@ -72,9 +72,6 @@ class Token:
         return f'Line {self.line}: {type_}({self.__class__.__name__}{value})'
 
     def run(self, interpreter):
-        if not self.satisfied:
-            raise exceptions.SyntaxException(self)
-
         for function in self.run_functions:
             function(interpreter)
 
@@ -167,6 +164,9 @@ class Value:
         if self.value is None:
             raise exceptions.UndefinedVariableException(self)
         return self.value
+
+    def negate_value(self) -> None:
+        self.value = not self.value
 
     def __repr__(self):
         return str(self.value)
