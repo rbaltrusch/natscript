@@ -453,6 +453,26 @@ class FOR(Token):
         return self.tokens[1]
 
 
+class WHILE(Token):
+
+    EXPECTED_TOKENS = [
+        ExpectedToken((VALUE,), 0),
+        ExpectedToken((CLAUSE,), 1),
+    ]
+
+    def run(self, interpreter):
+        while True:
+            for token in self.tokens:
+                token.run(interpreter)
+            clause = interpreter.stack_pop()
+            if not self._check_condition(interpreter):
+                break
+            clause.get_value()(interpreter)
+
+    def _check_condition(self, interpreter) -> bool:
+        return interpreter.stack_pop().get_value()
+
+
 class THAN(Token):
     pass
 
@@ -526,6 +546,7 @@ tokens = {
     "the": THE,
     "expecting": EXPECTING,
     "with": WITH,
+    "while": WHILE,
 }
 
 regex_tokens = {
