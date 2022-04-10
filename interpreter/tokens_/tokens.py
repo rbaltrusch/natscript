@@ -217,7 +217,7 @@ class FUNCTION(Token):
     def _run(self, interpreter):
         function = interpreter.stack_pop()
         code = interpreter.stack_pop()
-        input_parameters = interpreter.stack_pop().get_value()
+        input_parameters = interpreter.stack_pop()
         function.value = code.get_value()
         function.inputs = input_parameters
         interpreter.set_variable(function.name, function)
@@ -231,23 +231,45 @@ class COLLECTION(VALUE, ClauseToken):
 
     CLOSE_TOKEN = COLLECTION_END
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._constructed = False
-
     def _run(self, interpreter):
-        if self._constructed:
-            return
-
         # ignore last token, which closes the collection (COLLECTION_END)
         self.value = []
         for _ in self.tokens[:-1]:
             value = interpreter.stack_pop()
             self.value.append(value)
         self.value.reverse()
-
         super()._run(interpreter)
-        self._constructed = True
+
+
+class APPEND(Token):
+
+    EXPECTED_TOKENS = [
+        ExpectedToken((VALUE,), 0),
+        ExpectedToken((ASSIGN_R,), 1),
+        ExpectedToken((VARNAME), 2)
+    ]
+
+    def _run(self, interpreter):
+        collection = interpreter.stack_pop().get_value()
+        value = interpreter.stack_pop().get_value()
+        collection.append(value)
+
+
+class OF(Token):
+    pass
+
+
+class LENGTH(VALUE):
+
+    EXPECTED_TOKENS = [
+        ExpectedToken((OF,), 0),
+        ExpectedToken((VALUE,), 1)
+    ]
+
+    def _run(self, interpreter):
+        collection = interpreter.stack_pop().get_value()
+        length = self.TOKEN_FACTORY.create_value(len(collection))
+        interpreter.stack_append(length)
 
 
 class EXPECTING(Token):
@@ -290,7 +312,8 @@ class CALL(Token):
         inputs = interpreter.stack_pop().get_value() if self.has_all_optionals else []
         interpreter.add_stack()
         # take input parameters from stack
-        for value, variable in zip(inputs, function.inputs):
+        for input_, variable in zip(inputs, function.inputs.value):
+            value = self.TOKEN_FACTORY.create_value(value=input_)
             interpreter.set_variable(variable.name, value)
         function.get_value()(interpreter)
         return_value = interpreter.stack_pop()
@@ -504,6 +527,34 @@ class THE(Token):
         return tokens.pop(0)
 
 
+class FIRST(VALUE):
+
+    EXPECTED_TOKENS = [
+        ExpectedToken((VARNAME,), 1),
+        ExpectedToken((IN,), 2),
+        ExpectedToken((VALUE,), 0),
+    ]
+    RETURN_TOKEN_INDEX = 0
+
+    def run(self, interpreter):
+        self.tokens[-1].run(interpreter)
+        collection = interpreter.stack_pop().get_value()
+        value = self.TOKEN_FACTORY.create_value(
+            value=collection[self.RETURN_TOKEN_INDEX]
+        )
+        interpreter.stack_append(value)
+        # ignore collection (last token), as it was previously run
+        for token in self.tokens[:-1]:
+            token.run(interpreter)
+
+        # append it again, previous stack append gets consumed by IN token
+        interpreter.stack_append(value)
+
+
+class LAST(FIRST):
+    RETURN_TOKEN_INDEX = -1
+
+
 tokens = {
     "set": ASSIGN_L,
     "to": ASSIGN_R,
@@ -548,6 +599,11 @@ tokens = {
     "with": WITH,
     "while": WHILE,
     "not": NOT,
+    "first": FIRST,
+    "last": LAST,
+    "length": LENGTH,
+    "of": OF,
+    "append": APPEND,
 }
 
 regex_tokens = {
