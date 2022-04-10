@@ -1,0 +1,21 @@
+# natscript
+# author richard baltrusch
+# date 10 Apr 2022
+
+define the function fibonacci expecting [limit] as {
+    set old to 1
+    set current to 1
+    set numbers to [old current]
+
+    while check current not greater than the limit {
+        add old to current, and set old to last number in numbers
+        append current to numbers, and set it to last number in numbers
+    }
+    return the numbers
+}
+
+define function main as {
+    call fibonacci with [100] and print the result
+}
+
+call main

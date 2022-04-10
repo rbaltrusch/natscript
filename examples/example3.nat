@@ -1,0 +1,24 @@
+# natscript
+# author richard baltrusch
+# date 10 Apr 2022
+
+define function add_list_to_number expecting [total and numbers] as {
+    # this function adds the sum of numbers to the total and returns it
+    set the sum to 0
+    for each number in numbers {
+        add the number to the sum
+    }
+    add the sum to the total and return it
+}
+
+define function main as {
+    call add_list_to_number with [
+        10,
+        [1, 2, 3]
+    ]
+    print result
+    return nothing
+}
+
+# this call prints 16
+call main

@@ -5,3 +5,7 @@ define function test as {
 call test
 
 set a to {print 1} and call it
+
+define function ab as {print 1} and call it
+define function abc as {print 2} and call it
+define function f expecting [a b] as {add a to b and print it} and call f with [1, 2]
