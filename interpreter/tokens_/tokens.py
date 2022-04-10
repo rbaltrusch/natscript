@@ -398,6 +398,7 @@ class EACH(Token):
 
     def reset(self):
         self._index = 0
+        self.collection = None
 
     @property
     def exhausted(self) -> bool:
