@@ -37,7 +37,8 @@ class Interpreter:
     def add_stack(self) -> None:
         """Adds a stack to the stack of stacks"""
         self._stacks.append([])
-        self._variables.append({})
+        globals_dict = self._variables[0].copy()
+        self._variables.append(globals_dict)
 
     def remove_stack(self) -> None:
         """Removes the last stack from the stack of stacks"""
@@ -59,17 +60,16 @@ class Interpreter:
 
     def check_variable(self, name: str) -> bool:
         """Returns True if the passed name is in the variables list"""
-        return any(name in variables for variables in self._variables)
+        return name in self._variables[-1]
 
     def get_variable(self, name: str) -> Variable:
         """Returns a Variable if it can be looked up by name.
 
         Raises an UndefinedVariableException if variable cannot be found.
         """
-        for variables in self._variables[::-1]:
-            value = variables.get(name)
-            if value is not None:
-                return value
+        value = self._variables[-1].get(name)
+        if value is not None:
+            return value
         raise exceptions.UndefinedVariableException(name)
 
     def set_variable(self, name: str, value: Any) -> None:
