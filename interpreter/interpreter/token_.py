@@ -10,6 +10,7 @@ from dataclasses import field
 from typing import Any
 from typing import List
 from typing import Tuple
+from typing import Type
 
 from interpreter import exceptions
 
@@ -60,6 +61,42 @@ class ExpectedToken:
     run_order: int = 0
     optional: bool = False
 
+    def pop_token_from(self, expected_tokens):
+        return expected_tokens.pop(0)
+
+    def copy(self):
+        return self
+
+
+class ExpectedTokenCombination:
+    def __init__(self, *tokens: ExpectedToken, optional = False):
+        self.tokens = list(tokens)
+        self._current_tokens = self.tokens[:]
+        self.optional = optional
+
+    def pop_token_from(self, expected_tokens):
+        tokens = self._current_tokens if self._current_tokens else expected_tokens
+        return tokens.pop(0)
+
+    def copy(self):
+        return self.__class__(*self.tokens, optional=self.optional)
+
+    @property
+    def types(self) -> Tuple[Type]:
+        types = []
+        for token in self._current_tokens:
+            types.extend(token.types)
+            if not token.optional:
+                break
+        return tuple(types)
+
+    @property
+    def run_order(self) -> int:
+        if not self._current_tokens:
+            return 0
+        return self._current_tokens[0].run_order
+
+
 class Token:
 
     EXPECTED_TOKENS: List[ExpectedToken] = []
@@ -73,7 +110,7 @@ class Token:
         self.tokens = []
         self.run_order = 0
         self.parent = None
-        self.expected_tokens = self.EXPECTED_TOKENS.copy()
+        self.expected_tokens = [token.copy() for token in self.EXPECTED_TOKENS]
 
     def __repr__(self):
         value = '' if self.value is None else f', {self.value}'
@@ -114,7 +151,7 @@ class Token:
 
     def _check_types(self, token):
         while self.expected_tokens:
-            expected_token = self.expected_tokens.pop(0)
+            expected_token = self.expected_tokens[0].pop_token_from(self.expected_tokens)
             if isinstance(token, expected_token.types):
                 token.run_order = expected_token.run_order
                 return
