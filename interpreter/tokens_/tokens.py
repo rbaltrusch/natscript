@@ -434,14 +434,6 @@ class IF(Token):
         elif else_clause is not None:
             else_clause.get_value()(interpreter)
 
-    @property
-    def else_executed(self) -> bool:
-        return self.has_else and self.tokens[-1].executed
-
-    @property
-    def has_else(self) -> bool:
-        return isinstance(self.tokens[-1], ELSE)
-
 
 class IN(Token):
     def _run(self, interpreter):
