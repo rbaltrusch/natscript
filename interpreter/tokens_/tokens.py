@@ -349,8 +349,8 @@ class CALL(Token):
         if function.inputs:
             # take input parameters from stack
             for input_, variable in zip(inputs, function.inputs.value):
-                value = self.TOKEN_FACTORY.create_value(value=input_)
-                interpreter.set_variable(variable.name, value)
+                variable.value = input_
+                interpreter.set_variable(variable.name, variable)
         function.get_value()(interpreter)
         return_value = interpreter.stack_pop()
         interpreter.remove_stack()
