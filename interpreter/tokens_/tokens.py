@@ -44,19 +44,37 @@ class NOTHING(VALUE):
     VALUE_FACTORY = lambda *_: None
 
 
+class ASSIGN_R(Token):
+    pass
+
+
+class DEFAULTING(Token):
+
+    EXPECTED_TOKENS = [
+        ExpectedToken((ASSIGN_R,), 0),
+        ExpectedToken((VALUE,), 1)
+    ]
+
+
 class VARNAME(VALUE):
+
+    EXPECTED_TOKENS = [
+        ExpectedToken((DEFAULTING,), optional=True)
+    ]
+
     def _run(self, interpreter):
         if interpreter.check_variable(self.value):
             variable = interpreter.get_variable(self.value)
         else:
             variable = self.TOKEN_FACTORY.create_variable(self.value)
 
+        if self.has_all_optionals:
+            default_value = interpreter.stack_pop()
+            variable.value = default_value.get_value()
+            interpreter.set_variable(variable.name, default_value)
+
         interpreter.stack_append(variable)
         interpreter.set_variable("it", variable)
-
-
-class ASSIGN_R(Token):
-    pass
 
 
 class ASSIGN_L(Token):
@@ -563,6 +581,7 @@ class LAST(FIRST):
 tokens = {
     "set": ASSIGN_L,
     "to": ASSIGN_R,
+    "defaulting": DEFAULTING,
     "from": FROM,
     "by": BY,
     "times": TIMES,
