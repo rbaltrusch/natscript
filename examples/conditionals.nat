@@ -4,3 +4,5 @@ if condition then {
     multiply it times 2
     print it
 }
+
+if false then {print 1} else {print 2}

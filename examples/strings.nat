@@ -1,0 +1,47 @@
+define function a expecting [
+    limit defaulting to 1
+] as {
+    set strings to [
+        "a"
+        "b"
+        "c"
+        "d"
+        "e"
+        "f"
+        "g"
+        "h"
+    ]
+
+    set inputs to []
+    set counter to 0
+
+    if check limit greater than length of strings then {
+        set limit to length of strings
+    }
+
+    while check counter less than limit {
+        add 1 to counter
+        set value to first string in strings
+        append it to inputs and remove value from strings
+    }
+    return inputs
+}
+
+define function join expecting [strings] as {
+    set fullstring to ""
+    for each string in strings {
+        add string to fullstring
+    }
+    return fullstring
+}
+
+define function main as {
+    call join with [
+        result of call a with [
+            result of call {return 40}
+        ]
+    ]
+    add "test" to result and print it
+}
+
+call main
