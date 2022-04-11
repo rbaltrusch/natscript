@@ -273,6 +273,20 @@ class APPEND(Token):
         collection.append(value)
 
 
+class REMOVE(Token):
+
+    EXPECTED_TOKENS = [
+        ExpectedToken((VALUE,), 0),
+        ExpectedToken((FROM,), 1),
+        ExpectedToken((VARNAME), 2)
+    ]
+
+    def _run(self, interpreter):
+        collection = interpreter.stack_pop().get_value()
+        value = interpreter.stack_pop().get_value()
+        collection.remove(value)
+
+
 class OF(Token):
     pass
 
@@ -628,6 +642,7 @@ tokens = {
     "length": LENGTH,
     "of": OF,
     "append": APPEND,
+    "remove": REMOVE,
 }
 
 regex_tokens = {
