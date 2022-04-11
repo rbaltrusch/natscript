@@ -75,3 +75,7 @@ class Interpreter:
     def set_variable(self, name: str, value: Any) -> None:
         """Sets the value of the variable identified by name to the specified value."""
         self._variables[-1][name] = value
+
+    def remove_variable(self, name: str) -> None:
+        """Removes the variable identified by name from the current variable scope"""
+        self._variables[-1].pop(name)
