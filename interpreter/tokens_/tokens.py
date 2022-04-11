@@ -6,6 +6,7 @@ Created on Fri Nov 20 13:54:34 2020
 """
 import operator
 from typing import Optional
+from interpreter.token_ import ExpectedTokenCombination
 from interpreter.token_ import ClauseToken
 from interpreter.token_ import ExpectedToken
 from interpreter.token_ import Token
@@ -356,6 +357,22 @@ class CALL(Token):
         interpreter.set_variable('result', return_value)
 
 
+class RESULT(VARNAME):
+    EXPECTED_TOKENS = [
+        ExpectedTokenCombination(
+            ExpectedToken((OF,), 0),
+            ExpectedToken((CALL,), 1),
+            optional=True
+        )
+    ]
+
+    def _run(self, interpreter):
+        variable = interpreter.get_variable("result")
+        interpreter.remove_variable("result")
+        interpreter.set_variable("it", variable)
+        interpreter.stack_append(variable)
+
+
 class THEN(Token):
     pass
 
@@ -619,6 +636,7 @@ tokens = {
     "}": END,
     "return": RETURN,
     "nothing": NOTHING,
+    "result": RESULT,
     "call": CALL,
     "if": IF,
     "then": THEN,
