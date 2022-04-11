@@ -65,6 +65,7 @@ class Token:
     EXPECTED_TOKENS: List[ExpectedToken] = []
     VALUE_FACTORY: callable = None
     TOKEN_FACTORY: TokenFactory = TokenFactory()
+    TOKEN_STACK = []
 
     def __init__(self, value=None, line: int = 0):
         self.value = value
@@ -80,8 +81,11 @@ class Token:
         return f'Line {self.line}: {type_}({self.__class__.__name__}{value})'
 
     def run(self, interpreter):
-        for function in self.run_functions:
-            function(interpreter)
+        for token in sorted(self.tokens, key=lambda x: x.run_order):
+            self.TOKEN_STACK.append(token)
+            token.run(interpreter)
+            self.TOKEN_STACK.pop()
+        self._run(interpreter)
 
     def _run(self, interpreter):
         pass
@@ -102,6 +106,11 @@ class Token:
 
     def update_token_factory(self, token_factory):
         pass
+
+    def print_token_stack(self):
+        print('---TOKEN STACK---')
+        for token in self.TOKEN_STACK:
+            print(token)
 
     def _check_types(self, token):
         while self.expected_tokens:
@@ -141,10 +150,6 @@ class Token:
     @property
     def has_all_optionals(self) -> bool:
         return len(self.tokens) == len(self.EXPECTED_TOKENS)
-
-    @property
-    def run_functions(self) -> List[callable]:
-        return [t.run for t in sorted(self.tokens, key=lambda x: x.run_order)] + [self._run]
 
 
 class ClauseToken(Token):
