@@ -199,7 +199,7 @@ class Token:
 class ClauseToken(Token):
 
     CLOSE_TOKEN = Token
-    EXPECTED_TOKENS = [ExpectedToken((Token, ))] * 1000
+    EXPECTED_TOKENS = [ExpectedToken((Token, ))] * 1000000
 
     @property
     def full(self) -> bool:
