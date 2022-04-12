@@ -45,14 +45,14 @@ class NOTHING(VALUE):
     VALUE_FACTORY = lambda *_: None
 
 
-class ASSIGN_R(Token):
+class TO(Token):
     pass
 
 
 class DEFAULTING(Token):
 
     EXPECTED_TOKENS = [
-        ExpectedToken((ASSIGN_R,), 0),
+        ExpectedToken((TO,), 0),
         ExpectedToken((VALUE,), 1)
     ]
 
@@ -78,11 +78,11 @@ class VARNAME(VALUE):
         interpreter.set_variable("it", variable)
 
 
-class ASSIGN_L(Token):
+class SET(Token):
 
     EXPECTED_TOKENS = [
         ExpectedToken((VARNAME,), 2),
-        ExpectedToken((ASSIGN_R,), 1),
+        ExpectedToken((TO,), 1),
         ExpectedToken((VALUE,), 0),
     ]
 
@@ -122,7 +122,7 @@ class ADD(Token):
 
     EXPECTED_TOKENS = [
         ExpectedToken((VALUE,), 0),
-        ExpectedToken((ASSIGN_R,), 1),
+        ExpectedToken((TO,), 1),
         ExpectedToken((VARNAME,), 2),
     ]
 
@@ -211,13 +211,13 @@ class AND(Token):
         return tokens.pop(0)
 
 
-class END(Token):
+class CLAUSE_END(Token):
     pass
 
 
 class CLAUSE(VALUE, ClauseToken):
 
-    CLOSE_TOKEN = END
+    CLOSE_TOKEN = CLAUSE_END
 
     def run(self, interpreter):
         def run_tokens(interpreter):
@@ -264,7 +264,7 @@ class APPEND(Token):
 
     EXPECTED_TOKENS = [
         ExpectedToken((VALUE,), 0),
-        ExpectedToken((ASSIGN_R,), 1),
+        ExpectedToken((TO,), 1),
         ExpectedToken((VARNAME), 2)
     ]
 
@@ -556,7 +556,7 @@ class GREATER(CONDITION):
 class EQUAL(CONDITION):
     OPERATOR = operator.eq
     EXPECTED_TOKENS = [
-        ExpectedToken((ASSIGN_R,), 0),
+        ExpectedToken((TO,), 0),
         ExpectedToken((VALUE,), 1),
     ]
 
@@ -602,8 +602,8 @@ class LAST(FIRST):
 
 
 tokens = {
-    "set": ASSIGN_L,
-    "to": ASSIGN_R,
+    "set": SET,
+    "to": TO,
     "defaulting": DEFAULTING,
     "from": FROM,
     "by": BY,
@@ -625,7 +625,7 @@ tokens = {
     "function": FUNCTION,
     "as": AS,
     "{": CLAUSE,
-    "}": END,
+    "}": CLAUSE_END,
     "return": RETURN,
     "nothing": NOTHING,
     "result": RESULT,
