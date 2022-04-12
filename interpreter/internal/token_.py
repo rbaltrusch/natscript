@@ -12,7 +12,7 @@ from typing import List
 from typing import Tuple
 from typing import Type
 
-from interpreter import exceptions
+from internal import exceptions
 
 
 @dataclass

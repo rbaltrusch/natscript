@@ -15,7 +15,7 @@ import hashlib
 from typing import Dict, List, Optional, Tuple, Any, Type
 
 from tokens_ import tokens
-from interpreter.token_ import Token
+from internal.token_ import Token
 
 
 TokenData = Tuple[int, str, Any, int, int, int]

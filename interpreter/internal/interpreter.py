@@ -8,10 +8,10 @@ from typing import Any
 from typing import Dict
 from typing import List
 
-import interpreter.exceptions as exceptions
-from interpreter.interfaces import Token
-from interpreter.interfaces import Value
-from interpreter.interfaces import Variable
+import internal.exceptions as exceptions
+from internal.interfaces import Token
+from internal.interfaces import Value
+from internal.interfaces import Variable
 
 class Interpreter:
     """Interprets tokens and keeps track of the program state"""

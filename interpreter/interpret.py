@@ -4,10 +4,10 @@ Created on Tue Dec 14 21:51:28 2021
 
 @author: richa
 """
-from interpreter import interpreter
-from interpreter import lexer
-from interpreter import parsing
-from interpreter import token_ as token
+from internal import parsing
+from internal import lexer
+from internal import interpreter
+import interpreter.token_ as token
 from tokens_ import tokens
 from tokens_ import compiler
 

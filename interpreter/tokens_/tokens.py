@@ -6,10 +6,11 @@ Created on Fri Nov 20 13:54:34 2020
 """
 import operator
 from typing import Optional
-from interpreter.token_ import ExpectedTokenCombination
-from interpreter.token_ import ClauseToken
-from interpreter.token_ import ExpectedToken
-from interpreter.token_ import Token
+from internal.interpreter import Interpreter
+from internal.token_ import ExpectedTokenCombination
+from internal.token_ import ClauseToken
+from internal.token_ import ExpectedToken
+from internal.token_ import Token
 
 
 class VALUE(Token):
