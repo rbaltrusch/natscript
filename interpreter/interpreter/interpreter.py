@@ -8,7 +8,7 @@ from typing import Any
 from typing import Dict
 from typing import List
 
-from interpreter import exceptions
+import interpreter.exceptions as exceptions
 from interpreter.interfaces import Token
 from interpreter.interfaces import Value
 from interpreter.interfaces import Variable
@@ -67,10 +67,10 @@ class Interpreter:
 
         Raises an UndefinedVariableException if variable cannot be found.
         """
-        value = self._variables[-1].get(name)
-        if value is not None:
-            return value
-        raise exceptions.UndefinedVariableException(name)
+        try:
+            return self._variables[-1][name]
+        except KeyError:
+            raise exceptions.UndefinedVariableException(name)
 
     def set_variable(self, name: str, value: Any) -> None:
         """Sets the value of the variable identified by name to the specified value."""
