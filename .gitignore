@@ -6,3 +6,5 @@ interpreter/*.natc
 tests/reports/
 tests/htmlcov/
 .vscode/
+**/fib.py
+todo.txt
