@@ -248,7 +248,7 @@ class NoneValue(Value):
         return "none"
 
     def get_value(self):
-        return None
+        return self
 
 
 class Variable(Value):
