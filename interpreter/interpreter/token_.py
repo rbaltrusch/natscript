@@ -226,6 +226,8 @@ class Value:
         self.value = not self.value
 
     def __repr__(self):
+        if isinstance(self.value, bool):
+            return str(self.value).lower()
         return str(self.value)
 
 
@@ -242,6 +244,9 @@ class IterableValue(Value):
 
 
 class NoneValue(Value):
+    def __repr__(self):
+        return "none"
+
     def get_value(self):
         return None
 
