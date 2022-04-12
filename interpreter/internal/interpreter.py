@@ -47,10 +47,10 @@ class Interpreter:
     def stack_pop(self) -> Value:
         """Pops and returns the last value on the stack.
 
-        Raises an InternalEmptyStackError if the stack is empty.
+        Raises an EmptyStackError if the stack is empty.
         """
         if not self._stacks or not self._stacks[-1]:
-            raise exceptions.InternalEmptyStackError()
+            raise exceptions.EmptyStackError()
         return self._stacks[-1].pop()
 
     def stack_append(self, value: Value) -> None:

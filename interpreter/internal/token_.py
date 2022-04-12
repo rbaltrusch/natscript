@@ -174,7 +174,7 @@ class Token:
                 return
 
             if not expected_token.optional:
-                raise exceptions.InternalParseTypeError(token, expected_token.types)
+                raise exceptions.ParseTypeError(token, expected_token.types)
         raise exceptions.ParseException(token)
 
     @property
