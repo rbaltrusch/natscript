@@ -416,10 +416,10 @@ class CHECK(VALUE):
 
 class IF(Token):
     EXPECTED_TOKENS = [
-        ExpectedToken((VALUE, CHECK), 2),
-        ExpectedToken((THEN,), 0),
+        ExpectedToken((VALUE, CHECK), 1),
+        ExpectedToken((THEN,), 2),
         ExpectedToken((CLAUSE,), 3),
-        ExpectedToken((ELSE,), 1, optional=True),
+        ExpectedToken((ELSE,), 0, optional=True),
     ]
 
     def run(self, interpreter):
