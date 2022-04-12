@@ -64,27 +64,32 @@ class ExpectedToken:
     def pop_token_from(self, expected_tokens):
         return expected_tokens.pop(0)
 
-    def copy(self):
-        return self
+    @property
+    def needs_copy(self) -> bool:
+        return False
 
 
 class ExpectedTokenCombination:
-    def __init__(self, *tokens: ExpectedToken, optional = False):
+    def __init__(self, *tokens: ExpectedToken, optional=False, copied=False):
         self.tokens = list(tokens)
-        self._current_tokens = self.tokens[:]
         self.optional = optional
+        self.copied = copied
 
     def pop_token_from(self, expected_tokens):
-        tokens = self._current_tokens if self._current_tokens else expected_tokens
+        tokens = self.tokens if self.tokens else expected_tokens
         return tokens.pop(0)
 
     def copy(self):
-        return self.__class__(*self.tokens, optional=self.optional)
+        return self.__class__(*self.tokens, optional=self.optional, copied=True)
+
+    @property
+    def needs_copy(self) -> bool:
+        return not self.copied
 
     @property
     def types(self) -> Tuple[Type]:
         types = []
-        for token in self._current_tokens:
+        for token in self.tokens:
             types.extend(token.types)
             if not token.optional:
                 break
@@ -92,9 +97,9 @@ class ExpectedTokenCombination:
 
     @property
     def run_order(self) -> int:
-        if not self._current_tokens:
+        if not self.tokens:
             return 0
-        return self._current_tokens[0].run_order
+        return self.tokens[0].run_order
 
 
 class Token:
@@ -110,7 +115,7 @@ class Token:
         self.tokens = []
         self.run_order = 0
         self.parent = None
-        self.expected_tokens = [token.copy() for token in self.EXPECTED_TOKENS]
+        self.expected_tokens = self.EXPECTED_TOKENS[:]
 
     def __repr__(self):
         value = '' if self.value is None else f', {self.value}'
@@ -151,6 +156,8 @@ class Token:
 
     def _check_types(self, token):
         while self.expected_tokens:
+            if self.expected_tokens[0].needs_copy:
+                self.expected_tokens[0] = self.expected_tokens[0].copy()
             expected_token = self.expected_tokens[0].pop_token_from(self.expected_tokens)
             if isinstance(token, expected_token.types):
                 token.run_order = expected_token.run_order
