@@ -12,7 +12,7 @@ from tokens_ import tokens
 
 
 def interpret(code: str):
-    token_factory = token_.TokenFactory(tokens.tokens, tokens.regex_tokens)
+    token_factory = token_.TokenFactory(tokens.get_tokens(), tokens.get_regex_tokens())
     lex = lexer.Lexer(token_factory)
     parser = parsing.Parser()
     inter = interpreter.Interpreter()
