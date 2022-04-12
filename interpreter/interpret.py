@@ -4,16 +4,20 @@ Created on Tue Dec 14 21:51:28 2021
 
 @author: richa
 """
-from internal import parsing
-from internal import lexer
 from internal import interpreter
-import interpreter.token_ as token
-from tokens_ import tokens
+from internal import lexer
+from internal import parsing
+from internal import token_
 from tokens_ import compiler
+from tokens_ import tokens
 
 
-def interpret(filename: str):
-    token_factory = token.TokenFactory(tokens.get_tokens(), tokens.get_regex_tokens())
+def interpret(filename: str) -> None:
+    """Constructs a token tree for the source code file specified, either
+    by reading the soruce code directly or loading the token tree from a compiled file,
+    then runs all tokens in the tree.
+    """
+    token_factory = token_.TokenFactory(tokens.get_tokens(), tokens.get_regex_tokens())
     lex = lexer.Lexer(token_factory)
     parser = parsing.Parser()
     inter = interpreter.Interpreter()
@@ -30,13 +34,14 @@ def interpret(filename: str):
         inter.interpret(syntax_block)
 
 
-def read_file(filename: str):
-    with open(filename) as file:
+def read_file(filename: str) -> str:
+    """Reads the specified file and returns its contents"""
+    with open(filename, "r", encoding="utf-8") as file:
         file_contents = file.read()
     return file_contents
 
 
-def print_token_trace(token: token.Token, indent: int = 0):
+def print_token_trace(token: token_.Token, indent: int = 0):
     """Recursively prints information tree for token and its subtokens."""
     values = [] if token.value is None else [token.value]
     print(token.line, ' ' * indent, token.__class__.__name__, *values)
