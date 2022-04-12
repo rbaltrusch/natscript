@@ -21,4 +21,4 @@ jobs:
     - name: Analysing the code with pylint
       working-directory: interpreter
       run: |
-        pylint interpreter
+        pylint internal
