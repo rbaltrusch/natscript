@@ -4,7 +4,6 @@ Created on Fri Nov 20 17:17:11 2020
 
 @author: Korean_Crimson
 """
-from typing import Any
 from typing import Dict
 from typing import List
 
@@ -72,9 +71,9 @@ class Interpreter:
         except KeyError:
             raise exceptions.UndefinedVariableException(name)
 
-    def set_variable(self, name: str, value: Any) -> None:
-        """Sets the value of the variable identified by name to the specified value."""
-        self._variables[-1][name] = value
+    def set_variable(self, name: str, variable: Variable) -> None:
+        """Sets the value of the variable identified by name to the specified variable."""
+        self._variables[-1][name] = variable
 
     def remove_variable(self, name: str) -> None:
         """Removes the variable identified by name from the current variable scope"""

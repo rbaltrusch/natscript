@@ -47,6 +47,10 @@ class InternalParseTypeError(Exception):
     def __init__(self, token, types):
         super().__init__(f'Expected {types=}, but got {token}!')
 
+class InternalFullTokenParseError(Exception):
+    def __init__(self, token):
+        super().__init__(f'Token {token=} is already full!')
+
 class InternalEmptyStackError(Exception):
     def __init__(self):
         super().__init__('Could not pop value from empty stack!')

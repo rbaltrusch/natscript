@@ -4,13 +4,19 @@ Created on Sat Nov  6 12:04:45 2021
 
 @author: richa
 """
+from __future__ import annotations
+
 import re
 from dataclasses import dataclass
 from dataclasses import field
 from typing import Any
+from typing import Callable
 from typing import List
+from typing import Optional
 from typing import Tuple
 from typing import Type
+
+from interpreter.internal.interfaces import Interpreter
 
 from internal import exceptions
 
@@ -61,8 +67,11 @@ class ExpectedToken:
     run_order: int = 0
     optional: bool = False
 
-    def pop_token_from(self, expected_tokens):
+    def pop_token_from(self, expected_tokens: List[ExpectedToken]):
         return expected_tokens.pop(0)
+
+    def copy(self):
+        return self
 
     @property
     def needs_copy(self) -> bool:
@@ -75,7 +84,7 @@ class ExpectedTokenCombination:
         self.optional = optional
         self.copied = copied
 
-    def pop_token_from(self, expected_tokens):
+    def pop_token_from(self, expected_tokens: List[ExpectedToken]):
         tokens = self.tokens if self.tokens else expected_tokens
         return tokens.pop(0)
 
@@ -87,8 +96,8 @@ class ExpectedTokenCombination:
         return not self.copied
 
     @property
-    def types(self) -> Tuple[Type]:
-        types = []
+    def types(self) -> Tuple[Type[Token], ...]:
+        types: List[Type[Token]] = []
         for token in self.tokens:
             types.extend(token.types)
             if not token.optional:
@@ -105,16 +114,16 @@ class ExpectedTokenCombination:
 class Token:
 
     EXPECTED_TOKENS: List[ExpectedToken] = []
-    VALUE_FACTORY: callable = None
+    VALUE_FACTORY: Optional[Callable[..., Any]] = None
     TOKEN_FACTORY: TokenFactory = TokenFactory()
-    TOKEN_STACK = []
+    TOKEN_STACK: List[Token] = []
 
     def __init__(self, value=None, line: int = 0):
         self.value = value
         self.line = line
-        self.tokens = []
+        self.tokens: List[Token] = []
         self.run_order = 0
-        self.parent = None
+        self.parent: Optional[Token] = None
         self.expected_tokens = self.EXPECTED_TOKENS[:]
 
     def __repr__(self):
@@ -129,32 +138,33 @@ class Token:
             self.TOKEN_STACK.pop()
         self._run(interpreter)
 
-    def _run(self, interpreter):
+    def _run(self, _: Interpreter):
         pass
 
-    def check_optional_token(self, token) -> bool:
+    def check_optional_token(self, token: Token) -> bool:
         all_types = tuple(t for token in self.expected_tokens for t in token.types)
         return isinstance(token, all_types)
 
-    def add_token(self, token):
+    def add_token(self, token: Token):
         if self.full:
-            raise exceptions.InternalParseError(token)
+            raise exceptions.InternalFullTokenParseError(token)
         self._check_types(token)
         self.tokens.append(token)
         token.parent = self
 
-    def pop_tokens(self, tokens):
+    def pop_tokens(self, _: List[Token]):
         pass
 
-    def update_token_factory(self, token_factory):
+    def update_token_factory(self, _: TokenFactory):
         pass
 
-    def print_token_stack(self):
+    @classmethod
+    def print_token_stack(cls):
         print('---TOKEN STACK---')
-        for token in self.TOKEN_STACK:
+        for token in cls.TOKEN_STACK:
             print(token)
 
-    def _check_types(self, token):
+    def _check_types(self, token: Token):
         while self.expected_tokens:
             if self.expected_tokens[0].needs_copy:
                 self.expected_tokens[0] = self.expected_tokens[0].copy()
@@ -203,7 +213,7 @@ class ClauseToken(Token):
 
     @property
     def full(self) -> bool:
-        return self.tokens and isinstance(self.tokens[-1], self.CLOSE_TOKEN)
+        return bool(self.tokens) and isinstance(self.tokens[-1], self.CLOSE_TOKEN)
 
     @property
     def satisfied(self) -> bool:
@@ -236,6 +246,7 @@ class IterableValue(Value):
         values = []
         for value in self.value:
             try:
+                value: Value
                 val = value.get_value()
             except AttributeError:
                 val = value
