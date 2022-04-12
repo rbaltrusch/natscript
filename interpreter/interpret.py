@@ -7,13 +7,13 @@ Created on Tue Dec 14 21:51:28 2021
 from interpreter import interpreter
 from interpreter import lexer
 from interpreter import parsing
-from interpreter import token_
+from interpreter import token_ as token
 from tokens_ import tokens
 from tokens_ import compiler
 
 
 def interpret(filename: str):
-    token_factory = token_.TokenFactory(tokens.get_tokens(), tokens.get_regex_tokens())
+    token_factory = token.TokenFactory(tokens.get_tokens(), tokens.get_regex_tokens())
     lex = lexer.Lexer(token_factory)
     parser = parsing.Parser()
     inter = interpreter.Interpreter()
@@ -34,3 +34,11 @@ def read_file(filename: str):
     with open(filename) as file:
         file_contents = file.read()
     return file_contents
+
+
+def print_token_trace(token: token.Token, indent: int = 0):
+    """Recursively prints information tree for token and its subtokens."""
+    values = [] if token.value is None else [token.value]
+    print(token.line, ' ' * indent, token.__class__.__name__, *values)
+    for token in token.tokens:
+        print_token_trace(token, indent+4)
