@@ -11,32 +11,37 @@ from dataclasses import dataclass
 from dataclasses import field
 from typing import Any
 from typing import Callable
+from typing import Dict
 from typing import List
 from typing import Optional
 from typing import Tuple
 from typing import Type
 
-from interpreter.internal.interfaces import Interpreter
+from internal.interfaces import Interpreter
 
 from internal import exceptions
+
+# pylint: disable=no-self-use
+# pylint: disable=missing-class-docstring
+# pylint: disable=missing-function-docstring
 
 
 @dataclass
 class TokenFactory:
 
-    tokens: dict = field(default_factory=dict)
-    regex_tokens: dict = field(default_factory=dict)
+    tokens: Dict[str, Type[Token]] = field(default_factory=dict)
+    regex_tokens: Dict[str, Type[Token]] = field(default_factory=dict)
 
     def __post_init__(self):
-        self.regex_patterns = [(re.compile(k), k) for k in self.regex_tokens.keys()]
+        self._regex_patterns = [(re.compile(k), k) for k in self.regex_tokens.keys()]
         self.line_number = 1
 
-    def create_token(self, token: str):
+    def create_token(self, token: str) -> Token:
         if token in self.tokens:
             token_type = self.tokens[token]
             return token_type(value=None, line=self.line_number)
 
-        for pattern, key in self.regex_patterns:
+        for pattern, key in self._regex_patterns:
             if pattern.search(token):
                 token_type = self.regex_tokens[key]
                 return token_type(value=token, line=self.line_number)
@@ -44,11 +49,11 @@ class TokenFactory:
         raise exceptions.LexError(token, self.line_number)
 
     @staticmethod
-    def create_variable(name: str):
+    def create_variable(name: str) -> Variable:
         return Variable(name)
 
     @staticmethod
-    def create_value(value: Any):
+    def create_value(value: Any) -> Value:
         if value is None:
             return NoneValue()
 

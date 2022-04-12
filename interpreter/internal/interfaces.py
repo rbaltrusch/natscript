@@ -12,6 +12,8 @@ from typing import Dict
 from typing import List
 from typing import Optional
 from typing import Protocol
+from typing import Tuple
+from typing import Type
 
 
 class Token(Protocol):
@@ -19,10 +21,8 @@ class Token(Protocol):
 
     value: Any
     line: int
-    full: bool
-    satisfied: bool
-    RESOLUTION_ORDER: List[int]
-    EXPECTED_TOKENS: List[tuple]
+    tokens: List[Token]
+    EXPECTED_TOKENS: List[ExpectedToken]
     VALUE_FACTORY: Optional[Callable[..., Any]]
     TOKEN_FACTORY: TokenFactory
     TOKEN_STACK: List[Token]
@@ -43,8 +43,38 @@ class Token(Protocol):
     def print_token_stack(cls):
         """Prints the current token stack"""
 
+    @property
+    def full(self) -> bool:
+        """The filling status of the token"""
 
-class Value(Protocol):
+    @property
+    def satisfied(self) -> bool:
+        """True if all mandatory tokens are contained"""
+
+    @property
+    def has_all_optionals(self) -> bool:
+        """True if all expected tokens are contained"""
+
+
+class ExpectedToken(Protocol):
+    """Protocol for expected token"""
+
+    types: Tuple[type]
+    run_order: int
+    optional: bool
+
+    def pop_token_from(self, expected_tokens: List[ExpectedToken]) -> ExpectedToken:
+        """Pops a token from the list and returns it"""
+
+    def copy(self) -> ExpectedToken:
+        """Returns a copy of the current token"""
+
+    @property
+    def needs_copy(self) -> bool:
+        """True if this token needs to be copied (True if mutable)"""
+
+
+class Value(Protocol): #pylint: disable=too-few-public-methods
     """Protocol for interpreter stack Value objects"""
 
     value: Any
@@ -54,7 +84,7 @@ class Value(Protocol):
         """Returns the actual value of the Value"""
 
 
-class Variable(Protocol):
+class Variable(Protocol): #pylint: disable=too-few-public-methods
     """Protocol for interpreter Variable objects"""
 
     value: Any
@@ -70,6 +100,7 @@ class TokenFactory(Protocol):
 
     tokens: Dict[str, Token]
     regex_tokens: Dict[str, Token]
+    line_number: str
 
     def create_token(self, token: str) -> Token:
         """Returns a new token"""

@@ -62,7 +62,7 @@ class SyntaxException(RunTimeException):
         )
 
 
-class ParseTypeError(SyntaxException):
+class ParseTypeError(Exception):
     """Raised for mismatching token types"""
 
     def __init__(self, token: Token, types: Tuple):
