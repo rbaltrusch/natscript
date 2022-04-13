@@ -49,9 +49,10 @@ class Interpreter:
 
         Raises an EmptyStackError if the stack is empty.
         """
-        if not self._stacks or not self._stacks[-1]:
+        try:
+            return self._stacks[-1].pop()
+        except IndexError:
             raise exceptions.EmptyStackError()
-        return self._stacks[-1].pop()
 
     def stack_append(self, value: Value) -> None:
         """Appends the passed Value to the stack"""
