@@ -21,4 +21,4 @@ jobs:
     - name: Analysing the code with pylint
       working-directory: interpreter
       run: |
-        pylint internal
+        pylint internal --fail-under=9.5

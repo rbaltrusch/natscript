@@ -15,13 +15,19 @@ from typing import Protocol
 from typing import Tuple
 from typing import Type
 
+# pylint: disable=duplicate-code
+
 
 class Token(Protocol):
     """Protocol for executable Tokens"""
 
-    value: Any
+    value: Optional[Any]
     line: int
     tokens: List[Token]
+    run_order: int
+    parent: Optional[Token]
+    expected_tokens: List[ExpectedToken]
+
     EXPECTED_TOKENS: List[ExpectedToken]
     VALUE_FACTORY: Optional[Callable[..., Any]]
     TOKEN_FACTORY: TokenFactory
@@ -59,7 +65,7 @@ class Token(Protocol):
 class ExpectedToken(Protocol):
     """Protocol for expected token"""
 
-    types: Tuple[type]
+    types: Tuple[Type[Token], ...]
     run_order: int
     optional: bool
 
@@ -74,7 +80,7 @@ class ExpectedToken(Protocol):
         """True if this token needs to be copied (True if mutable)"""
 
 
-class Value(Protocol): #pylint: disable=too-few-public-methods
+class Value(Protocol):  # pylint: disable=too-few-public-methods
     """Protocol for interpreter stack Value objects"""
 
     value: Any
@@ -84,7 +90,7 @@ class Value(Protocol): #pylint: disable=too-few-public-methods
         """Returns the actual value of the Value"""
 
 
-class Variable(Protocol): #pylint: disable=too-few-public-methods
+class Variable(Protocol):  # pylint: disable=too-few-public-methods
     """Protocol for interpreter Variable objects"""
 
     value: Any
@@ -98,8 +104,8 @@ class Variable(Protocol): #pylint: disable=too-few-public-methods
 class TokenFactory(Protocol):
     """Protocol for TokenFactory"""
 
-    tokens: Dict[str, Token]
-    regex_tokens: Dict[str, Token]
+    tokens: Dict[str, Type[Token]]
+    regex_tokens: Dict[str, Type[Token]]
     line_number: str
 
     def create_token(self, token: str) -> Token:
@@ -110,7 +116,7 @@ class TokenFactory(Protocol):
         """Returns a new Variable"""
 
     @staticmethod
-    def create_value(value: str) -> Value:
+    def create_value(value: Any) -> Value:
         """Returns a new Value"""
 
 

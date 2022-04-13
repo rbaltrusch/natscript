@@ -5,23 +5,31 @@ Created on Fri Nov 20 13:51:53 2020
 @author: Korean_Crimson
 """
 import re
+from typing import Generator
+from typing import List
 
+from internal.interfaces import Token
+
+# pylint: disable=too-few-public-methods
 class Lexer:
+    """Lexer class, lexes a string and turns it into a list of tokens"""
+
     def __init__(self, token_factory):
         self.token_factory = token_factory
 
-    def lex(self, string):
-        for s in self._split(string):
-            token = self.token_factory.create_token(s)
+    def lex(self, string: str) -> Generator[Token, str, None]:
+        """Turns the string into a Token generator"""
+        for substring in self._split(string):
+            token = self.token_factory.create_token(substring)
             token.update_token_factory(self.token_factory)
             yield token
 
     @staticmethod
-    def _split(string):
-        string = string.replace('\n', ' \n ')
+    def _split(string: str) -> List[str]:
+        string = string.replace("\n", " \n ")
 
-        #matches non-word characters (i.e. punctuation) and adds whitespace around them
+        # matches non-word characters (i.e. punctuation) and adds whitespace around them
         # ignore dot (.) and quotation marks (""), needed for float and string values.
-        string = re.sub('(?P<match>[^\w\."])', ' \g<match> ', string).strip()
-        string_tokens = [s for s in string.split(' ') if s != '']
+        string = re.sub(r'(?P<match>[^\w\."])', r" \g<match> ", string).strip()
+        string_tokens = [s for s in string.split(" ") if s != ""]
         return string_tokens

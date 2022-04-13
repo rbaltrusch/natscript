@@ -4,14 +4,25 @@ Created on Fri Nov 20 14:34:15 2020
 
 @author: Korean_Crimson
 """
+from typing import Generator
+from typing import List
 
+from internal.interfaces import Token
+
+
+# pylint: disable=too-few-public-methods
 class Parser:
+    """Parser classes, parses a list of Token objects and constructs
+    token trees from them by nesting them as required.
+    """
+
     def __init__(self):
         self.token_stack = []
 
-    def parse(self, tokens):
+    def parse(self, tokens: List[Token]) -> Generator[Token, Token, None]:
+        """Constructs nested token trees by parsing the passed tokens"""
         while tokens:
-            popped_tokens = tokens[0].pop_tokens(tokens)
+            popped_tokens = tokens[0].pop_tokens(tokens) # type: ignore
             if popped_tokens:
                 continue
 
@@ -20,7 +31,11 @@ class Parser:
                 self.token_stack.append(token)
                 continue
 
-            while self.token_stack and not self._can_add(token) and self.token_stack[-1].is_subtoken:
+            while (
+                self.token_stack
+                and not self._can_add(token)
+                and self.token_stack[-1].is_subtoken
+            ):
                 self.token_stack.pop()
 
             if self.token_stack:
@@ -41,5 +56,6 @@ class Parser:
         while self.token_stack:
             yield self.token_stack.pop()
 
-    def _can_add(self, token):
-        return not self.token_stack[-1].satisfied or self.token_stack[-1].check_optional_token(token)
+    def _can_add(self, token: Token) -> bool:
+        parent = self.token_stack[-1]
+        return not parent.satisfied or parent.check_optional_token(token)

@@ -7,7 +7,7 @@ Created on Fri Nov 20 17:17:11 2020
 from typing import Dict
 from typing import List
 
-import internal.exceptions as exceptions
+from internal import exceptions
 from internal.interfaces import Token
 from internal.interfaces import Value
 from internal.interfaces import Variable
@@ -25,13 +25,13 @@ class Interpreter:
             if not token.satisfied:
                 raise exceptions.SyntaxException(token)
             token.run(self)
-        except exceptions.RunTimeException as e:
+        except exceptions.RunTimeException as exc:
             token.print_token_stack()
-            e.line = token.TOKEN_STACK[-1].line
-            raise e
-        except Exception as e:
+            exc.line = token.TOKEN_STACK[-1].line
+            raise exc
+        except Exception as exc:
             token.print_token_stack()
-            raise e
+            raise exc
 
     def add_stack(self) -> None:
         """Adds a stack to the stack of stacks"""
@@ -69,7 +69,7 @@ class Interpreter:
         try:
             return self._variables[-1][name]
         except KeyError:
-            raise exceptions.UndefinedVariableException(name)
+            raise exceptions.UndefinedVariableException(name) # pylint: disable=raise-missing-from
 
     def set_variable(self, name: str, variable: Variable) -> None:
         """Sets the value of the variable identified by name to the specified variable."""

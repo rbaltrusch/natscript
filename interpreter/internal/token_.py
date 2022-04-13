@@ -17,9 +17,8 @@ from typing import Optional
 from typing import Tuple
 from typing import Type
 
-from internal.interfaces import Interpreter
-
 from internal import exceptions
+from internal.interfaces import Interpreter
 
 # pylint: disable=no-self-use
 # pylint: disable=missing-class-docstring
@@ -33,7 +32,7 @@ class TokenFactory:
     regex_tokens: Dict[str, Type[Token]] = field(default_factory=dict)
 
     def __post_init__(self):
-        self._regex_patterns = [(re.compile(k), k) for k in self.regex_tokens.keys()]
+        self._regex_patterns = [(re.compile(k), k) for k in self.regex_tokens]
         self.line_number = 1
 
     def create_token(self, token: str) -> Token:
@@ -68,14 +67,14 @@ class TokenFactory:
 
 @dataclass
 class ExpectedToken:
-    types: Tuple[type]
+    types: Tuple[Type[Token], ...]
     run_order: int = 0
     optional: bool = False
 
-    def pop_token_from(self, expected_tokens: List[ExpectedToken]):
+    def pop_token_from(self, expected_tokens: List[ExpectedToken]) -> ExpectedToken:
         return expected_tokens.pop(0)
 
-    def copy(self):
+    def copy(self) -> ExpectedToken:
         return self
 
     @property
@@ -123,7 +122,7 @@ class Token:
     TOKEN_FACTORY: TokenFactory = TokenFactory()
     TOKEN_STACK: List[Token] = []
 
-    def __init__(self, value=None, line: int = 0):
+    def __init__(self, value: Optional[Any] = None, line: int = 0):
         self.value = value
         self.line = line
         self.tokens: List[Token] = []
@@ -193,7 +192,7 @@ class Token:
     @value.setter
     def value(self, value):
         if self.VALUE_FACTORY is not None:
-            self._value = self.VALUE_FACTORY(value)
+            self._value = self.VALUE_FACTORY(value) # pylint: disable=not-callable
         else:
             self._value = value
 
@@ -268,7 +267,7 @@ class NoneValue(Value):
 
 
 class Variable(Value):
-    def __init__(self, name: str):
+    def __init__(self, name: str): # pylint: disable=super-init-not-called
         self.name = name
         self.inputs = []
 

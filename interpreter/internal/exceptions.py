@@ -38,6 +38,7 @@ class RunTimeException(Exception):
 
     @property
     def line_text(self) -> str:
+        """The text displaying the line number"""
         return f"Line {self.line}: "
 
 
