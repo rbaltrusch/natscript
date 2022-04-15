@@ -54,7 +54,9 @@ class Parser:
                     break
 
         while self.token_stack:
-            yield self.token_stack.pop()
+            popped_token = self.token_stack.pop()
+            if not popped_token.is_subtoken:
+                yield popped_token
 
     def _can_add(self, token: Token) -> bool:
         parent = self.token_stack[-1]
