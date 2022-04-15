@@ -12,12 +12,14 @@ from dataclasses import field
 from typing import Any
 from typing import Callable
 from typing import Dict
+from typing import Iterable
 from typing import List
 from typing import Optional
 from typing import Tuple
 from typing import Type
 
 from internal import exceptions
+from internal import tokenvalue
 from internal.interfaces import Interpreter
 
 # pylint: disable=no-self-use
@@ -34,6 +36,8 @@ class TokenFactory:
     def __post_init__(self):
         self._regex_patterns = [(re.compile(k), k) for k in self.regex_tokens]
         self.line_number = 1
+        self._value_cache = {}
+        self._none_value = tokenvalue.NoneValue()
 
     def create_token(self, token: str) -> Token:
         if token in self.tokens:
@@ -48,22 +52,28 @@ class TokenFactory:
         raise exceptions.LexError(token, self.line_number)
 
     @staticmethod
-    def create_variable(name: str) -> Variable:
-        return Variable(name)
+    def create_variable(name: str) -> tokenvalue.Variable:
+        return tokenvalue.Variable(name)
 
-    @staticmethod
-    def create_value(value: Any) -> Value:
+    def create_any_value(self, value: Any) -> tokenvalue.Value:
         if value is None:
-            return NoneValue()
-
-        if isinstance(value, str):
-            return Value(value)
+            return self.create_none_value()
 
         try:
-            iter(value)
-            return IterableValue(value)
+            return self.create_value(value)
         except TypeError:
-            return Value(value)
+            return self.create_iterable_value(value)
+
+    def create_value(self, value: Any) -> tokenvalue.Value:
+        return self._value_cache.get(value, tokenvalue.Value(value))
+
+    @staticmethod
+    def create_iterable_value(value: Iterable) -> tokenvalue.IterableValue:
+        return tokenvalue.IterableValue(value)
+
+    def create_none_value(self) -> tokenvalue.NoneValue:
+        return self._none_value
+
 
 @dataclass
 class ExpectedToken:
@@ -222,54 +232,3 @@ class ClauseToken(Token):
     @property
     def satisfied(self) -> bool:
         return self.full
-
-
-@dataclass
-class Value:
-    value: Any = None
-
-    def __post_init__(self):
-        self.inputs = None
-
-    def get_value(self):
-        if self.value is None:
-            raise exceptions.UndefinedVariableException(self)
-        return self.value
-
-    def negate_value(self) -> None:
-        self.value = not self.value
-
-    def __repr__(self):
-        if isinstance(self.value, bool):
-            return str(self.value).lower()
-        return str(self.value)
-
-
-class IterableValue(Value):
-    def get_value(self):
-        values = []
-        for value in self.value:
-            try:
-                value: Value
-                val = value.get_value()
-            except AttributeError:
-                val = value
-            values.append(val)
-        return values
-
-
-class NoneValue(Value):
-    def __repr__(self):
-        return "none"
-
-    def get_value(self):
-        return self
-
-
-class Variable(Value):
-    def __init__(self, name: str): # pylint: disable=super-init-not-called
-        self.name = name
-        self.inputs = []
-
-    def __repr__(self):
-        return f'{self.name}'
