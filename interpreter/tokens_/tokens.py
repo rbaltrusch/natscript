@@ -130,6 +130,13 @@ class DEFAULTING(Token):
         ExpectedToken((VALUE,), 1)
     ]
 
+    def _init(self, interpreter):
+        for token in self.tokens:
+            token.run(interpreter)
+
+    def run(self, interpreter):
+        pass
+
 
 class VARNAME(VALUE):
 
@@ -138,19 +145,16 @@ class VARNAME(VALUE):
     ]
 
     def _init(self, interpreter):
-        interpreter.set_variable(
-            self.value,
-            self.TOKEN_FACTORY.create_variable(self.value)
-        )
-
-    def _run(self, interpreter):
-        variable = interpreter.get_variable(self.value)
+        variable = self.TOKEN_FACTORY.create_variable(self.value)
+        interpreter.set_variable(self.value, variable)
 
         if self.has_all_optionals:
             default_value = interpreter.stack_pop()
             variable.value = default_value.get_value()
             interpreter.set_variable(variable.name, default_value)
 
+    def _run(self, interpreter):
+        variable = interpreter.get_variable(self.value)
         interpreter.stack_append(variable)
         interpreter.set_variable("it", variable)
 
