@@ -132,6 +132,7 @@ class Token:
     VALUE_FACTORY: Optional[Callable[..., Any]] = None
     TOKEN_FACTORY: TokenFactory = TokenFactory()
     TOKEN_STACK: List[Token] = []
+    functional = True
 
     def __init__(self, value: Optional[Any] = None, line: int = 0):
         self.value = value
@@ -149,7 +150,8 @@ class Token:
 
     def init(self, interpreter):
         for token in self.tokens:
-            token.init(interpreter)
+            if token.functional:
+                token.init(interpreter)
         self._init(interpreter)
 
     def _init(self, interpreter):
@@ -157,7 +159,9 @@ class Token:
 
     def run(self, interpreter):
         if self._sorted_tokens is None:
-            self._sorted_tokens = sorted(self.tokens, key=lambda x: x.run_order)
+            self._sorted_tokens = sorted(
+                [x for x in self.tokens if x.functional], key=lambda x: x.run_order
+            )
 
         for token in self._sorted_tokens:
             token.run(interpreter)

@@ -22,31 +22,31 @@ from internal.token_ import Token
 
 
 class TO(Token):
-    pass
+    functional = False
 
 
 class THAN(Token):
-    pass
+    functional = False
 
 
 class FROM(Token):
-    pass
+    functional = False
 
 
 class BY(Token):
-    pass
+    functional = False
 
 
 class AS(Token):
-    pass
+    functional = False
 
 
 class OF(Token):
-    pass
+    functional = False
 
 
 class THEN(Token):
-    pass
+    functional = False
 
 
 class THE(SkipToken):
