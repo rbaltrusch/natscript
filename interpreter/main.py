@@ -8,4 +8,5 @@ Created on Fri Nov 20 13:54:26 2020
 import interpret
 
 if __name__ == '__main__':
-    interpret.interpret(filename='test.nat')
+    tokens = interpret.construct_tokens(filename='test.nat')
+    interpret.interpret(tokens)

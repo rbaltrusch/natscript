@@ -4,37 +4,43 @@ Created on Tue Dec 14 21:51:28 2021
 
 @author: richa
 """
+from typing import List
 from internal import interpreter
 from internal import lexer
 from internal import parsing
 from internal import token_
+from internal import interfaces
 from tokens_ import compiler
 from tokens_ import tokens
 
+def construct_tokens(filename: str) -> None:
+    try:
+        return compiler.read_compiled_file(filename)
+    except compiler.CompilerError:
+        pass
 
-def interpret(filename: str) -> None:
+    token_factory = token_.TokenFactory(tokens.get_tokens(), tokens.get_regex_tokens())
+    lex = lexer.Lexer(token_factory)
+    parser = parsing.Parser()
+
+    code = read_file(filename)
+    tokens_ = list(lex.lex(code))
+    syntax_blocks = list(parser.parse(tokens_))
+    compiler.write_compiled_file(syntax_blocks, filename)
+    return syntax_blocks
+
+def interpret(syntax_blocks: List[interfaces.Token]) -> None:
     """Constructs a token tree for the source code file specified, either
     by reading the source code directly or loading the token tree from a compiled file,
     then runs all tokens in the tree.
     """
-    token_factory = token_.TokenFactory(tokens.get_tokens(), tokens.get_regex_tokens())
-    lex = lexer.Lexer(token_factory)
-    parser = parsing.Parser()
     inter = interpreter.Interpreter()
-
-    try:
-        syntax_blocks = compiler.read_compiled_file(filename)
-    except compiler.CompilerError:
-        code = read_file(filename)
-        tokens_ = list(lex.lex(code))
-        syntax_blocks = list(parser.parse(tokens_))
-        compiler.write_compiled_file(syntax_blocks, filename)
-
     for syntax_block in syntax_blocks:
         syntax_block.init(inter)
 
-    for syntax_block in syntax_blocks:
-        inter.interpret(syntax_block)
+    for _ in range(1000):
+        for syntax_block in syntax_blocks:
+            inter.interpret(syntax_block)
 
 
 def read_file(filename: str) -> str:
