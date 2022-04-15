@@ -22,13 +22,20 @@ def _delete_compiled_files():
 
 def _run_test_():
     filepaths = glob.glob('../examples/**/*.nat', recursive=True)
+    original_dir = os.getcwd()
     for filepath in filepaths:
         print(f'Running {filepath}...')
 
+        os.chdir(os.path.dirname(filepath))
+        filename = os.path.basename(filepath)
+
         try:
-            interpret.interpret(filepath)
+            tokens = interpret.construct_tokens(filename)
+            interpret.interpret(tokens)
             passed = True
         except Exception as exc:
             raise exc
         assert passed, f'{filepath} could not be interpreted!'
+
+        os.chdir(original_dir)
         print(f'{filepath} passed.')
