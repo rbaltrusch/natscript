@@ -7,15 +7,17 @@ define the function fibonacci expecting [limit] as {
     set current to 1
     set numbers to [old current]
 
-    while check current not greater than the limit {
-        add old to current, and set old to last number in numbers
-        append current to numbers, and set it to last number in numbers
+    while check current less than the limit {
+        set temp to current
+        add old to current
+        set old to temp
+        append current to numbers
     }
     return the numbers
 }
 
 define function main as {
-    call fibonacci with [100] and print the result
+    call fibonacci with [1000000] and print result
 }
 
 call main
