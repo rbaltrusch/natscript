@@ -742,6 +742,36 @@ class NONE(CollectionLogicToken):
         return result
 
 
+class IMPORT(Token):
+
+    EXPECTED_TOKENS = [
+        ExpectedToken((COLLECTION,), 2),
+        ExpectedToken((FROM,), 1),
+        ExpectedToken((STRING,), 0),
+    ]
+
+    def run(self, interpreter):
+        self.tokens[0].run(interpreter)
+        import_variables = interpreter.stack_pop().value
+        filename = self.tokens[-1].value
+
+        import interpret
+        tokens = interpret.construct_tokens(filename)
+
+        interpreter.add_stack()
+        for token in tokens:
+            token.init(interpreter)
+
+        for token in tokens:
+            token.run(interpreter)
+
+        variables = [interpreter.get_variable(x.name) for x in import_variables]
+        interpreter.remove_stack()
+
+        for variable in variables:
+            interpreter.set_variable(variable.name, variable)
+
+
 def get_tokens():
     return {
         "set": SET,
@@ -804,6 +834,7 @@ def get_tokens():
         "any": ANY,
         "some": SOME,
         "none": NONE,
+        "import": IMPORT,
     }
 
 
