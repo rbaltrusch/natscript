@@ -9,7 +9,7 @@ define function main as {
     set the total to 0
     for each num in numbers greater than threshold {
         for each num2 in numbers equal to target {
-            multiply num2 times num and add it to the total
+            multiply num2 by num and add it to the total
         }
     }
     print total

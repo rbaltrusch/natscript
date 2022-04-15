@@ -33,10 +33,6 @@ class FROM(Token):
     pass
 
 
-class TIMES(Token):
-    pass
-
-
 class BY(Token):
     pass
 
@@ -215,7 +211,7 @@ class MULTIPLY(Token):
 
     EXPECTED_TOKENS = [
         ExpectedToken((VARNAME,), 2),
-        ExpectedToken((TIMES,), 1),
+        ExpectedToken((BY,), 1),
         ExpectedToken((VALUE,), 0),
     ]
 
@@ -679,7 +675,6 @@ def get_tokens():
         "defaulting": DEFAULTING,
         "from": FROM,
         "by": BY,
-        "times": TIMES,
         "print": PRINT,
         "add": ADD,
         "subtract": SUBTRACT,
