@@ -243,3 +243,8 @@ class ClauseToken(Token):
     @property
     def satisfied(self) -> bool:
         return self.full
+
+
+class SkipToken(Token):
+    def pop_tokens(self, tokens):
+        return tokens.pop(0)

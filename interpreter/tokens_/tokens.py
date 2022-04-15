@@ -12,12 +12,84 @@ from internal.interpreter import Interpreter
 from internal.token_ import ClauseToken
 from internal.token_ import ExpectedToken
 from internal.token_ import ExpectedTokenCombination
+from internal.token_ import SkipToken
 from internal.token_ import Token
 
 
 # pylint: disable=no-self-use
 # pylint: disable=missing-class-docstring
 # pylint: disable=missing-function-docstring
+
+
+class TO(Token):
+    pass
+
+
+class THAN(Token):
+    pass
+
+
+class FROM(Token):
+    pass
+
+
+class TIMES(Token):
+    pass
+
+
+class BY(Token):
+    pass
+
+
+class AS(Token):
+    pass
+
+
+class OF(Token):
+    pass
+
+
+class THEN(Token):
+    pass
+
+
+class THE(SkipToken):
+    pass
+
+
+class THAT(SkipToken):
+    pass
+
+
+class IS(SkipToken):
+    pass
+
+
+class ARE(SkipToken):
+    pass
+
+
+class AND(SkipToken):
+    pass
+
+class COMMA(SkipToken):
+    pass
+
+
+class LINEBREAK(SkipToken):
+    def update_token_factory(self, token_factory):
+        token_factory.line_number += 1
+
+
+class COMMENT(Token):
+    def pop_tokens(self, tokens):
+        popped_tokens = []
+        while tokens:
+            token = tokens.pop(0)
+            popped_tokens.append(token)
+            if isinstance(token, LINEBREAK):
+                break
+        return popped_tokens
 
 
 class VALUE(Token):
@@ -53,10 +125,6 @@ class FALSE(VALUE):
 
 class NOTHING(VALUE):
     VALUE_FACTORY = lambda *_: None
-
-
-class TO(Token):
-    pass
 
 
 class DEFAULTING(Token):
@@ -104,22 +172,6 @@ class SET(Token):
         value = interpreter.stack_pop()
         variable.value = value.get_value()
         interpreter.set_variable(variable.name, variable)
-
-
-class FROM(Token):
-    pass
-
-
-class TIMES(Token):
-    pass
-
-
-class BY(Token):
-    pass
-
-
-class AS(Token):
-    pass
 
 
 class PRINT(Token):
@@ -193,35 +245,6 @@ class IT(VARNAME):
     def _run(self, interpreter):
         variable = interpreter.get_variable("it")
         interpreter.stack_append(variable)
-
-
-class LINEBREAK(Token):
-    def pop_tokens(self, tokens):
-        return tokens.pop(0)
-
-    def update_token_factory(self, token_factory):
-        token_factory.line_number += 1
-
-
-class COMMA(Token):
-    def pop_tokens(self, tokens):
-        return tokens.pop(0)
-
-
-class COMMENT(Token):
-    def pop_tokens(self, tokens):
-        popped_tokens = []
-        while tokens:
-            token = tokens.pop(0)
-            popped_tokens.append(token)
-            if isinstance(token, LINEBREAK):
-                break
-        return popped_tokens
-
-
-class AND(Token):
-    def pop_tokens(self, tokens):
-        return tokens.pop(0)
 
 
 class CLAUSE_END(Token):
@@ -316,10 +339,6 @@ class REMOVE(Token):
         collection.remove(value)
 
 
-class OF(Token):
-    pass
-
-
 class LENGTH(VALUE):
 
     EXPECTED_TOKENS = [
@@ -403,10 +422,6 @@ class RESULT(VARNAME):
         interpreter.remove_variable("result")
         interpreter.set_variable("it", variable)
         interpreter.stack_append(variable)
-
-
-class THEN(Token):
-    pass
 
 
 class ELSE(Token):
@@ -572,10 +587,6 @@ class WHILE(Token):
             clause_function(interpreter)
 
 
-class THAN(Token):
-    pass
-
-
 class GREATER(CONDITION):
     OPERATOR = operator.gt
     EXPECTED_TOKENS = [
@@ -596,21 +607,6 @@ class LESS(CONDITION):
         ExpectedToken((THAN,), 0),
         ExpectedToken((VALUE,), 1),
     ]
-
-
-class THE(Token):
-    def pop_tokens(self, tokens):
-        return tokens.pop(0)
-
-
-class THAT(Token):
-    def pop_tokens(self, tokens):
-        return tokens.pop(0)
-
-
-class IS(Token):
-    def pop_tokens(self, tokens):
-        return tokens.pop(0)
 
 
 class FIRST(VALUE):
@@ -734,6 +730,7 @@ def get_tokens():
         "at": AT,
         "is": IS,
         "that": THAT,
+        "are": ARE,
     }
 
 
