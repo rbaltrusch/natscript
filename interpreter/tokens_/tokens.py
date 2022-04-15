@@ -6,17 +6,26 @@ Created on Fri Nov 20 13:54:34 2020
 """
 import operator
 from typing import Optional
+
+from internal import exceptions
 from internal.interpreter import Interpreter
-from internal.token_ import ExpectedTokenCombination
 from internal.token_ import ClauseToken
 from internal.token_ import ExpectedToken
+from internal.token_ import ExpectedTokenCombination
 from internal.token_ import Token
 
 
+# pylint: disable=no-self-use
+# pylint: disable=missing-class-docstring
+# pylint: disable=missing-function-docstring
+
+
 class VALUE(Token):
+    def _init(self, interpreter):
+        self.token_value = self.TOKEN_FACTORY.create_value(self.value)
+
     def _run(self, interpreter):
-        value = self.TOKEN_FACTORY.create_value(self.value)
-        interpreter.stack_append(value)
+        interpreter.stack_append(self.token_value)
 
 
 class INTEGER(VALUE):
@@ -64,11 +73,14 @@ class VARNAME(VALUE):
         ExpectedToken((DEFAULTING,), optional=True)
     ]
 
+    def _init(self, interpreter):
+        interpreter.set_variable(
+            self.value,
+            self.TOKEN_FACTORY.create_variable(self.value)
+        )
+
     def _run(self, interpreter):
-        if interpreter.check_variable(self.value):
-            variable = interpreter.get_variable(self.value)
-        else:
-            variable = self.TOKEN_FACTORY.create_variable(self.value)
+        variable = interpreter.get_variable(self.value)
 
         if self.has_all_optionals:
             default_value = interpreter.stack_pop()
@@ -220,17 +232,28 @@ class CLAUSE(VALUE, ClauseToken):
 
     CLOSE_TOKEN = CLAUSE_END
 
-    def run(self, interpreter):
-        def run_tokens(interpreter):
-            for token in self.tokens:
-                token.run(interpreter)
-                if isinstance(token, RETURN):
-                    break
-            else:
-                interpreter.stack_append(self.TOKEN_FACTORY.create_value(value=None))
+    def _init(self, interpreter):
+        self._none = self.TOKEN_FACTORY.create_none_value()
+        self._runnable_tokens = self.tokens[:-1]
 
-        value = self.TOKEN_FACTORY.create_value(run_tokens)
+        for i, token in enumerate(self._runnable_tokens):
+            if isinstance(token, RETURN):
+                self._return_index = i
+                break
+        else:
+            self._return_index = None
+
+    def run(self, interpreter):
+        value = self.TOKEN_FACTORY.create_value(self._run_tokens)
         interpreter.stack_append(value)
+
+    def _run_tokens(self, interpreter):
+        for i, token in enumerate(self._runnable_tokens):
+            token.run(interpreter)
+            if i == self._return_index:
+                raise exceptions.ReturnException(self)
+        else:
+            interpreter.stack_append(self._none)
 
 
 class FUNCTION(Token):
@@ -251,6 +274,9 @@ class COLLECTION(VALUE, ClauseToken):
 
     CLOSE_TOKEN = COLLECTION_END
 
+    def _init(self, interpreter):
+        pass
+
     def _run(self, interpreter):
         # ignore last token, which closes the collection (COLLECTION_END)
         self.value = []
@@ -258,7 +284,8 @@ class COLLECTION(VALUE, ClauseToken):
             value = interpreter.stack_pop()
             self.value.append(value)
         self.value.reverse()
-        super()._run(interpreter)
+        value = self.TOKEN_FACTORY.create_iterable_value(self.value)
+        interpreter.stack_append(value)
 
 
 class APPEND(Token):
@@ -327,7 +354,7 @@ class DEFINE(Token):
 
     def run(self, interpreter):
         if not self.has_all_optionals:
-            value = self.TOKEN_FACTORY.create_value(value=[])
+            value = self.TOKEN_FACTORY.create_iterable_value(value=[])
             interpreter.stack_append(value)
         super().run(interpreter)
 
@@ -352,7 +379,11 @@ class CALL(Token):
             for input_, variable in zip(inputs, function.inputs.value):
                 variable.value = input_
                 interpreter.set_variable(variable.name, variable)
-        function.get_value()(interpreter)
+
+        try:
+            function.get_value()(interpreter)
+        except exceptions.ReturnException:
+            pass
         return_value = interpreter.stack_pop()
         interpreter.remove_stack()
         interpreter.set_variable('result', return_value)
@@ -465,7 +496,7 @@ class EACH(Token):
         if self.exhausted:
             return
 
-        value = self.TOKEN_FACTORY.create_value(
+        value = self.TOKEN_FACTORY.create_any_value(
             value=self.collection[self._index]
         )
         interpreter.stack_append(value)
@@ -586,7 +617,8 @@ class FIRST(VALUE):
     def run(self, interpreter):
         self.tokens[-1].run(interpreter)
         collection = interpreter.stack_pop().get_value()
-        value = self.TOKEN_FACTORY.create_value(
+
+        value = self.TOKEN_FACTORY.create_any_value(
             value=collection[self.RETURN_TOKEN_INDEX]
         )
         interpreter.stack_append(value)

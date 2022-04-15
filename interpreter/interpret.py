@@ -31,6 +31,9 @@ def interpret(filename: str) -> None:
         compiler.write_compiled_file(syntax_blocks, filename)
 
     for syntax_block in syntax_blocks:
+        syntax_block.init(inter)
+
+    for syntax_block in syntax_blocks:
         inter.interpret(syntax_block)
 
 

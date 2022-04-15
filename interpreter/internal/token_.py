@@ -147,6 +147,14 @@ class Token:
         type_ = 'Token' if not self.tokens else 'SyntaxTree'
         return f'Line {self.line}: {type_}({self.__class__.__name__}{value})'
 
+    def init(self, interpreter):
+        for token in self.tokens:
+            token.init(interpreter)
+        self._init(interpreter)
+
+    def _init(self, interpreter):
+        pass
+
     def run(self, interpreter):
         if self._sorted_tokens is None:
             self._sorted_tokens = sorted(self.tokens, key=lambda x: x.run_order)

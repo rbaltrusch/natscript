@@ -49,6 +49,13 @@ class UndefinedVariableException(RunTimeException):
         super().__init__(f"Tried to access undefined variable {name}!")
 
 
+class ReturnException(RunTimeException):
+    """Exception to be raised by a RETURN token and caught by a CALL token"""
+
+    def __init__(self, token: Token):
+            super().__init__(f"Did not expect token {token} at this location!")
+
+
 class SyntaxException(RunTimeException):
     """Exception to be raised for syntax errors"""
 
