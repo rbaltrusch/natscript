@@ -1,0 +1,87 @@
+# Finds the index of an element in a sorted array using binary search
+# Author: Richard Baltrusch
+# Date: 14/04/2022
+
+define function get_half_length expecting [collection] as {
+    # returns half the length of collection
+    set len to length of collection, divide it by 2, round it and return it
+}
+
+
+define function splice expecting [collection, start, end] as {
+    # returns a sub-collection containing all elements between indices start and end
+    set split_collection to []
+    while check start is less than end {
+        get element from collection at start and append it to split_collection
+        add 1 to start
+    }
+    return split_collection
+}
+
+
+define function binary_search expecting [collection target] as {
+    set results to [0]
+    call _binary_search with [collection, target, results]
+    print results
+    set sum to 0
+    for each number in results {
+        add number to sum
+    }
+    return sum
+}
+
+
+define function _binary_search expecting [collection target, results] as {
+    # returns the index of the target element in a sorted collection
+    set index to result of call get_half_length with [collection]
+    get number from collection at index
+    print [collection, target number, index]
+    if check that the number is equal to the target then {
+        append index to results
+        return index
+    }
+
+    if check that the target is greater than the number then {
+        append index to results
+        set split_collection to result of call splice with [collection, index, length of collection]
+        call _binary_search with [split_collection, target, results] and append result to results
+        #return index
+        return 0
+    }
+
+    set split_collection to result of call splice with [collection, 0, index]
+    set index to result of call _binary_search with [split_collection, target, results]
+    return 0
+}
+
+
+define function binary_search2 expecting [collection target] as {
+    # returns the index of the target element in a sorted collection
+    set index to result of call get_half_length with [collection]
+    get number from collection at index
+    print [collection, target number, index]
+    if check that the number is equal to the target then {
+        return index
+    }
+
+    if check that the target is greater than the number then {
+        set split_collection to result of call splice with [collection, index, length of collection]
+        call binary_search2 with [split_collection, target]
+        add result to index and return it
+    }
+
+    set split_collection to result of call splice with [collection, 0, index]
+    return result of call binary_search2 with [split_collection, target]
+}
+
+
+define function main as {
+    # main function
+    # something about the binary search is not quite right, probaby a bug in the language still
+    #collection defaulting to [1, 3, 5, 8, 13, 26, 53, 76, 88, 135, 268, 377, 416, 529, 876, 1000]
+    #for each target in collection {
+    #    call binary_search2 with [collection, target] and print result
+    #}
+}
+
+call main

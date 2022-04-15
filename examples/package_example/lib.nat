@@ -1,0 +1,8 @@
+define function sum expecting [m] as {
+    # returns the sum of the input collection
+    set s to 0
+    for each n in m {
+        add n to s
+    }
+    return s
+}
