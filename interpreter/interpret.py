@@ -5,11 +5,12 @@ Created on Tue Dec 14 21:51:28 2021
 @author: richa
 """
 from typing import List
+
+from internal import interfaces
 from internal import interpreter
 from internal import lexer
 from internal import parsing
 from internal import token_
-from internal import interfaces
 from tokens_ import compiler
 from tokens_ import tokens
 
@@ -38,9 +39,8 @@ def interpret(syntax_blocks: List[interfaces.Token]) -> None:
     for syntax_block in syntax_blocks:
         syntax_block.init(inter)
 
-    for _ in range(1000):
-        for syntax_block in syntax_blocks:
-            inter.interpret(syntax_block)
+    for syntax_block in syntax_blocks:
+        inter.interpret(syntax_block)
 
 
 def read_file(filename: str) -> str:
