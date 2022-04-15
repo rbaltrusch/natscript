@@ -562,16 +562,14 @@ class WHILE(Token):
     ]
 
     def run(self, interpreter):
+        self.tokens[-1].run(interpreter)
+        clause_function = interpreter.stack_pop().get_value()
+        condition = self.tokens[0]
         while True:
-            for token in self.tokens:
-                token.run(interpreter)
-            clause = interpreter.stack_pop()
-            if not self._check_condition(interpreter):
+            condition.run(interpreter)
+            if not interpreter.stack_pop().get_value():
                 break
-            clause.get_value()(interpreter)
-
-    def _check_condition(self, interpreter) -> bool:
-        return interpreter.stack_pop().get_value()
+            clause_function(interpreter)
 
 
 class THAN(Token):
