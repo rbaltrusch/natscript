@@ -672,6 +672,76 @@ class GET(Token):
         variable.value = collection[index]
 
 
+class CollectionLogicToken(VALUE):
+
+    EXPECTED_TOKENS = [
+        ExpectedToken((VALUE,), 0),
+        ExpectedToken((CONDITION,), 1, optional=True),
+    ]
+    initial_condition_value = True
+
+    def run(self, interpreter):
+        self.tokens[0].run(interpreter)
+        collection = interpreter.stack_pop().get_value()
+
+        for value in collection:
+            result = self._get_condition_result(value, interpreter)
+            if self._check_if_should_break(result):
+                condition_value = not self.initial_condition_value
+                break
+        else:
+            condition_value = self.initial_condition_value
+
+        result = self.TOKEN_FACTORY.create_value(condition_value)
+        interpreter.stack_append(result)
+
+    def _get_condition_result(self, value, interpreter):
+        if not self.has_all_optionals:
+            return bool(value)
+
+        interpreter.stack_append(self.TOKEN_FACTORY.create_any_value(value))
+        self.tokens[1].run(interpreter)
+        return interpreter.stack_pop().get_value()
+
+
+class ALL(CollectionLogicToken):
+
+    initial_condition_value = True
+
+    def _check_if_should_break(self, result):
+        return not result
+
+
+class ANY(CollectionLogicToken):
+
+    initial_condition_value = False
+
+    def _check_if_should_break(self, result):
+        return result
+
+
+class SOME(CollectionLogicToken):
+
+    initial_condition_value = False
+
+    def run(self, interpreter):
+        self.counter = 0
+        super().run(interpreter)
+
+    def _check_if_should_break(self, result):
+        if result:
+            self.counter += 1
+        return self.counter > 1
+
+
+class NONE(CollectionLogicToken):
+
+    initial_condition_value = True
+
+    def _check_if_should_break(self, result):
+        return result
+
+
 def get_tokens():
     return {
         "set": SET,
@@ -730,6 +800,10 @@ def get_tokens():
         "is": IS,
         "that": THAT,
         "are": ARE,
+        "all": ALL,
+        "any": ANY,
+        "some": SOME,
+        "none": NONE,
     }
 
 
