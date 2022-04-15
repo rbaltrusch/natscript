@@ -5,6 +5,7 @@ Created on Sat Nov  6 12:04:45 2021
 @author: richa
 """
 from __future__ import annotations
+from functools import cached_property
 
 import re
 from dataclasses import dataclass
@@ -217,7 +218,7 @@ class Token:
         mandatory_tokens = [token for token in self.expected_tokens if not token.optional]
         return not mandatory_tokens
 
-    @property
+    @cached_property
     def has_all_optionals(self) -> bool:
         return len(self.tokens) == len(self.EXPECTED_TOKENS)
 
