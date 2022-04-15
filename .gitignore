@@ -6,5 +6,6 @@ interpreter/*.nat
 tests/reports/
 tests/htmlcov/
 .vscode/
-**/fib.py
+interpreter/algo
+interpreter/_experimental
 todo.txt
