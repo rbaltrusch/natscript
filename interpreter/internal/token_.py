@@ -139,6 +139,7 @@ class Token:
         self.run_order = 0
         self.parent: Optional[Token] = None
         self.expected_tokens = self.EXPECTED_TOKENS[:]
+        self._sorted_tokens = None
 
     def __repr__(self):
         value = '' if self.value is None else f', {self.value}'
@@ -146,10 +147,11 @@ class Token:
         return f'Line {self.line}: {type_}({self.__class__.__name__}{value})'
 
     def run(self, interpreter):
-        for token in sorted(self.tokens, key=lambda x: x.run_order):
-            self.TOKEN_STACK.append(token)
+        if self._sorted_tokens is None:
+            self._sorted_tokens = sorted(self.tokens, key=lambda x: x.run_order)
+
+        for token in self._sorted_tokens:
             token.run(interpreter)
-            self.TOKEN_STACK.pop()
         self._run(interpreter)
 
     def _run(self, _: Interpreter):

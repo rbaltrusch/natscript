@@ -25,10 +25,6 @@ class Interpreter:
             if not token.satisfied:
                 raise exceptions.SyntaxException(token)
             token.run(self)
-        except exceptions.RunTimeException as exc:
-            token.print_token_stack()
-            exc.line = token.TOKEN_STACK[-1].line
-            raise exc
         except Exception as exc:
             token.print_token_stack()
             raise exc
