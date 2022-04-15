@@ -144,17 +144,17 @@ class VARNAME(VALUE):
         ExpectedToken((DEFAULTING,), optional=True)
     ]
 
-    def _init(self, interpreter):
-        variable = self.TOKEN_FACTORY.create_variable(self.value)
-        interpreter.set_variable(self.value, variable)
+    def _run(self, interpreter):
+        try:
+            variable = interpreter.get_variable(self.value)
+        except exceptions.UndefinedVariableException:
+            variable = self.TOKEN_FACTORY.create_variable(self.value)
 
         if self.has_all_optionals:
             default_value = interpreter.stack_pop()
             variable.value = default_value.get_value()
             interpreter.set_variable(variable.name, default_value)
 
-    def _run(self, interpreter):
-        variable = interpreter.get_variable(self.value)
         interpreter.stack_append(variable)
         interpreter.set_variable("it", variable)
 
