@@ -603,6 +603,16 @@ class THE(Token):
         return tokens.pop(0)
 
 
+class THAT(Token):
+    def pop_tokens(self, tokens):
+        return tokens.pop(0)
+
+
+class IS(Token):
+    def pop_tokens(self, tokens):
+        return tokens.pop(0)
+
+
 class FIRST(VALUE):
 
     EXPECTED_TOKENS = [
@@ -630,6 +640,40 @@ class FIRST(VALUE):
 
 class LAST(FIRST):
     RETURN_TOKEN_INDEX = -1
+
+
+class ROUND(VALUE):
+    EXPECTED_TOKENS = [ExpectedToken((VALUE,))]
+
+    def _run(self, interpreter):
+        value = interpreter.stack_pop()
+        value.value = round(value.value)
+        interpreter.stack_append(value)
+
+
+class ANY_CHARACTER(Token):
+    def _run(self, interpreter):
+        raise exceptions.SyntaxException(self)
+
+
+class AT(Token):
+    EXPECTED_TOKENS = [ExpectedToken((VALUE,))]
+
+
+class GET(Token):
+
+    EXPECTED_TOKENS = [
+        ExpectedToken((VARNAME), 3),
+        ExpectedToken((FROM,), 1),
+        ExpectedToken((VALUE), 2),
+        ExpectedToken((AT,), 0),
+    ]
+
+    def _run(self, interpreter):
+        variable = interpreter.stack_pop()
+        collection = interpreter.stack_pop().get_value()
+        index = interpreter.stack_pop().get_value()
+        variable.value = collection[index]
 
 
 def get_tokens():
@@ -685,6 +729,11 @@ def get_tokens():
         "of": OF,
         "append": APPEND,
         "remove": REMOVE,
+        "round": ROUND,
+        "get": GET,
+        "at": AT,
+        "is": IS,
+        "that": THAT,
     }
 
 
@@ -694,4 +743,5 @@ def get_regex_tokens():
         r'^"\w*"': STRING,
         r"^\w+$": VARNAME,
         r"^\d+\.\d+": FLOAT,
+        r".": ANY_CHARACTER,
     }
