@@ -14,7 +14,7 @@ from tokens_ import tokens
 
 def interpret(filename: str) -> None:
     """Constructs a token tree for the source code file specified, either
-    by reading the soruce code directly or loading the token tree from a compiled file,
+    by reading the source code directly or loading the token tree from a compiled file,
     then runs all tokens in the tree.
     """
     token_factory = token_.TokenFactory(tokens.get_tokens(), tokens.get_regex_tokens())
