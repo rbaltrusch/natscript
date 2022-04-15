@@ -5,11 +5,11 @@ Created on Sat Nov  6 12:04:45 2021
 @author: richa
 """
 from __future__ import annotations
-from functools import cached_property
 
 import re
 from dataclasses import dataclass
 from dataclasses import field
+from functools import cached_property
 from typing import Any
 from typing import Callable
 from typing import Dict
