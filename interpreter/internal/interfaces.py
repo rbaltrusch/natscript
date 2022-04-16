@@ -27,11 +27,14 @@ class Token(Protocol):
     run_order: int
     parent: Optional[Token]
     expected_tokens: List[ExpectedToken]
+    filepath: Optional[str]
 
     EXPECTED_TOKENS: List[ExpectedToken]
     VALUE_FACTORY: Optional[Callable[..., Any]]
     TOKEN_FACTORY: TokenFactory
-    TOKEN_STACK: List[Token]
+
+    def init(self, interpreter: Interpreter) -> None:
+        """Initialises the token"""
 
     def run(self, interpreter: Interpreter) -> None:
         """Runs the token"""
@@ -44,10 +47,6 @@ class Token(Protocol):
 
     def update_token_factory(self, token_factory: TokenFactory) -> None:
         """Updates the token factory"""
-
-    @classmethod
-    def print_token_stack(cls):
-        """Prints the current token stack"""
 
     @property
     def full(self) -> bool:

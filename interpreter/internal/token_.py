@@ -135,7 +135,6 @@ class Token:
     EXPECTED_TOKENS: List[ExpectedToken] = []
     VALUE_FACTORY: Optional[Callable[..., Any]] = None
     TOKEN_FACTORY: TokenFactory = TokenFactory()
-    TOKEN_STACK: List[Token] = []
     functional = True
 
     def __init__(self, value: Optional[Any] = None, line: int = 0):
@@ -146,16 +145,18 @@ class Token:
         self.parent: Optional[Token] = None
         self.expected_tokens = self.EXPECTED_TOKENS[:]
         self._sorted_tokens = None
+        self.filepath: Optional[str] = None
 
     def __repr__(self):
         value = '' if self.value is None else f', {self.value}'
         type_ = 'Token' if not self.tokens else 'SyntaxTree'
-        return f'Line {self.line}: {type_}({self.__class__.__name__}{value})'
+        file = "" if not self.filepath else f"File {self.filepath}: "
+        return f'{file}Line {self.line}: {type_}({self.__class__.__name__}{value})'
 
     def init(self, interpreter):
         for token in self.tokens:
             if token.functional:
-                token.init(interpreter)
+                interpreter.init(token)
         self._init(interpreter)
 
     def _init(self, interpreter):
@@ -168,7 +169,7 @@ class Token:
             )
 
         for token in self._sorted_tokens:
-            token.run(interpreter)
+            interpreter.run(token)
         self._run(interpreter)
 
     def _run(self, _: Interpreter):
@@ -191,11 +192,8 @@ class Token:
     def update_token_factory(self, _: TokenFactory):
         pass
 
-    @classmethod
-    def print_token_stack(cls):
-        print('---TOKEN STACK---')
-        for token in cls.TOKEN_STACK:
-            print(token)
+    def raise_syntax_exception(self):
+        raise exceptions.SyntaxException(self)
 
     def _check_types(self, token: Token):
         while self.expected_tokens:
@@ -243,6 +241,9 @@ class ClauseToken(Token):
 
     CLOSE_TOKEN = Token
     EXPECTED_TOKENS = [ExpectedToken((Token, ))] * 1000
+
+    def raise_syntax_exception(self):
+            raise exceptions.UnclosedClauseException(self)
 
     @property
     def full(self) -> bool:

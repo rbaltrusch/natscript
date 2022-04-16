@@ -4,6 +4,8 @@ Created on Wed Nov  3 22:59:11 2021
 
 @author: richa
 """
+from typing import List
+from typing import Optional
 from typing import Tuple
 
 from interpreter.internal.interfaces import Token
@@ -23,23 +25,41 @@ class ParseException(Exception):
         super().__init__(f"{token} was not expected at this location!")
 
 
+class ParseTypeError(Exception):
+    """Raised for mismatching token types"""
+
+    def __init__(self, token: Token, types: Tuple):
+        types_ = tuple([t.__name__ for t in types])
+        super().__init__(f"Unexpected token at {token}, expected any of the token types {types_}.")
+
+
+class InternalFullTokenParseError(Exception):
+    """Internal exception - should only occur when a programming mistake was made"""
+
+    def __init__(self, token: Token):
+        super().__init__(f"Token {token=} is already full!")
+
+
+
 class RunTimeException(Exception):
     """Base class for exceptions raised while running the program"""
 
-    def __init__(self, *args, line: int = 1, **kwargs):
+    def __init__(self, *args, token: Optional[Token] = None, **kwargs):
         super().__init__(*args, **kwargs)
-        self.line = line
+        self.token_stack: List[Token] = []
+        if token is not None:
+            self.token_stack.append(token)
 
     def __str__(self):
-        return self.line_text + super().__str__()
+        return super().__str__() + self.stack_trace
 
     def __repr__(self):
-        return self.line_text + super().__repr__()
+        return super().__repr__() + self.stack_trace
 
     @property
-    def line_text(self) -> str:
+    def stack_trace(self) -> str:
         """The text displaying the line number"""
-        return f"Line {self.line}: "
+        return "\n\t" + "\n\t".join(f"{token}" for token in self.token_stack)
 
 
 class UndefinedVariableException(RunTimeException):
@@ -83,27 +103,23 @@ class SyntaxException(RunTimeException):
             for exp in token.EXPECTED_TOKENS[len(token.tokens) :]
             for t in exp.types
         ]
-        super().__init__(
-            f"{token} cannot be run: missing expected tokens {missing_tokens}"
-        )
+
+        if missing_tokens:
+            message = f"Token is missing expected tokens {missing_tokens}"
+        else:
+            message = f"Did not expect token {token} at this location!"
+        super().__init__(message)
 
 
-class ParseTypeError(Exception):
-    """Raised for mismatching token types"""
-
-    def __init__(self, token: Token, types: Tuple):
-        super().__init__(f"Expected {types=}, but got {token}!")
-
-
-class EmptyStackError(Exception):
-    """Internal exception - should only occur when a programming mistake was made"""
-
-    def __init__(self):
-        super().__init__("Could not pop value from empty stack!")
-
-
-class InternalFullTokenParseError(Exception):
-    """Internal exception - should only occur when a programming mistake was made"""
+class UnclosedClauseException(RunTimeException):
+    """Exception to be raised for claused with unmatched close tokens"""
 
     def __init__(self, token: Token):
-        super().__init__(f"Token {token=} is already full!")
+        super().__init__("Clause token was not closed with corresponding token!", token=token)
+
+
+class EmptyStackError(RunTimeException):
+    """Exception to be raised when trying to access a value from an empty interpreter stack"""
+
+    def __init__(self):
+        super().__init__("Expected value is missing!")

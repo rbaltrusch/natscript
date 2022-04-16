@@ -11,16 +11,18 @@ from interpreter.internal import interpreter
 from interpreter.internal import lexer
 from interpreter.internal import parsing
 from interpreter.internal import token_
-from interpreter.tokens_ import compiler
 from interpreter.tokens_ import tokens
 
-def construct_tokens(filename: str) -> None:
+def construct_tokens(filepath: str) -> None:
     token_factory = token_.TokenFactory(tokens.get_tokens(), tokens.get_regex_tokens())
     lex = lexer.Lexer(token_factory)
     parser = parsing.Parser()
 
-    code = read_file(filename)
+    code = read_file(filepath)
     tokens_ = list(lex.lex(code))
+    for token in tokens_:
+        token.filepath = filepath
+
     syntax_blocks = list(parser.parse(tokens_))
     return syntax_blocks
 
@@ -31,16 +33,16 @@ def interpret(syntax_blocks: List[interfaces.Token], iterations: int = 1) -> Non
     """
     inter = interpreter.Interpreter()
     for syntax_block in syntax_blocks:
-        syntax_block.init(inter)
+        inter.init(syntax_block)
 
     for _ in range(iterations):
         for syntax_block in syntax_blocks:
-            inter.interpret(syntax_block)
+            inter.run(syntax_block)
 
 
-def read_file(filename: str) -> str:
+def read_file(filepath: str) -> str:
     """Reads the specified file and returns its contents"""
-    with open(filename, "r", encoding="utf-8") as file:
+    with open(filepath, "r", encoding="utf-8") as file:
         file_contents = file.read()
     return file_contents
 

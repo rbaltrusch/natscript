@@ -19,15 +19,22 @@ class Interpreter:
         self._stacks: List[List[Value]] = [[]]
         self._variables: List[Dict[str, Variable]] = [{}]
 
-    def interpret(self, token: Token) -> None:
+    def run(self, token: Token) -> None:
         """Runs the current token"""
         try:
-            if not token.satisfied:
-                raise exceptions.SyntaxException(token)
             token.run(self)
-        except Exception as exc:
-            token.print_token_stack()
-            exc.line = token.line
+        except exceptions.RunTimeException as exc:
+            exc.token_stack.append(token)
+            raise exc
+
+    def init(self, token: Token) -> None:
+        """Initialises the current token"""
+        try:
+            if not token.satisfied:
+                token.raise_syntax_exception()
+            token.init(self)
+        except exceptions.RunTimeException as exc:
+            exc.token_stack.append(token)
             raise exc
 
     def add_stack(self) -> None:
@@ -49,7 +56,7 @@ class Interpreter:
         try:
             return self._stacks[-1].pop()
         except IndexError:
-            raise exceptions.EmptyStackError()
+            raise exceptions.EmptyStackError() from None
 
     def stack_append(self, value: Value) -> None:
         """Appends the passed Value to the stack"""
@@ -67,7 +74,7 @@ class Interpreter:
         try:
             return self._variables[-1][name]
         except KeyError:
-            raise exceptions.UndefinedVariableException(name) # pylint: disable=raise-missing-from
+            raise exceptions.UndefinedVariableException(name) from None
 
     def set_variable(self, name: str, variable: Variable) -> None:
         """Sets the value of the variable identified by name to the specified variable."""

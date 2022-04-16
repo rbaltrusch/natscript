@@ -136,7 +136,7 @@ class DEFAULTING(Token):
 
     def _init(self, interpreter):
         for token in self.tokens:
-            token.run(interpreter)
+            interpreter.run(token)
 
     def run(self, interpreter):
         pass
@@ -300,7 +300,7 @@ class CLAUSE(VALUE, ClauseToken):
 
     def _run_tokens(self, interpreter):
         for i, token in enumerate(self._runnable_tokens):
-            token.run(interpreter)
+            interpreter.run(token)
             if i == self._return_index:
                 raise exceptions.ReturnException(self)
         else:
@@ -546,7 +546,7 @@ class EACH(Token):
 
     def run(self, interpreter):
         if self.collection is None:
-            self.tokens[-1].run(interpreter)
+            interpreter.run(self.tokens[-1])
             self.collection = interpreter.stack_pop().get_value()
 
         if self.exhausted:
@@ -560,7 +560,7 @@ class EACH(Token):
 
         # ignore collection (last token), as it was previously run
         for token in self.tokens[:-1]:
-            token.run(interpreter)
+            interpreter.run(token)
 
         # append it again, this value can be consumed by optional for-each
         # condition, or needs to be thrown away by for-each loop if no condition
@@ -587,7 +587,7 @@ class FOR(Token):
     def run(self, interpreter):
         while not self.extractor.exhausted:
             for token in self.tokens:
-                token.run(interpreter)
+                interpreter.run(token)
             clause = interpreter.stack_pop()
             try:
                 if self._check_condition(interpreter):
@@ -623,7 +623,7 @@ class WHILE(Token):
     ]
 
     def run(self, interpreter):
-        self.tokens[-1].run(interpreter)
+        interpreter.run(self.tokens[-1])
         clause_function = interpreter.stack_pop().get_value()
         condition = self.tokens[0]
         while True:
@@ -669,7 +669,7 @@ class FIRST(VALUE):
     RETURN_TOKEN_INDEX = 0
 
     def run(self, interpreter):
-        self.tokens[-1].run(interpreter)
+        interpreter.run(self.tokens[-1])
         collection = interpreter.stack_pop().get_value()
 
         value = self.TOKEN_FACTORY.create_any_value(
@@ -678,7 +678,7 @@ class FIRST(VALUE):
         interpreter.stack_append(value)
         # ignore collection (last token), as it was previously run
         for token in self.tokens[:-1]:
-            token.run(interpreter)
+            interpreter.run(token)
 
         # append it again, previous stack append gets consumed by IN token
         interpreter.stack_append(value)
@@ -731,7 +731,7 @@ class CollectionLogicToken(VALUE):
     initial_condition_value = True
 
     def run(self, interpreter):
-        self.tokens[0].run(interpreter)
+        interpreter.run(self.tokens[0])
         collection = interpreter.stack_pop().get_value()
 
         for value in collection:
@@ -750,7 +750,7 @@ class CollectionLogicToken(VALUE):
             return bool(value)
 
         interpreter.stack_append(self.TOKEN_FACTORY.create_any_value(value))
-        self.tokens[1].run(interpreter)
+        interpreter.run(self.tokens[1])
         return interpreter.stack_pop().get_value()
 
 
@@ -801,7 +801,7 @@ class IMPORT(Token):
     ]
 
     def run(self, interpreter):
-        self.tokens[0].run(interpreter)
+        interpreter.run(self.tokens[0])
         import_variables = interpreter.stack_pop().value
         filename = self.tokens[-1].value
 
@@ -810,10 +810,10 @@ class IMPORT(Token):
 
         interpreter.add_stack()
         for token in tokens:
-            token.init(interpreter)
+            interpreter.init(token)
 
         for token in tokens:
-            token.run(interpreter)
+            interpreter.run(token)
 
         variables = []
         for import_variable in import_variables:
@@ -821,7 +821,7 @@ class IMPORT(Token):
             if variable.get_qualifier("private"):
                 raise exceptions.ImportException(
                     f"Could not import private variable {variable.name} from module {filename}!",
-                    line=self.line
+                    token=self,
                 )
             variables.append(variable)
         interpreter.remove_stack()

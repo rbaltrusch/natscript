@@ -9,6 +9,10 @@ from interpreter.tokens_ import compiler
 argparser = interpreter.cli.construct_parser()
 arguments = argparser.parse_args()
 
+if not arguments.debug:
+    import sys
+    sys.tracebacklimit = 0
+
 if arguments.compile == "True":
     compiler_ = (
         compiler.PickleCompiler()
