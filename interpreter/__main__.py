@@ -2,7 +2,6 @@
 """
 The entry point to the Natscript interpreter.
 """
-
 import interpreter.cli
 from interpreter import interpret
 from interpreter.tokens_ import compiler

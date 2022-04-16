@@ -531,10 +531,6 @@ class IN(Token):
 
 
 class EACH(Token):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._index = 0
-        self.collection = None
 
     # run order is ignored by EACH.run method
     EXPECTED_TOKENS = [
@@ -542,6 +538,11 @@ class EACH(Token):
         ExpectedToken((IN,), 2),
         ExpectedToken((VALUE,), 0),
     ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._index = 0
+        self.collection = None
 
     def run(self, interpreter):
         if self.collection is None:
