@@ -26,9 +26,9 @@ class ParseException(Exception):
 class RunTimeException(Exception):
     """Base class for exceptions raised while running the program"""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, line: int = 1, **kwargs):
         super().__init__(*args, **kwargs)
-        self.line = 1
+        self.line = line
 
     def __str__(self):
         return self.line_text + super().__str__()
