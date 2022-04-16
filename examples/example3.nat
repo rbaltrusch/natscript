@@ -1,6 +1,6 @@
 # natscript
 # author richard baltrusch
-# date 10 Apr 2022
+# date 10/Apr/2022
 
 define function add_list_to_number expecting [total and numbers] as {
     # this function adds the sum of numbers to the total and returns it

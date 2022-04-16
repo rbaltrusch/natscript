@@ -6,3 +6,7 @@ define function sum expecting [m] as {
     }
     return s
 }
+
+define private function f as {
+    # this cannot get imported
+}

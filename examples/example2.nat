@@ -8,3 +8,9 @@ print b
 multiply b by 4.1
 print it
 divide b by 2 and print it
+
+set d to 4
+divide d by 2 and print it
+
+set e to 5
+divide it by 2, round it then print it

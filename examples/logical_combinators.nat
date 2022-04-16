@@ -21,3 +21,5 @@ call test with [n f1]
 call test with [n f2]
 call test with [n f3]
 call test with [n f4]
+
+print all [3, 6, 9] greater than 2

@@ -6,3 +6,5 @@ if condition then {
 }
 
 if false then {print 1} else {print 2}
+
+if not true then {print 1} else {print 2}

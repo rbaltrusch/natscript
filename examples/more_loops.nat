@@ -14,5 +14,20 @@ for each e in [{print 1} {print 3} {print 4}] {
 }
 
 for each n in range from 0 to 10 {
+    if check n is equal to 5 then {
+        skip it
+    }
+
+    if check n is greater than 8 then {
+        break out
+    }
     print n
+}
+
+set counter to 0
+while true {
+    add 1 to counter
+    if check counter greater than 3 then {
+        break out
+    }
 }
