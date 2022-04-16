@@ -4,6 +4,7 @@ Created on Tue Dec 14 21:51:28 2021
 
 @author: richa
 """
+from collections import defaultdict
 from dataclasses import dataclass
 from typing import Any
 
@@ -58,6 +59,29 @@ class Variable(Value):
         self.name = name
         self.inputs = []
         self.source = None
+        self.qualifiers = defaultdict(bool)
 
     def __repr__(self):
         return f'{self.name}'
+
+    def add_qualifier(self, qualifier: str) -> None:
+        self.qualifiers[qualifier] = True
+
+    def get_qualifier(self, qualifier: str) -> bool:
+        return self.qualifiers[qualifier]
+
+
+class Constant(Variable):
+    def __init__(self, variable: Variable):
+        self._value = variable.value
+        super().__init__(variable.name)
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, value):
+        if self._value is not None:
+            raise exceptions.RunTimeException("Cannot assign new value to a constant!")
+        self._value = value

@@ -100,6 +100,12 @@ class Variable(Protocol):  # pylint: disable=too-few-public-methods
     def get_value(self) -> Any:
         """Returns the actual value of the Variable"""
 
+    def get_qualifier(self, name: str) -> bool:
+        """Returns the value of the queried qualifier"""
+
+    def set_qualifier(self, name: str) -> None:
+        """Sets the value of the qualifier to True"""
+
 
 class TokenFactory(Protocol):
     """Protocol for TokenFactory"""

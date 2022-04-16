@@ -163,9 +163,33 @@ class VARNAME(VALUE):
         interpreter.set_variable("it", variable)
 
 
+class QualifierToken(Token):
+    def _run(self, interpreter):
+        variable = interpreter.stack_pop()
+        variable.add_qualifier(self.qualifier)
+        interpreter.stack_append(variable)
+
+
+QualifierToken.EXPECTED_TOKENS = [ExpectedToken((QualifierToken,), optional=True)]
+
+
+class PRIVATE(QualifierToken):
+    qualifier = "private"
+
+
+class CONSTANT(QualifierToken):
+    qualifier = "constant"
+
+    def _run(self, interpreter):
+        variable = interpreter.stack_pop()
+        constant = self.TOKEN_FACTORY.create_constant(variable)
+        interpreter.stack_append(constant)
+
+
 class SET(Token):
 
     EXPECTED_TOKENS = [
+        ExpectedToken((QualifierToken), 3, optional=True),
         ExpectedToken((VARNAME,), 2),
         ExpectedToken((TO,), 1),
         ExpectedToken((VALUE,), 0),
@@ -368,7 +392,8 @@ class WITH(Token):
 
 class DEFINE(Token):
     EXPECTED_TOKENS = [
-        ExpectedToken((FUNCTION,), 4),
+        ExpectedToken((PRIVATE), 4, optional=True),
+        ExpectedToken((FUNCTION,), 5),
         ExpectedToken((VARNAME,), 3),
         ExpectedToken((EXPECTING,), 0, optional=True),
         ExpectedToken((AS,), 2),
@@ -778,7 +803,15 @@ class IMPORT(Token):
         for token in tokens:
             token.run(interpreter)
 
-        variables = [interpreter.get_variable(x.name) for x in import_variables]
+        variables = []
+        for import_variable in import_variables:
+            variable = interpreter.get_variable(import_variable.name)
+            if variable.get_qualifier("private"):
+                raise exceptions.ImportException(
+                    f"Could not import private variable {variable.name} from module {filename}!",
+                    line=self.line
+                )
+            variables.append(variable)
         interpreter.remove_stack()
 
         for variable in variables:
@@ -865,6 +898,8 @@ def get_tokens():
         "skip": SKIP,
         "break": BREAK,
         "out": OUT,
+        "private": PRIVATE,
+        "constant": CONSTANT,
     }
 
 

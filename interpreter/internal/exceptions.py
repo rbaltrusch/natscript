@@ -70,6 +70,10 @@ class BreakIterationException(RunTimeException):
         super().__init__(f"Did not expect token {token} at this location!")
 
 
+class ImportException(RunTimeException):
+    """Exception to be raised when something cannot be imported"""
+
+
 class SyntaxException(RunTimeException):
     """Exception to be raised for syntax errors"""
 

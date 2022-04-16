@@ -56,6 +56,10 @@ class TokenFactory:
     def create_variable(name: str) -> tokenvalue.Variable:
         return tokenvalue.Variable(name)
 
+    @staticmethod
+    def create_constant(variable: tokenvalue.Variable) -> tokenvalue.Constant:
+        return tokenvalue.Constant(variable)
+
     def create_any_value(self, value: Any) -> tokenvalue.Value:
         if value is None:
             return self.create_none_value()
