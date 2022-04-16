@@ -2,4 +2,6 @@
 
 [run]
 omit =
-    ../interpreter/main.py,
+    ../interpreter/__main__.py,
+    ../interpreter/cli.py
+    ../setup.py
