@@ -56,6 +56,20 @@ class ReturnException(RunTimeException):
             super().__init__(f"Did not expect token {token} at this location!")
 
 
+class SkipElementException(RunTimeException):
+    """Exception raised by SKIP element, caught by FOR token"""
+
+    def __init__(self, token: Token):
+            super().__init__(f"Did not expect token {token} at this location!")
+
+
+class BreakIterationException(RunTimeException):
+    """Exception raised by BREAK element, caught by WHILE and FOR loops"""
+
+    def __init__(self, token: Token):
+            super().__init__(f"Did not expect token {token} at this location!")
+
+
 class SyntaxException(RunTimeException):
     """Exception to be raised for syntax errors"""
 

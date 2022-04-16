@@ -45,6 +45,10 @@ class OF(Token):
     functional = False
 
 
+class OUT(Token):
+    functional = False
+
+
 class THEN(Token):
     functional = False
 
@@ -548,8 +552,13 @@ class FOR(Token):
             for token in self.tokens:
                 token.run(interpreter)
             clause = interpreter.stack_pop()
-            if self._check_condition(interpreter):
-                clause.get_value()(interpreter)
+            try:
+                if self._check_condition(interpreter):
+                    clause.get_value()(interpreter)
+            except exceptions.SkipElementException:
+                pass
+            except exceptions.BreakIterationException:
+                break
         self.extractor.reset()
 
     def _check_condition(self, interpreter) -> bool:
@@ -584,7 +593,11 @@ class WHILE(Token):
             condition.run(interpreter)
             if not interpreter.stack_pop().get_value():
                 break
-            clause_function(interpreter)
+
+            try:
+                clause_function(interpreter)
+            except exceptions.BreakIterationException:
+                break
 
 
 class GREATER(CONDITION):
@@ -772,6 +785,20 @@ class IMPORT(Token):
             interpreter.set_variable(variable.name, variable)
 
 
+class SKIP(Token):
+    EXPECTED_TOKENS = [ExpectedToken((VARNAME,), optional=True)]
+
+    def _run(self, interpreter):
+        raise exceptions.SkipElementException(self)
+
+
+class BREAK(Token):
+    EXPECTED_TOKENS = [ExpectedToken((OUT,))]
+
+    def _run(self, interpreter):
+        raise exceptions.BreakIterationException(self)
+
+
 def get_tokens():
     return {
         "set": SET,
@@ -835,6 +862,9 @@ def get_tokens():
         "some": SOME,
         "none": NONE,
         "import": IMPORT,
+        "skip": SKIP,
+        "break": BREAK,
+        "out": OUT,
     }
 
 
