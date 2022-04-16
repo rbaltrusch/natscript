@@ -9,4 +9,4 @@ import interpret
 
 if __name__ == '__main__':
     tokens = interpret.construct_tokens(filename='test.nat')
-    interpret.interpret(tokens)
+    interpret.interpret(tokens, iterations=1)

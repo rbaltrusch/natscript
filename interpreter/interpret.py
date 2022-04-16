@@ -30,7 +30,7 @@ def construct_tokens(filename: str) -> None:
     compiler.write_compiled_file(syntax_blocks, filename)
     return syntax_blocks
 
-def interpret(syntax_blocks: List[interfaces.Token]) -> None:
+def interpret(syntax_blocks: List[interfaces.Token], iterations: int = 1) -> None:
     """Constructs a token tree for the source code file specified, either
     by reading the source code directly or loading the token tree from a compiled file,
     then runs all tokens in the tree.
@@ -39,8 +39,9 @@ def interpret(syntax_blocks: List[interfaces.Token]) -> None:
     for syntax_block in syntax_blocks:
         syntax_block.init(inter)
 
-    for syntax_block in syntax_blocks:
-        inter.interpret(syntax_block)
+    for _ in range(iterations):
+        for syntax_block in syntax_blocks:
+            inter.interpret(syntax_block)
 
 
 def read_file(filename: str) -> str:
