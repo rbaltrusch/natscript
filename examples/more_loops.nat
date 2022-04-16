@@ -12,3 +12,7 @@ for each e in [{print 1} {print 3} {print 4}] {
     call e
     print 23
 }
+
+for each n in range from 0 to 10 {
+    print n
+}

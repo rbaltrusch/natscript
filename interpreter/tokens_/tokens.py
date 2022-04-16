@@ -540,7 +540,7 @@ class EACH(Token):
     EXPECTED_TOKENS = [
         ExpectedToken((VARNAME,), 1),
         ExpectedToken((IN,), 2),
-        ExpectedToken((COLLECTION, VARNAME), 0),
+        ExpectedToken((VALUE,), 0),
     ]
 
     def run(self, interpreter):
@@ -843,6 +843,22 @@ class BREAK(Token):
         raise exceptions.BreakIterationException(self)
 
 
+class RANGE(VALUE):
+
+    EXPECTED_TOKENS = [
+        ExpectedToken((FROM,), 0),
+        ExpectedToken((VALUE,), 1),
+        ExpectedToken((TO,), 2),
+        ExpectedToken((VALUE,), 3),
+    ]
+
+    def _run(self, interpreter):
+        end = interpreter.stack_pop().get_value()
+        start = interpreter.stack_pop().get_value()
+        interpreter.stack_append(
+            self.TOKEN_FACTORY.create_iterable_value(value=list(range(start, end)))
+        )
+
 def get_tokens():
     return {
         "set": SET,
@@ -911,6 +927,7 @@ def get_tokens():
         "out": OUT,
         "private": PRIVATE,
         "constant": CONSTANT,
+        "range": RANGE,
     }
 
 
