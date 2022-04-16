@@ -7,13 +7,13 @@ Created on Fri Nov 20 13:54:34 2020
 import operator
 from typing import Optional
 
-from internal import exceptions
-from internal.interpreter import Interpreter
-from internal.token_ import ClauseToken
-from internal.token_ import ExpectedToken
-from internal.token_ import ExpectedTokenCombination
-from internal.token_ import SkipToken
-from internal.token_ import Token
+from interpreter.internal import exceptions
+from interpreter.internal.interpreter import Interpreter
+from interpreter.internal.token_ import ClauseToken
+from interpreter.internal.token_ import ExpectedToken
+from interpreter.internal.token_ import ExpectedTokenCombination
+from interpreter.internal.token_ import SkipToken
+from interpreter.internal.token_ import Token
 
 
 # pylint: disable=no-self-use
@@ -385,6 +385,11 @@ class EXPECTING(Token):
         ExpectedToken((COLLECTION,), 0)
     ]
 
+    def _run(self, interpreter):
+        collection = interpreter.stack_pop()
+        interpreter.stack_pop() # default empty args
+        interpreter.stack_append(collection)
+
 
 class WITH(Token):
     EXPECTED_TOKENS = [ExpectedToken((COLLECTION,), 0)]
@@ -401,9 +406,7 @@ class DEFINE(Token):
     ]
 
     def run(self, interpreter):
-        if not self.has_all_optionals:
-            value = self.TOKEN_FACTORY.create_iterable_value(value=[])
-            interpreter.stack_append(value)
+        interpreter.stack_append(self.TOKEN_FACTORY.create_iterable_value(value=[]))
         super().run(interpreter)
 
 
@@ -418,14 +421,22 @@ class CALL(Token):
 
     def _run(self, interpreter):
         function = interpreter.stack_pop()
-        inputs = interpreter.stack_pop().get_value() if self.has_all_optionals else []
-        interpreter.add_stack()
 
+        if self.has_all_optionals:
+            inputs = interpreter.stack_pop()
+            inputs.get_value() #check defined
+            input_values = inputs.value
+        else:
+            input_values = []
+
+        interpreter.add_stack()
         # some functions dont have inputs
-        if function.inputs:
+
+        if function.inputs and function.inputs.value:
             # take input parameters from stack
-            for input_, variable in zip(inputs, function.inputs.value):
-                variable.value = input_
+            for input_, variable in zip(input_values, function.inputs.value):
+                variable.value = input_.get_value()
+                variable.inputs = input_.inputs
                 interpreter.set_variable(variable.name, variable)
 
         try:
@@ -793,7 +804,7 @@ class IMPORT(Token):
         import_variables = interpreter.stack_pop().value
         filename = self.tokens[-1].value
 
-        import interpret
+        from interpreter import interpret
         tokens = interpret.construct_tokens(filename)
 
         interpreter.add_stack()

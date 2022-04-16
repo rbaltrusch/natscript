@@ -13,7 +13,6 @@ import datetime
 import subprocess
 import py
 
-PACKAGE_NAME = 'interpreter'
 REPORTS_PATH = 'reports'
 
 def run_tests(args):
@@ -21,8 +20,7 @@ def run_tests(args):
     and open the report in the browser.
     """
     script_dir = os.path.abspath(os.path.dirname(__file__))
-    package_path = os.path.join(script_dir, '..', PACKAGE_NAME)
-    sys.path.append(package_path)
+    package_path = os.path.join(script_dir, '..')
 
     timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
     report_filename = f'{timestamp}_report.html'

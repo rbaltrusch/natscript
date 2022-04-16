@@ -19,9 +19,9 @@ from typing import Optional
 from typing import Tuple
 from typing import Type
 
-from internal import exceptions
-from internal import tokenvalue
-from internal.interfaces import Interpreter
+from interpreter.internal import exceptions
+from interpreter.internal import tokenvalue
+from interpreter.internal.interfaces import Interpreter
 
 # pylint: disable=no-self-use
 # pylint: disable=missing-class-docstring

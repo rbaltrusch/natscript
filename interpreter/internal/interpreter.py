@@ -7,10 +7,10 @@ Created on Fri Nov 20 17:17:11 2020
 from typing import Dict
 from typing import List
 
-from internal import exceptions
-from internal.interfaces import Token
-from internal.interfaces import Value
-from internal.interfaces import Variable
+from interpreter.internal import exceptions
+from interpreter.internal.interfaces import Token
+from interpreter.internal.interfaces import Value
+from interpreter.internal.interfaces import Variable
 
 class Interpreter:
     """Interprets tokens and keeps track of the program state"""
@@ -27,6 +27,7 @@ class Interpreter:
             token.run(self)
         except Exception as exc:
             token.print_token_stack()
+            exc.line = token.line
             raise exc
 
     def add_stack(self) -> None:

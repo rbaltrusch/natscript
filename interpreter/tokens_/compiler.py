@@ -35,8 +35,7 @@ class CompilerError(Exception):
     """
 
 
-@abc.ABC #type: ignore
-class BytecodeCompiler:
+class BytecodeCompiler(abc.ABC):
     """Bytecode compiler class, stores token data to bypass lexing and parsing"""
 
     def write_compiled_file(self, tokens: List[Token], filename: str) -> None:
@@ -51,7 +50,7 @@ class BytecodeCompiler:
         compiled_filename = self.get_compiled_filename(filename)
         self.write_content_to_file(content, compiled_filename)
 
-    def read_compiled_file(self, filename: str, format_: str = "pickle") -> List[Token]:
+    def read_compiled_file(self, filename: str) -> List[Token]:
         """Loads tokens from the corresponding compiled file to the filename specified.
 
         If a compiled file cannot be found or the file hash of the source code file and
@@ -121,7 +120,7 @@ def _hash_file(filename: str) -> str:
     bytes_ = bytearray(128 * 1024)
     memory_view = memoryview(bytes_)
     with open(filename, "rb", buffering=0) as file:
-        for n in iter(lambda: file.readinto(memory_view), 0): # type: ignore
+        for n in iter(lambda: file.readinto(memory_view), 0):  # type: ignore
             hash_.update(memory_view[:n])
     return hash_.hexdigest()
 
@@ -148,7 +147,7 @@ def _construct_token_trees(token_data: List[TokenData]) -> List[Token]:
     """Constructs a list of nested token trees from the passed token data."""
     parents: Dict[int, Token] = {}
     tokens_: List[Token] = []
-    expected_tokens = [] #type: ignore
+    expected_tokens = []  # type: ignore
     for id_, class_name, value, run_order, parent_id, line in token_data:
         class_: Type[Token] = tokens.__dict__[class_name]
         token_ = class_(value, line)

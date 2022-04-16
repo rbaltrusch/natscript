@@ -4,22 +4,17 @@ Created on Tue Dec 14 21:51:28 2021
 
 @author: richa
 """
-from typing import List
+from typing import List, Optional
 
-from internal import interfaces
-from internal import interpreter
-from internal import lexer
-from internal import parsing
-from internal import token_
-from tokens_ import compiler
-from tokens_ import tokens
+from interpreter.internal import interfaces
+from interpreter.internal import interpreter
+from interpreter.internal import lexer
+from interpreter.internal import parsing
+from interpreter.internal import token_
+from interpreter.tokens_ import compiler
+from interpreter.tokens_ import tokens
 
 def construct_tokens(filename: str) -> None:
-    try:
-        return compiler.read_compiled_file(filename)
-    except compiler.CompilerError:
-        pass
-
     token_factory = token_.TokenFactory(tokens.get_tokens(), tokens.get_regex_tokens())
     lex = lexer.Lexer(token_factory)
     parser = parsing.Parser()
@@ -27,7 +22,6 @@ def construct_tokens(filename: str) -> None:
     code = read_file(filename)
     tokens_ = list(lex.lex(code))
     syntax_blocks = list(parser.parse(tokens_))
-    compiler.write_compiled_file(syntax_blocks, filename)
     return syntax_blocks
 
 def interpret(syntax_blocks: List[interfaces.Token], iterations: int = 1) -> None:

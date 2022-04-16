@@ -8,7 +8,7 @@ import re
 from typing import Generator
 from typing import List
 
-from internal.interfaces import Token
+from interpreter.internal.interfaces import Token
 
 # pylint: disable=too-few-public-methods
 class Lexer:

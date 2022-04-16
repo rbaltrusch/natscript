@@ -8,7 +8,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from typing import Any
 
-from internal import exceptions
+from interpreter.internal import exceptions
 
 
 @dataclass
@@ -57,7 +57,7 @@ class NoneValue(Value):
 class Variable(Value):
     def __init__(self, name: str): # pylint: disable=super-init-not-called
         self.name = name
-        self.inputs = []
+        self.inputs = None
         self.source = None
         self.qualifiers = defaultdict(bool)
 

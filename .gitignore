@@ -1,11 +1,21 @@
+# python
 **/__pycache__/
 **/.pylint.d/
-interpreter/*.nat
-**/*.natc
 **/.coverage
 tests/reports/
 tests/htmlcov/
+**/*.egg-info
+
+# Natscript files
+*.nat
+!examples/*.nat
+**/*.natc
+
+# work files
 .vscode/
 interpreter/algo
 interpreter/_experimental
 todo.txt
+
+# cProfile output file
+o

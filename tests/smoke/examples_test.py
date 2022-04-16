@@ -8,7 +8,8 @@ Created on Tue Dec 14 21:40:44 2021
 import os
 import glob
 
-import interpret
+from interpreter import interpret
+from interpreter.tokens_ import compiler
 
 def test_examples():
     _delete_compiled_files()
@@ -23,6 +24,7 @@ def _delete_compiled_files():
 def _run_test_():
     filepaths = glob.glob('../examples/**/*.nat', recursive=True)
     original_dir = os.getcwd()
+    compiler_ = compiler.PickleCompiler()
     for filepath in filepaths:
         print(f'Running {filepath}...')
 
@@ -30,7 +32,12 @@ def _run_test_():
         filename = os.path.basename(filepath)
 
         try:
-            tokens = interpret.construct_tokens(filename)
+            try:
+                tokens = compiler_.read_compiled_file(filename)
+            except compiler.CompilerError:
+                tokens = interpret.construct_tokens(filename)
+
+            compiler_.write_compiled_file(tokens, filename)
             interpret.interpret(tokens)
             passed = True
         except Exception as exc:

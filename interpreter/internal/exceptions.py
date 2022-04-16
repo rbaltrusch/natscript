@@ -6,7 +6,7 @@ Created on Wed Nov  3 22:59:11 2021
 """
 from typing import Tuple
 
-from internal.interfaces import Token
+from interpreter.internal.interfaces import Token
 
 
 class LexError(Exception):
