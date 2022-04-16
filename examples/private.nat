@@ -1,0 +1,2 @@
+define private function a as {print 1}
+define function b as {print 2}

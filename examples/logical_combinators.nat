@@ -1,0 +1,23 @@
+set a to [1, 1, 1]
+set b to [1, 1, 0]
+set c to [1, 0, 0]
+set d to [0, 0, 0]
+set n to [a b c d]
+
+define function f1 expecting [m] as {return all m}
+define function f2 expecting [m] as {return some m}
+define function f3 expecting [m] as {return any m}
+define function f4 expecting [m] as {return none m}
+
+define function test expecting [n, f] as {
+    set r to []
+    for each m in n {
+        append result of call f with [m] to r
+    }
+    print r
+}
+
+call test with [n f1]
+call test with [n f2]
+call test with [n f3]
+call test with [n f4]

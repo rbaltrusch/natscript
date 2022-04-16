@@ -9,3 +9,6 @@ set a to {print 1} and call it
 define function ab as {print 1} and call it
 define function abc as {print 2} and call it
 define function f expecting [a b] as {add a to b and print it} and call f with [1, 2]
+
+set f to {set x to 1, multiply x by x then return it}
+call f and print result
