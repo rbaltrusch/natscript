@@ -482,7 +482,7 @@ class CONDITION(VALUE, ClauseToken):
 
 
 class NOT(CONDITION):
-    EXPECTED_TOKENS = [ExpectedToken((CONDITION,))]
+    EXPECTED_TOKENS = [ExpectedToken((VALUE,))]
 
     def _run(self, interpreter):
         value = interpreter.stack_pop()
