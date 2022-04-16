@@ -30,6 +30,9 @@ class Lexer:
 
         # matches non-word characters (i.e. punctuation) and adds whitespace around them
         # ignore dot (.) and quotation marks (""), needed for float and string values.
-        string = re.sub(r'(?P<match>[^\w\."])', r" \g<match> ", string).strip()
+        #string = re.sub(r'(?P<match>[^\w\."])', r" \g<match> ", string).strip()
+
+        # add whitespace around [] {} , #
+        string = re.sub(r'(?P<match>[\[\]\{\}\,\#])', r" \g<match> ", string).strip()
         string_tokens = [s for s in string.split(" ") if s != ""]
         return string_tokens
