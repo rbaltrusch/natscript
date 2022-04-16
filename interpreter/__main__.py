@@ -24,4 +24,8 @@ if arguments.compile == "True":
 else:
     tokens = interpret.construct_tokens(arguments.filepath)
 
+if arguments.debug:
+    for token in tokens:
+        interpret.print_token_trace(token)
+
 interpret.interpret(tokens, arguments.iterations)
