@@ -106,7 +106,7 @@ A full list of code examples can be found [here](https://github.com/rbaltrusch/p
 The Natscript interpreter CLI has several configureable options:
 
 ```
-usage: Natscript interpreter [-h] [--debug] [--compile COMPILE] [--compiled-format {pickle,json}]
+usage: interpreter [-h] [--debug] [--compile COMPILE] [--compiled-format {pickle,json}]
                              [--iterations ITERATIONS]
                              filepath
 
