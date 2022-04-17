@@ -4,27 +4,132 @@
 
 # Natscript Interpreter
 
-This is an interpreter written in Python for a custom interpreted language, Natscript, which is to be very close to natural English. It is currently still in development and supports very little functionality, but will receive more over time.
+This is Natscript, a custom interpreted language with a free, natural language-like syntax that lends itself to prosaic code, such as:
+
+```powershell
+define function main as {
+    set squares to []
+    for each number in range from 0 to 5 {
+        if checked that the number is equal to 3 then {
+            skip it
+        }
+
+        multiply it by itself, then append it to squares
+    }
+    return squares
+}
+
+# This will output [0, 1, 4, 16] to the console
+print result of call main
+```
+
+The main implementation Natscript interpreter is currently written in Python, but may be shifted to [C++](https://github.com/rbaltrusch/python_interpreter/tree/main/README.md#1-c-implementation) in the future for improved performance.
+
+## Available functionality
+
+Currently available functionality includes:
+- variables and operations
+- conditionals
+- loops (for-each, while)
+- first-order functions
+- module imports
+- access modifiers (private, constant)
+- recursion
+- a bytecode compiler to speed up module loading
+- precise stack traces for run-time exceptions
+
+A complete list of the currently available Natscript commands will soon be added to the [wiki](https://github.com/rbaltrusch/python_interpreter/wiki).
 
 ## Getting started
 
-To get a copy of this repository, simply open up git bash in an empty folder and use the command:
+To get a copy of this repository, clone it using git, then install all dependencies (currently none), as well as the interpreter package itself:
 
-		$ git clone https://github.com/rbaltrusch/python_interpreter
+```batch
+git clone https://github.com/rbaltrusch/python_interpreter
+cd python_interpreter
+python -m pip install -r requirements.txt
+python -m pip install -e .
+```
 
-To run the interpreter, run interpreter/main.py. At the moment, it is configured to only parse in and interpret file contents, rather than an interactive console.
+To run the interpreter, run the interpreter package, specifying a Natscript file to be executed:
+```batch
+python -m interpreter examples\helloworld.nat
+```
+
+## Syntax highlighting
+
+### Github / Linguist
+
+Currently, Natscript is in its early stages and not supported yet by Linguist (which, e.g. provides the syntax highlighting on Github). Powershell syntax highlighting seems to be an acceptable alternative.
+
+### Visual Studio Code
+
+Language support in VS Code is planned, but not available yet.
+
+### Notepad++
+
+The syntax highlighting file for Natscript in Notepad++ can be found [here](https://github.com/rbaltrusch/python_interpreter/tree/main/tools/syntax_highlighting/notepad++/natscript.xml). It can be imported to Notepad++ in the Languages menu (Languages -> User Language -> Define Your Language... -> Import).
 
 ## Documentation
 
-### Available functionality
-
-A list of the currently available Natscript commands will be found in the [wiki](https://github.com/rbaltrusch/python_interpreter/wiki).
-
-Available functionality includes variables, conditionals, function and lambda definitions, as well as scope and nesting.
-
 ### Examples
 
-Examples can be found [here](https://github.com/rbaltrusch/python_interpreter/tree/main/examples).
+Below is one example of the natural syntax of Natscript:
+
+```powershell
+define function fibonacci expecting [limit] as {
+    set old to 1
+    set current to 1
+    set numbers to [old current]
+
+    while checked that current is less than the limit {
+        set temp to current
+        add old to current then set old to temp
+        append current to numbers
+    }
+    return the numbers
+}
+
+define function main as {
+    return result of call fibonacci with [1000000]
+}
+
+# prints all fibonacci numbers from 1 to 1000000
+call main and print result
+```
+
+A full list of code examples can be found [here](https://github.com/rbaltrusch/python_interpreter/tree/main/examples).
+
+
+### Interpreter CLI
+
+The Natscript interpreter CLI has several configureable options:
+
+```
+usage: Natscript interpreter [-h] [--debug] [--compile COMPILE] [--compiled-format {pickle,json}]
+                             [--iterations ITERATIONS]
+                             filepath
+
+CLI for the Natscript interpreter
+
+positional arguments:
+  filepath              The path of the Natscript file to be run
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --debug, -d           Enables the interpreter debug mode
+  --compile COMPILE, -c COMPILE
+                        Enables the bytecode compiler
+  --compiled-format {pickle,json}, -f {pickle,json}
+                        Specifies the format of the bytecode-compiled file
+  --iterations ITERATIONS, -i ITERATIONS
+                        Specifies how often the script should be executed
+```
+
+The interpreter CLI help message can be shown by running:
+```batch
+python -m interpreter -h
+```
 
 ### Tutorials
 
