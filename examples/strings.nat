@@ -15,11 +15,11 @@ define function a expecting [
     set inputs to []
     set counter to 0
 
-    if check limit greater than length of strings then {
+    if checked limit greater than length of strings then {
         set limit to length of strings
     }
 
-    while check counter less than limit {
+    while checked counter less than limit {
         add 1 to counter
         set value to first string in strings
         append it to inputs and remove value from strings

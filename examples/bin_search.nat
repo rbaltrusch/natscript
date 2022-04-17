@@ -11,7 +11,7 @@ define function get_half_length expecting [collection] as {
 define function slice expecting [collection, start, end] as {
     # returns a sub-collection containing all elements between indices start and end
     set split_collection to []
-    while check start is less than end {
+    while checked start is less than end {
         get element from collection at start and append it to split_collection
         add 1 to start
     }
@@ -24,11 +24,11 @@ define function binary_search expecting [collection target] as {
     set index to result of call get_half_length with [collection]
 
     get _ from collection at index and set number to it
-    if check that the number is equal to the target then {
+    if checked that the number is equal to the target then {
         return index
     }
 
-    if check that the target is greater than the number then {
+    if checked that the target is greater than the number then {
         set split_collection to result of call slice with [collection, index, length of collection]
         call binary_search with [split_collection, target]
         add result to index and return it

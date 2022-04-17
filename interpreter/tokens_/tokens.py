@@ -895,7 +895,7 @@ def get_tokens():
         "for": FOR,
         "each": EACH,
         "in": IN,
-        "check": CHECK,
+        "checked": CHECK,
         "equal": EQUAL,
         "less": LESS,
         "greater": GREATER,

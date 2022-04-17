@@ -7,7 +7,7 @@ define the function fibonacci expecting [limit] as {
     set current to 1
     set numbers to [old current]
 
-    while check current less than the limit {
+    while checked that current is less than the limit {
         set temp to current
         add old to current
         set old to temp
