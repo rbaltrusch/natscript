@@ -9,6 +9,7 @@ from typing import Optional
 from typing import Tuple
 
 from interpreter.internal.interfaces import Token
+from interpreter.util.pattern_matching import determine_patterns
 
 
 class LexError(Exception):
@@ -59,7 +60,36 @@ class RunTimeException(Exception):
     @property
     def stack_trace(self) -> str:
         """The text displaying the line number"""
-        return "\n\t" + "\n\t".join(f"{token}" for token in self.token_stack)
+        token_representations = [repr(token) for token in self.token_stack]
+        patterns = determine_patterns(token_representations)
+        for pattern in patterns:
+            pattern.delay_start()  # we want to show the first repetition
+
+        trace = "\n\t"
+        for i, token in enumerate(token_representations):
+            if not patterns:
+                trace += "\n\t" + token
+                continue
+
+            pattern = patterns[0]
+            if i in pattern.range:
+                continue
+
+            if i >= pattern.end:
+                repeat_message = (
+                    "once more..."
+                    if pattern.repetitions == 1
+                    else f"{pattern.repetitions} more times..."
+                )
+                tokens_message = (
+                    "token repeats"
+                    if pattern.length == 1
+                    else f"{pattern.length} tokens repeat"
+                )
+                trace += f"\n\t[The previous {tokens_message} {repeat_message}]"
+                patterns.pop(0)
+            trace += "\n\t" + token
+        return trace
 
 
 class UndefinedVariableException(RunTimeException):
