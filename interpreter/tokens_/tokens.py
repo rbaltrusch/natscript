@@ -928,6 +928,7 @@ def get_tokens():
         "private": PRIVATE,
         "constant": CONSTANT,
         "range": RANGE,
+        "itself": IT,
     }
 
 
