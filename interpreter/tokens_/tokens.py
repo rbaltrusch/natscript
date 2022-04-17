@@ -699,7 +699,7 @@ class ROUND(VALUE):
 
 class ANY_CHARACTER(Token):
     def _run(self, interpreter):
-        raise exceptions.SyntaxException(self)
+        raise exceptions.SyntaxException(self) from None
 
 
 class AT(Token):
@@ -822,7 +822,7 @@ class IMPORT(Token):
                 raise exceptions.ImportException(
                     f"Could not import private variable {variable.name} from module {filename}!",
                     token=self,
-                )
+                ) from None
             variables.append(variable)
         interpreter.remove_stack()
 

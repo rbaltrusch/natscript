@@ -50,7 +50,7 @@ class TokenFactory:
                 token_type = self.regex_tokens[key]
                 return token_type(value=token, line=self.line_number)
 
-        raise exceptions.LexError(token, self.line_number)
+        raise exceptions.LexError(token, self.line_number) from None
 
     @staticmethod
     def create_variable(name: str) -> tokenvalue.Variable:
@@ -181,7 +181,7 @@ class Token:
 
     def add_token(self, token: Token):
         if self.full:
-            raise exceptions.InternalFullTokenParseError(token)
+            raise exceptions.InternalFullTokenParseError(token) from None
         self._check_types(token)
         self.tokens.append(token)
         token.parent = self
@@ -205,8 +205,8 @@ class Token:
                 return
 
             if not expected_token.optional:
-                raise exceptions.ParseTypeError(token, expected_token.types)
-        raise exceptions.ParseException(token)
+                raise exceptions.ParseTypeError(token, expected_token.types) from None
+        raise exceptions.ParseException(token) from None
 
     @property
     def is_subtoken(self) -> bool:
@@ -243,7 +243,7 @@ class ClauseToken(Token):
     EXPECTED_TOKENS = [ExpectedToken((Token, ))] * 1000
 
     def raise_syntax_exception(self):
-            raise exceptions.UnclosedClauseException(self)
+            raise exceptions.UnclosedClauseException(self) from None
 
     @property
     def full(self) -> bool:
