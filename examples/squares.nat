@@ -1,0 +1,14 @@
+define function main as {
+    set squares to []
+    for each number in range from 0 to 5 {
+        if checked that the number is equal to 3 then {
+            skip it
+        }
+
+        multiply it by itself, then append it to squares
+    }
+    return squares
+}
+
+# This will output [0, 1, 4, 16] to the console
+print result of call main
