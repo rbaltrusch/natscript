@@ -31,7 +31,9 @@ class ParseTypeError(Exception):
 
     def __init__(self, token: Token, types: Tuple):
         types_ = tuple([t.__name__ for t in types])
-        super().__init__(f"Unexpected token at {token}, expected any of the token types {types_}.")
+        super().__init__(
+            f"Unexpected token at {token}, expected any of the token types {types_}."
+        )
 
 
 class InternalFullTokenParseError(Exception):
@@ -41,12 +43,11 @@ class InternalFullTokenParseError(Exception):
         super().__init__(f"Token {token=} is already full!")
 
 
-
 class RunTimeException(Exception):
     """Base class for exceptions raised while running the program"""
 
     def __init__(self, *args, token: Optional[Token] = None, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs) # type: ignore
         self.token_stack: List[Token] = []
         if token is not None:
             self.token_stack.append(token)
@@ -145,7 +146,9 @@ class UnclosedClauseException(RunTimeException):
     """Exception to be raised for claused with unmatched close tokens"""
 
     def __init__(self, token: Token):
-        super().__init__("Clause token was not closed with corresponding token!", token=token)
+        super().__init__(
+            "Clause token was not closed with corresponding token!", token=token
+        )
 
 
 class EmptyStackError(RunTimeException):
