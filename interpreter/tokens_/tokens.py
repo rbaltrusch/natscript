@@ -694,7 +694,6 @@ class ROUND(VALUE):
     def _run(self, interpreter):
         value = interpreter.stack_pop()
         value.value = round(value.value)
-        interpreter.stack_append(value)
 
 
 class ANY_CHARACTER(Token):
