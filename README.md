@@ -8,11 +8,7 @@ This is Natscript, a custom interpreted language with a free, natural language-l
 ```powershell
 define function main as {
     set squares to []
-    for each number in range from 0 to 5 {
-        if checked that the number is equal to 3 then {
-            skip it
-        }
-
+    for each number in range from 0 to 5 not equal to 3 {
         multiply it by itself, then append it to squares
     }
     return squares
