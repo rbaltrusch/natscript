@@ -72,6 +72,7 @@ class ARE(SkipToken):
 class AND(SkipToken):
     pass
 
+
 class COMMA(SkipToken):
     pass
 
@@ -129,10 +130,7 @@ class NOTHING(VALUE):
 
 class DEFAULTING(Token):
 
-    EXPECTED_TOKENS = [
-        ExpectedToken((TO,), 0),
-        ExpectedToken((VALUE,), 1)
-    ]
+    EXPECTED_TOKENS = [ExpectedToken((TO,), 0), ExpectedToken((VALUE,), 1)]
 
     def _init(self, interpreter):
         for token in self.tokens:
@@ -144,9 +142,7 @@ class DEFAULTING(Token):
 
 class VARNAME(VALUE):
 
-    EXPECTED_TOKENS = [
-        ExpectedToken((DEFAULTING,), optional=True)
-    ]
+    EXPECTED_TOKENS = [ExpectedToken((DEFAULTING,), optional=True)]
 
     def _run(self, interpreter):
         try:
@@ -344,7 +340,7 @@ class APPEND(Token):
     EXPECTED_TOKENS = [
         ExpectedToken((VALUE,), 0),
         ExpectedToken((TO,), 1),
-        ExpectedToken((VARNAME), 2)
+        ExpectedToken((VARNAME), 2),
     ]
 
     def _run(self, interpreter):
@@ -358,7 +354,7 @@ class REMOVE(Token):
     EXPECTED_TOKENS = [
         ExpectedToken((VALUE,), 0),
         ExpectedToken((FROM,), 1),
-        ExpectedToken((VARNAME), 2)
+        ExpectedToken((VARNAME), 2),
     ]
 
     def _run(self, interpreter):
@@ -369,10 +365,7 @@ class REMOVE(Token):
 
 class LENGTH(VALUE):
 
-    EXPECTED_TOKENS = [
-        ExpectedToken((OF,), 0),
-        ExpectedToken((VALUE,), 1)
-    ]
+    EXPECTED_TOKENS = [ExpectedToken((OF,), 0), ExpectedToken((VALUE,), 1)]
 
     def _run(self, interpreter):
         collection = interpreter.stack_pop().get_value()
@@ -381,13 +374,11 @@ class LENGTH(VALUE):
 
 
 class EXPECTING(Token):
-    EXPECTED_TOKENS = [
-        ExpectedToken((COLLECTION,), 0)
-    ]
+    EXPECTED_TOKENS = [ExpectedToken((COLLECTION,), 0)]
 
     def _run(self, interpreter):
         collection = interpreter.stack_pop()
-        interpreter.stack_pop() # default empty args
+        interpreter.stack_pop()  # default empty args
         interpreter.stack_append(collection)
 
 
@@ -413,10 +404,11 @@ class DEFINE(Token):
 class RETURN(Token):
     EXPECTED_TOKENS = [ExpectedToken((VALUE,), 0)]
 
+
 class CALL(Token):
     EXPECTED_TOKENS = [
         ExpectedToken((VARNAME, CLAUSE), 1),
-        ExpectedToken((WITH,), 0, optional=True)
+        ExpectedToken((WITH,), 0, optional=True),
     ]
 
     def _run(self, interpreter):
@@ -424,7 +416,7 @@ class CALL(Token):
 
         if self.has_all_optionals:
             inputs = interpreter.stack_pop()
-            inputs.get_value() #check defined
+            inputs.get_value()  # check defined
             input_values = inputs.value
         else:
             input_values = []
@@ -445,15 +437,13 @@ class CALL(Token):
             pass
         return_value = interpreter.stack_pop()
         interpreter.remove_stack()
-        interpreter.set_variable('result', return_value)
+        interpreter.set_variable("result", return_value)
 
 
 class RESULT(VARNAME):
     EXPECTED_TOKENS = [
         ExpectedTokenCombination(
-            ExpectedToken((OF,), 0),
-            ExpectedToken((CALL,), 1),
-            optional=True
+            ExpectedToken((OF,), 0), ExpectedToken((CALL,), 1), optional=True
         )
     ]
 
@@ -552,9 +542,7 @@ class EACH(Token):
         if self.exhausted:
             return
 
-        value = self.TOKEN_FACTORY.create_any_value(
-            value=self.collection[self._index]
-        )
+        value = self.TOKEN_FACTORY.create_any_value(value=self.collection[self._index])
         interpreter.stack_append(value)
         self._index += 1
 
@@ -575,6 +563,7 @@ class EACH(Token):
         if self.collection is None:
             return False
         return self._index >= len(self.collection)
+
 
 class FOR(Token):
 
@@ -644,12 +633,14 @@ class GREATER(CONDITION):
         ExpectedToken((VALUE,), 1),
     ]
 
+
 class EQUAL(CONDITION):
     OPERATOR = operator.eq
     EXPECTED_TOKENS = [
         ExpectedToken((TO,), 0),
         ExpectedToken((VALUE,), 1),
     ]
+
 
 class LESS(CONDITION):
     OPERATOR = operator.lt
@@ -805,6 +796,7 @@ class IMPORT(Token):
         filename = self.tokens[-1].value
 
         from interpreter import interpret
+
         tokens = interpret.construct_tokens(filename)
 
         interpreter.add_stack()
@@ -858,6 +850,7 @@ class RANGE(VALUE):
         interpreter.stack_append(
             self.TOKEN_FACTORY.create_iterable_value(value=list(range(start, end)))
         )
+
 
 def get_tokens():
     return {
