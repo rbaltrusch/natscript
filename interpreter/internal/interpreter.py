@@ -4,13 +4,13 @@ Created on Fri Nov 20 17:17:11 2020
 
 @author: Korean_Crimson
 """
-from typing import Dict
-from typing import List
+from typing import Dict, List
 
 from interpreter.internal import exceptions
-from interpreter.internal.interfaces import Token
-from interpreter.internal.interfaces import Value
-from interpreter.internal.interfaces import Variable
+from interpreter.internal.interfaces import Value, Variable
+# Cant use Token interface because of bugged typechecking for reassigned class variables
+from interpreter.internal.token_ import Token
+
 
 class Interpreter:
     """Interprets tokens and keeps track of the program state"""
@@ -22,9 +22,9 @@ class Interpreter:
     def run(self, token: Token) -> None:
         """Runs the current token"""
         try:
-            token.run(self)
+            token.run(self) #type: ignore
         except exceptions.RunTimeException as exc:
-            exc.token_stack.append(token)
+            exc.token_stack.append(token) #type: ignore
             raise exc
 
     def init(self, token: Token) -> None:
@@ -32,9 +32,9 @@ class Interpreter:
         try:
             if not token.satisfied:
                 token.raise_syntax_exception()
-            token.init(self)
+            token.init(self) #type: ignore
         except exceptions.RunTimeException as exc:
-            exc.token_stack.append(token)
+            exc.token_stack.append(token) #type: ignore
             raise exc
 
     def add_stack(self) -> None:

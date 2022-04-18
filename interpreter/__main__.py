@@ -11,6 +11,7 @@ arguments = argparser.parse_args()
 
 if not arguments.debug:
     import sys
+
     sys.tracebacklimit = 0
 
 if arguments.compile == "True":

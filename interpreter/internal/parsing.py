@@ -4,8 +4,7 @@ Created on Fri Nov 20 14:34:15 2020
 
 @author: Korean_Crimson
 """
-from typing import Generator
-from typing import List
+from typing import Generator, List
 
 from interpreter.internal.interfaces import Token
 
@@ -17,12 +16,12 @@ class Parser:
     """
 
     def __init__(self):
-        self.token_stack = []
+        self.token_stack: List[Token] = []
 
     def parse(self, tokens: List[Token]) -> Generator[Token, Token, None]:
         """Constructs nested token trees by parsing the passed tokens"""
         while tokens:
-            popped_tokens = tokens[0].pop_tokens(tokens) # type: ignore
+            popped_tokens = tokens[0].pop_tokens(tokens)  # type: ignore
             if popped_tokens:
                 continue
 

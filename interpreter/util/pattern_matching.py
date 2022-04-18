@@ -6,13 +6,10 @@ which can be used e.g. to remove repeating parts from recursive stack traces.
 from __future__ import annotations
 
 from collections import defaultdict
-from dataclasses import dataclass
-from dataclasses import field
-from typing import DefaultDict
-from typing import Dict
-from typing import Hashable
-from typing import List
+from dataclasses import dataclass, field
+from typing import DefaultDict, Dict, List, Union
 
+Hashable = Union[int, str]
 DiffDict = Dict[Hashable, DefaultDict[int, List[int]]]
 
 

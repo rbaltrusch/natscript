@@ -15,16 +15,10 @@ import hashlib
 import json
 import os
 import pickle
-from typing import Any
-from typing import Dict
-from typing import List
-from typing import Optional
-from typing import Tuple
-from typing import Type
+from typing import Any, Dict, List, Optional, Tuple, Type
 
-from interpreter.internal.token_ import Token
+from interpreter.internal.token_ import Token  # type: ignore
 from interpreter.tokens_ import tokens
-
 
 TokenData = Tuple[int, str, Any, int, Optional[int], int]
 
@@ -38,12 +32,12 @@ class CompilerError(Exception):
 class BytecodeCompiler(abc.ABC):
     """Bytecode compiler class, stores token data to bypass lexing and parsing"""
 
-    def write_compiled_file(self, tokens: List[Token], filename: str) -> None:
+    def write_compiled_file(self, tokens_: List[Token], filename: str) -> None:
         """Traverses all token trees to collect their data, then dumps token data
         to pickle file, along with a current filehash of the source code file specified.
         """
         saved_tokens: List[TokenData] = []
-        for token in tokens:
+        for token in tokens_:
             _save_tokens(token, saved_tokens)
 
         content = {"tokens": saved_tokens, "hash": _hash_file(filename)}
@@ -68,7 +62,7 @@ class BytecodeCompiler(abc.ABC):
         return tokens_
 
     @abc.abstractmethod
-    def get_compiled_filename(self, filename: str):
+    def get_compiled_filename(self, filename: str) -> str:
         """Returns the name of the compiled file corresponding to the specified filename"""
 
     @abc.abstractmethod
@@ -81,6 +75,8 @@ class BytecodeCompiler(abc.ABC):
 
 
 class PickleCompiler(BytecodeCompiler):
+    """Bytecode compiler using pickle to write/read compiled files"""
+
     def write_content_to_file(self, content: Any, compiled_filename: str) -> None:
         """Writes the content to the compiled file"""
         with open(compiled_filename, "wb") as file:
@@ -98,14 +94,16 @@ class PickleCompiler(BytecodeCompiler):
 
 
 class JsonCompiler(BytecodeCompiler):
+    """Bytecode compiler using json to write/read compiled files"""
+
     def write_content_to_file(self, content: Any, compiled_filename: str) -> None:
         """Writes the content to the compiled file"""
-        with open(compiled_filename, "w") as file:
+        with open(compiled_filename, "w", encoding="utf-8") as file:
             json.dump(content, file)
 
     def read_content_from_file(self, compiled_filename: str) -> Dict[str, Any]:
         """Reads the content from the compiled file"""
-        with open(compiled_filename, "r") as file:
+        with open(compiled_filename, "r", encoding="utf-8") as file:
             contents = json.load(file)
         return contents
 
