@@ -20,4 +20,4 @@ define function main as {
 }
 
 # prints all fibonacci numbers from 1 to 1000000
-call main and print result
+call main #and print result
