@@ -130,6 +130,16 @@ python -m interpreter -h
 
 Tutorials will be written once more commands are supported by Natscript.
 
+## Pyinstaller
+
+Packaging the interpreter using pyinstaller can speed up execution time of Natscript code by a factor of 2x. Simply bundle it using the command:
+
+```batch
+pyinstaller -n interpreter interpreter/__main__.py
+```
+
+This will generate an executable file called interpreter.exe (with the same CLI as the python package) in the dist/interpreter folder.
+
 ## Contributions
 
 Contributions are welcome! For more details, please read the [contribution guidelines](CONTRIBUTING.md).
