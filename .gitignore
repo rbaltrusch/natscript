@@ -6,6 +6,11 @@ tests/reports/
 tests/htmlcov/
 **/*.egg-info
 
+# pyinstaller
+*.spec
+build
+dist
+
 # Natscript files
 *.nat
 !examples/*.nat
