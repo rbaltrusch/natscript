@@ -705,6 +705,14 @@ class CONTAINS(CONDITION):
     EXPECTED_TOKENS = [ExpectedToken((VALUE,))]
 
 
+class IDENTICAL(CONDITION):
+    OPERATOR = operator.is_
+    EXPECTED_TOKENS = [
+        ExpectedToken((TO,), 0),
+        ExpectedToken((VALUE,), 1),
+    ]
+
+
 class FIRST(VALUE):
 
     EXPECTED_TOKENS = [
@@ -950,6 +958,7 @@ def get_tokens():
         "greater": GREATER,
         "than": THAN,
         "contains": CONTAINS,
+        "identical": IDENTICAL,
         "the": THE,
         "expecting": EXPECTING,
         "with": WITH,
