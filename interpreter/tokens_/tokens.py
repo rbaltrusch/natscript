@@ -4,12 +4,14 @@ Created on Fri Nov 20 13:54:34 2020
 
 @author: Korean_Crimson
 """
+# #pylint: disable=too-many-lines
+
 import codecs
 import operator
 from typing import Any, List, Optional
 
 from interpreter.internal import exceptions
-from interpreter.internal.interfaces import Interpreter, Variable
+from interpreter.internal.interfaces import Interpreter, Value, Variable
 from interpreter.internal.token_ import (
     ClauseToken,
     ExpectedToken,
@@ -215,7 +217,21 @@ class PRINT(Token):
         print(value.convert_to_str())
 
 
-class ADD(Token):
+class OperatorToken(Token):
+    def _run(self, interpreter: Interpreter):
+        variable = interpreter.stack_pop()
+        value = interpreter.stack_pop()
+        try:
+            self.do_operation(variable, value)  # pylint: disable=no-member
+        except TypeError:
+            type_ = lambda x: x.get_value().__class__.__name__
+            raise exceptions.TypeException(
+                f"Unsupported operation for types {type_(variable)} and {type_(value)}!",
+                token=self,
+            ) from None
+
+
+class ADD(OperatorToken):
 
     EXPECTED_TOKENS = [
         ExpectedToken((VALUE,), 0),
@@ -223,13 +239,11 @@ class ADD(Token):
         ExpectedToken((VARNAME,), 2),
     ]
 
-    def _run(self, interpreter: Interpreter):
-        variable = interpreter.stack_pop()
-        value = interpreter.stack_pop()
+    def do_operation(self, variable: Variable, value: Value) -> None:
         variable.value = variable.get_value() + value.get_value()
 
 
-class SUBTRACT(Token):
+class SUBTRACT(OperatorToken):
 
     EXPECTED_TOKENS = [
         ExpectedToken((VALUE,), 0),
@@ -237,13 +251,11 @@ class SUBTRACT(Token):
         ExpectedToken((VARNAME,), 2),
     ]
 
-    def _run(self, interpreter: Interpreter):
-        variable = interpreter.stack_pop()
-        value = interpreter.stack_pop()
+    def do_operation(self, variable: Variable, value: Value) -> None:
         variable.value = variable.get_value() - value.get_value()
 
 
-class MULTIPLY(Token):
+class MULTIPLY(OperatorToken):
 
     EXPECTED_TOKENS = [
         ExpectedToken((VARNAME,), 2),
@@ -251,13 +263,11 @@ class MULTIPLY(Token):
         ExpectedToken((VALUE,), 0),
     ]
 
-    def _run(self, interpreter: Interpreter):
-        variable = interpreter.stack_pop()
-        value = interpreter.stack_pop()
+    def do_operation(self, variable: Variable, value: Value) -> None:
         variable.value = variable.get_value() * value.get_value()
 
 
-class DIVIDE(Token):
+class DIVIDE(OperatorToken):
 
     EXPECTED_TOKENS = [
         ExpectedToken((VARNAME,), 2),
@@ -265,9 +275,7 @@ class DIVIDE(Token):
         ExpectedToken((VALUE,), 0),
     ]
 
-    def _run(self, interpreter: Interpreter):
-        variable = interpreter.stack_pop()
-        value = interpreter.stack_pop()
+    def do_operation(self, variable: Variable, value: Value) -> None:
         variable.value = variable.get_value() / value.get_value()
         if variable.value == int(variable.value):
             variable.value = int(variable.value)
@@ -345,9 +353,17 @@ class APPEND(Token):
     ]
 
     def _run(self, interpreter: Interpreter):
-        collection: List[Any] = interpreter.stack_pop().get_value()
+        collection_variable = interpreter.stack_pop()
+        collection: List[Any] = collection_variable.get_value()
         value = interpreter.stack_pop().get_value()
-        collection.append(value)
+
+        try:
+            collection.append(value)
+        except AttributeError:
+            raise exceptions.TypeException(
+                f"Cannot append value to type {collection.__class__.__name__}!",
+                token=self,
+            ) from None
 
 
 class POP(Token):
@@ -366,7 +382,7 @@ class POP(Token):
             variable.value = collection.pop()
         except AttributeError:
             raise exceptions.TypeException(
-                f"Cannot pop from {type(collection)}!", token=self
+                f"Cannot pop from type {collection.__class__.__name__}!", token=self
             ) from None
         except IndexError:
             raise exceptions.ValueException(
@@ -387,7 +403,18 @@ class REMOVE(Token):
     def _run(self, interpreter: Interpreter):
         collection: List[Any] = interpreter.stack_pop().get_value()
         value = interpreter.stack_pop().get_value()
-        collection.remove(value)
+
+        try:
+            collection.remove(value)
+        except AttributeError:
+            raise exceptions.TypeException(
+                f"Cannot remove value from type {collection.__class__.__name__}!",
+                token=self,
+            ) from None
+        except ValueError:
+            raise exceptions.ValueException(
+                "Value not in collection!", token=self
+            ) from None
 
 
 class LENGTH(VALUE):
@@ -474,6 +501,11 @@ class CALL(Token):
 
         try:
             function.get_value()(interpreter)
+        except TypeError:
+            raise exceptions.TypeException(
+                f"Cannot call variable of type {function.get_value().__class__.__name__}!",
+                token=self,
+            ) from None
         except exceptions.ReturnException:
             pass
         return_value: Variable = interpreter.stack_pop()  # type: ignore
@@ -586,7 +618,15 @@ class EACH(Token):
         if self.exhausted:
             return
 
-        value = self.TOKEN_FACTORY.create_any_value(value=self.collection[self._index])
+        try:
+            collection_value = self.collection[self._index]
+        except TypeError:
+            raise exceptions.TypeException(
+                f"Cannot iterate through value of type {self.collection.__class__.__name__}!",
+                token=self,
+            ) from None
+
+        value = self.TOKEN_FACTORY.create_any_value(value=collection_value)
         interpreter.stack_append(value)
         self._index += 1
 
@@ -606,7 +646,13 @@ class EACH(Token):
     def exhausted(self) -> bool:
         if self.collection is None:
             return False
-        return self._index >= len(self.collection)
+
+        try:
+            return self._index >= len(self.collection)
+        except TypeError:
+            raise exceptions.TypeException(
+                f"Value of type {self.collection.__class__.__name__} has no length!"
+            ) from None
 
 
 class FOR(Token):
@@ -720,9 +766,18 @@ class FIRST(VALUE):
         interpreter.run(self.tokens[-1])
         collection = interpreter.stack_pop().get_value()
 
-        value = self.TOKEN_FACTORY.create_any_value(
-            value=collection[self.RETURN_TOKEN_INDEX]
-        )
+        try:
+            collection_value = collection[self.RETURN_TOKEN_INDEX]
+        except IndexError:
+            raise exceptions.ValueException(
+                "Cannot extract value from empty collection!"
+            ) from None
+        except TypeError:
+            raise exceptions.TypeException(
+                f"Cannot extract from value of type {collection.__class__.__name__}!",
+            ) from None
+
+        value = self.TOKEN_FACTORY.create_any_value(collection_value)
         interpreter.stack_append(value)
         # ignore collection (last token), as it was previously run
         for token in self.tokens[:-1]:
@@ -741,7 +796,12 @@ class ROUND(VALUE):
 
     def _run(self, interpreter: Interpreter):
         value = interpreter.stack_pop()
-        value.value = round(value.value)
+        try:
+            value.value = round(value.value)
+        except TypeError:
+            raise exceptions.TypeException(
+                f"Cannot round value of type {value.value.__class__.__name__}!"
+            ) from None
 
 
 class ANY_CHARACTER(Token):
@@ -766,7 +826,18 @@ class GET(Token):
         variable = interpreter.stack_pop()
         collection = interpreter.stack_pop().get_value()
         index = interpreter.stack_pop().get_value()
-        variable.value = collection[index]
+
+        try:
+            variable.value = collection[index]
+        except IndexError:
+            raise exceptions.ValueException(
+                f"Collection index {index} out of range!"
+            ) from None
+        except TypeError:
+            raise exceptions.TypeException(
+                f"Cannot index value of type {collection.__class__.__name__}!"
+            ) from None
+
         interpreter.set_variable(variable.name, variable)
 
 
@@ -866,7 +937,15 @@ class IMPORT(Token):
 
         variables: List[Variable] = []
         for import_variable in import_variables:
-            variable = interpreter.get_variable(import_variable.name)
+
+            try:
+                variable = interpreter.get_variable(import_variable.name)
+            except AttributeError:
+                type_ = import_variable.value.__class__.__name__
+                raise exceptions.ValueException(
+                    f"Cannot import: value of type {type_} is not a variable!"
+                ) from None
+
             if variable.get_qualifier("private"):
                 raise exceptions.ImportException(
                     f"Could not import private variable {variable.name} from module {filename}!",
