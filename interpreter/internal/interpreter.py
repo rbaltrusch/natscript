@@ -8,6 +8,7 @@ from typing import Dict, List
 
 from interpreter.internal import exceptions
 from interpreter.internal.interfaces import Value, Variable
+
 # Cant use Token interface because of bugged typechecking for reassigned class variables
 from interpreter.internal.token_ import Token
 
@@ -22,9 +23,9 @@ class Interpreter:
     def run(self, token: Token) -> None:
         """Runs the current token"""
         try:
-            token.run(self) #type: ignore
+            token.run(self)  # type: ignore
         except exceptions.RunTimeException as exc:
-            exc.token_stack.append(token) #type: ignore
+            exc.token_stack.append(token)  # type: ignore
             raise exc
 
     def init(self, token: Token) -> None:
@@ -32,9 +33,9 @@ class Interpreter:
         try:
             if not token.satisfied:
                 token.raise_syntax_exception()
-            token.init(self) #type: ignore
+            token.init(self)  # type: ignore
         except exceptions.RunTimeException as exc:
-            exc.token_stack.append(token) #type: ignore
+            exc.token_stack.append(token)  # type: ignore
             raise exc
 
     def add_stack(self) -> None:
