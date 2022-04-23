@@ -292,22 +292,13 @@ class CLAUSE(VALUE, ClauseToken):
         self._none = self.TOKEN_FACTORY.create_none_value()
         self._runnable_tokens = self.tokens[:-1]
 
-        for i, token in enumerate(self._runnable_tokens):
-            if isinstance(token, RETURN):
-                self._return_index = i
-                break
-        else:
-            self._return_index = None
-
     def run(self, interpreter: Interpreter):
         value = self.TOKEN_FACTORY.create_value(self._run_tokens)
         interpreter.stack_append(value)
 
     def _run_tokens(self, interpreter: Interpreter):
-        for i, token in enumerate(self._runnable_tokens):
+        for token in self._runnable_tokens:
             interpreter.run(token)
-            if i == self._return_index:
-                raise exceptions.ReturnException(self)
         interpreter.stack_append(self._none)
 
 
@@ -450,6 +441,9 @@ class DEFINE(Token):
 
 class RETURN(Token):
     EXPECTED_TOKENS = [ExpectedToken((VALUE,), 0)]
+
+    def _run(self, interpreter: Interpreter):
+        raise exceptions.ReturnException(self)
 
 
 class CALL(Token):
