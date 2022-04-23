@@ -350,7 +350,7 @@ class APPEND(Token):
     ]
 
     def _run(self, interpreter: Interpreter):
-        collection = interpreter.stack_pop().get_value()
+        collection: List[Any] = interpreter.stack_pop().get_value()
         value = interpreter.stack_pop().get_value()
         collection.append(value)
 
@@ -390,7 +390,7 @@ class REMOVE(Token):
     ]
 
     def _run(self, interpreter: Interpreter):
-        collection = interpreter.stack_pop().get_value()
+        collection: List[Any] = interpreter.stack_pop().get_value()
         value = interpreter.stack_pop().get_value()
         collection.remove(value)
 
