@@ -10,9 +10,13 @@ from typing import Any, List, Optional
 
 from interpreter.internal import exceptions
 from interpreter.internal.interfaces import Interpreter, Variable
-from interpreter.internal.token_ import (ClauseToken, ExpectedToken,
-                                         ExpectedTokenCombination, SkipToken,
-                                         Token)
+from interpreter.internal.token_ import (
+    ClauseToken,
+    ExpectedToken,
+    ExpectedTokenCombination,
+    SkipToken,
+    Token,
+)
 
 # type: ignore
 # pylint: disable=invalid-name
@@ -137,12 +141,9 @@ class DEFAULTING(Token):
 
     EXPECTED_TOKENS = [ExpectedToken((TO,), 0), ExpectedToken((VALUE,), 1)]
 
-    def _init(self, interpreter: Interpreter):
+    def run(self, interpreter: Interpreter):
         for token in self.tokens:
             interpreter.run(token)
-
-    def run(self, interpreter: Interpreter):
-        pass
 
 
 class VARNAME(VALUE):
@@ -158,7 +159,7 @@ class VARNAME(VALUE):
         if self.has_all_optionals:
             default_value = interpreter.stack_pop()
             variable.value = default_value.get_value()
-            interpreter.set_variable(variable.name, default_value)
+            interpreter.set_variable(variable.name, variable)
 
         interpreter.stack_append(variable)
         interpreter.set_variable("it", variable)
@@ -209,7 +210,7 @@ class PRINT(Token):
 
     def _run(self, interpreter: Interpreter):
         value = interpreter.stack_pop()
-        value.get_value() # HACK: make sure variables are set correctly
+        value.get_value()  # HACK: make sure variables are set correctly
         print(repr(value))
 
 
