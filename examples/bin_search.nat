@@ -23,7 +23,7 @@ define function binary_search expecting [collection target] as {
     # returns the index of the target element in a sorted collection
     set index to result of call get_half_length with [collection]
 
-    get _ from collection at index and set number to it
+    get number from collection at index
     if checked that the number is equal to the target then {
         return index
     }
@@ -43,7 +43,7 @@ define function main as {
     # main function
     set collection to [1, 3, 5, 8, 13, 26, 53, 76, 88, 135, 268, 377, 416, 529, 876, 1000]
     for each target in collection {
-        call binary_search with [collection, target]
+        call binary_search with [collection, target] and print result
     }
 }
 

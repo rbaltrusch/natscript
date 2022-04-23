@@ -720,6 +720,7 @@ class GET(Token):
         collection = interpreter.stack_pop().get_value()
         index = interpreter.stack_pop().get_value()
         variable.value = collection[index]
+        interpreter.set_variable(variable.name, variable)
 
 
 class CollectionLogicToken(VALUE):
