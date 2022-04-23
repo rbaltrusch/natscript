@@ -1,0 +1,13 @@
+set a to {
+    define function f expecting [b] as {
+        multiply b by 2 then return it
+    }
+    return f
+}
+
+set aa to {
+    define function f expecting [b] as {} and return it
+}
+
+call a, then call result with [2] and print result
+call aa, then call result with [2] and print result
