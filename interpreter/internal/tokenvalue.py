@@ -32,6 +32,8 @@ class Value:
     def __repr__(self):
         if isinstance(self.value, bool):
             return str(self.value).lower()
+        if callable(self.value):
+            return f"function {self.value.__name__}"
         return str(self.value)
 
 
@@ -57,7 +59,7 @@ class NoneValue(Value):
     """Value wrapper for None"""
 
     def __repr__(self):
-        return "none"
+        return "nothing"
 
     def get_value(self):
         """Returns itself. Cannot return None because this would cause problems

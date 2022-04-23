@@ -10,13 +10,9 @@ from typing import Any, List, Optional
 
 from interpreter.internal import exceptions
 from interpreter.internal.interfaces import Interpreter, Variable
-from interpreter.internal.token_ import (
-    ClauseToken,
-    ExpectedToken,
-    ExpectedTokenCombination,
-    SkipToken,
-    Token,
-)
+from interpreter.internal.token_ import (ClauseToken, ExpectedToken,
+                                         ExpectedTokenCombination, SkipToken,
+                                         Token)
 
 # type: ignore
 # pylint: disable=invalid-name
@@ -121,16 +117,20 @@ class STRING(VALUE):
 
 class TRUE(VALUE):
     def __init__(self, *_, **__):
-        super().__init__(value=1)
+        super().__init__(value=True)
 
 
 class FALSE(VALUE):
     def __init__(self, *_, **__):
-        super().__init__(value=0)
+        super().__init__(value=False)
 
 
 class NOTHING(VALUE):
     VALUE_FACTORY = lambda *_: None
+
+    def _init(self, interpreter: Interpreter):
+        # pylint: disable=attribute-defined-outside-init
+        self.token_value = self.TOKEN_FACTORY.create_none_value()
 
 
 class DEFAULTING(Token):
@@ -209,7 +209,8 @@ class PRINT(Token):
 
     def _run(self, interpreter: Interpreter):
         value = interpreter.stack_pop()
-        print(value.get_value())
+        value.get_value() # HACK: make sure variables are set correctly
+        print(repr(value))
 
 
 class ADD(Token):
