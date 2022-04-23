@@ -155,6 +155,14 @@ class UnclosedClauseException(RunTimeException):
         )
 
 
+class TypeException(RunTimeException):
+    """Exception to be raised for mismatching types"""
+
+
+class ValueException(RunTimeException):
+    """Exception to be raised for wrong values"""
+
+
 class EmptyStackError(RunTimeException):
     """Exception to be raised when trying to access a value from an empty interpreter stack"""
 

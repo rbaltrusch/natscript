@@ -355,6 +355,32 @@ class APPEND(Token):
         collection.append(value)
 
 
+class POP(Token):
+    EXPECTED_TOKENS = [
+        ExpectedToken((VARNAME,), 2),
+        ExpectedToken((FROM,), 1),
+        ExpectedToken((VARNAME), 0),
+    ]
+
+    def _run(self, interpreter: Interpreter):
+        variable = interpreter.stack_pop()
+        collection_variable: List[Any] = interpreter.stack_pop()
+        collection = collection_variable.get_value()
+
+        try:
+            variable.value = collection.pop()
+        except AttributeError:
+            raise exceptions.TypeException(
+                f"Cannot pop from {type(collection)}!", token=self
+            ) from None
+        except IndexError:
+            raise exceptions.ValueException(
+                "Cannot pop from empty collection!", token=self
+            ) from None
+
+        interpreter.set_variable(variable.name, variable)
+
+
 class REMOVE(Token):
 
     EXPECTED_TOKENS = [
@@ -916,6 +942,7 @@ def get_tokens():
         "of": OF,
         "append": APPEND,
         "remove": REMOVE,
+        "pop": POP,
         "round": ROUND,
         "get": GET,
         "at": AT,
