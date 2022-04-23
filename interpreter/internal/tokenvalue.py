@@ -36,6 +36,10 @@ class Value:
             return f"function {self.value.__name__}"
         return str(self.value)
 
+    def convert_to_str(self) -> str:
+        """Converts the value of the object to str"""
+        return self.__repr__()
+
 
 class IterableValue(Value):
     """Value wrapper for lists"""
@@ -58,7 +62,7 @@ class IterableValue(Value):
 class NoneValue(Value):
     """Value wrapper for None"""
 
-    def __repr__(self):
+    def convert_to_str(self) -> str:
         return "nothing"
 
     def get_value(self):
@@ -76,8 +80,9 @@ class Variable(Value):
         self.source = None
         self.qualifiers: DefaultDict[str, bool] = defaultdict(bool)
 
-    def __repr__(self):
-        return f"{self.name}"
+    def convert_to_str(self) -> str:
+        self.get_value()
+        return super().__repr__()
 
     def get_value(self) -> Any:
         """Returns its value. If it's None, it raises an UndefinedVariableException"""

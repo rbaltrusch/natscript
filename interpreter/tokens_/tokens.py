@@ -210,8 +210,7 @@ class PRINT(Token):
 
     def _run(self, interpreter: Interpreter):
         value = interpreter.stack_pop()
-        value.get_value()  # HACK: make sure variables are set correctly
-        print(repr(value))
+        print(value.convert_to_str())
 
 
 class ADD(Token):
