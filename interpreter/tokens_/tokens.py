@@ -654,6 +654,11 @@ class LESS(CONDITION):
     ]
 
 
+class CONTAINS(CONDITION):
+    OPERATOR = operator.contains
+    EXPECTED_TOKENS = [ExpectedToken((VALUE,))]
+
+
 class FIRST(VALUE):
 
     EXPECTED_TOKENS = [
@@ -897,6 +902,7 @@ def get_tokens():
         "less": LESS,
         "greater": GREATER,
         "than": THAN,
+        "contains": CONTAINS,
         "the": THE,
         "expecting": EXPECTING,
         "with": WITH,
