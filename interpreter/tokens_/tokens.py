@@ -138,7 +138,7 @@ class NOTHING(VALUE):
 
 
 class DEFAULTING(Token):
-
+    must_be_subtoken = True
     EXPECTED_TOKENS = [ExpectedToken((TO,), 0), ExpectedToken((VALUE,), 1)]
 
     def run(self, interpreter: Interpreter):
@@ -166,6 +166,8 @@ class VARNAME(VALUE):
 
 
 class QualifierToken(Token):
+    must_be_subtoken = True
+
     def _run(self, interpreter: Interpreter):
         variable = interpreter.stack_pop()
         variable.add_qualifier(self.qualifier)  # pylint: disable=no-member
@@ -310,6 +312,8 @@ class CLAUSE(VALUE, ClauseToken):
 
 
 class FUNCTION(Token):
+    must_be_subtoken = True
+
     def _run(self, interpreter: Interpreter):
         function = interpreter.stack_pop()
         code = interpreter.stack_pop()
@@ -401,11 +405,21 @@ class LENGTH(VALUE):
 
     def _run(self, interpreter: Interpreter):
         collection = interpreter.stack_pop().get_value()
-        length = self.TOKEN_FACTORY.create_value(len(collection))
+
+        try:
+            len_ = len(collection)
+        except TypeError:
+            raise exceptions.TypeException(
+                f"Value of type {collection.__class__.__name__} has no length!",
+                token=self,
+            ) from None
+
+        length = self.TOKEN_FACTORY.create_value(len_)
         interpreter.stack_append(length)
 
 
 class EXPECTING(Token):
+    must_be_subtoken = True
     EXPECTED_TOKENS = [ExpectedToken((COLLECTION,), 0)]
 
     def _run(self, interpreter: Interpreter):
@@ -415,6 +429,7 @@ class EXPECTING(Token):
 
 
 class WITH(Token):
+    must_be_subtoken = True
     EXPECTED_TOKENS = [ExpectedToken((COLLECTION,), 0)]
 
 
@@ -487,6 +502,7 @@ class RESULT(VARNAME):
 
 
 class ELSE(Token):
+    must_be_subtoken = True
     EXPECTED_TOKENS = [ExpectedToken((CLAUSE,))]
 
 
@@ -544,6 +560,8 @@ class IF(Token):
 
 
 class IN(Token):
+    must_be_subtoken = True
+
     def _run(self, interpreter: Interpreter):
         variable: Variable = interpreter.stack_pop()  # type: ignore
         value = interpreter.stack_pop()
@@ -552,6 +570,7 @@ class IN(Token):
 
 
 class EACH(Token):
+    must_be_subtoken = True
 
     # run order is ignored by EACH.run method
     EXPECTED_TOKENS = [

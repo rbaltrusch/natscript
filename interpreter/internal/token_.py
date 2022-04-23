@@ -158,6 +158,7 @@ class Token:
     VALUE_FACTORY: Optional[Callable[..., Any]] = None
     TOKEN_FACTORY: TokenFactory = TokenFactory()
     functional = True
+    must_be_subtoken = False
 
     def __init__(self, value: Optional[Any] = None, line: int = 0):
         self.value: Optional[Any] = value

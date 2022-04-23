@@ -22,6 +22,8 @@ class Token(Protocol):
     parent: Optional[Token]
     expected_tokens: List[ExpectedToken]
     filepath: Optional[str]
+    functional: bool
+    must_be_subtoken: bool
 
     EXPECTED_TOKENS: List[ExpectedToken]  # type: ignore
     VALUE_FACTORY: Optional[Callable[..., Any]]
@@ -91,6 +93,9 @@ class Value(Protocol):  # pylint: disable=too-few-public-methods
 
     def get_value(self) -> Any:
         """Returns the actual value of the Value"""
+
+    def convert_to_str(self) -> str:
+        """Returns the value of the object as a str"""
 
     def negate_value(self) -> None:
         """Negates value of Value"""

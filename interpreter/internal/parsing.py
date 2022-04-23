@@ -4,9 +4,35 @@ Created on Fri Nov 20 14:34:15 2020
 
 @author: Korean_Crimson
 """
+from dataclasses import dataclass
 from typing import Generator, List
 
+from interpreter.internal import exceptions
 from interpreter.internal.interfaces import Token
+
+
+@dataclass
+class TokenStack:
+    """TokenStack class"""
+
+    def __post_init__(self):
+        self.tokens: List[Token] = []
+
+    def pop(self, index=-1) -> Token:
+        """Pops the element at the idex from the list"""
+        return self.tokens.pop(index)
+
+    def append(self, token: Token) -> None:
+        """Appends the element to the list"""
+        if token.must_be_subtoken and not token.is_subtoken:
+            raise exceptions.ParseException(token)
+        self.tokens.append(token)
+
+    def __bool__(self):
+        return bool(self.tokens)
+
+    def __getitem__(self, index) -> Token:
+        return self.tokens[index]
 
 
 # pylint: disable=too-few-public-methods
@@ -16,7 +42,7 @@ class Parser:
     """
 
     def __init__(self):
-        self.token_stack: List[Token] = []
+        self.token_stack = TokenStack()
 
     def parse(self, tokens: List[Token]) -> Generator[Token, Token, None]:
         """Constructs nested token trees by parsing the passed tokens"""
