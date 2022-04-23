@@ -4,6 +4,7 @@ Created on Fri Nov 20 13:54:34 2020
 
 @author: Korean_Crimson
 """
+import codecs
 import operator
 from typing import Any, List, Optional
 
@@ -115,7 +116,7 @@ class FLOAT(VALUE):
 
 class STRING(VALUE):
     # for whatever reason python is passing self as first arg
-    VALUE_FACTORY = lambda _, x: str(x.strip('"'))
+    VALUE_FACTORY = lambda _, x: codecs.decode(str(x.strip('"')), "unicode_escape")
 
 
 class TRUE(VALUE):
