@@ -62,6 +62,9 @@ class IterableValue(Value):
 class NoneValue(Value):
     """Value wrapper for None"""
 
+    def __str__(self):
+        return "nothing"
+
     def convert_to_str(self) -> str:
         return "nothing"
 
