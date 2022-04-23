@@ -8,7 +8,7 @@ Created on Fri Nov 20 13:54:34 2020
 
 import codecs
 import operator
-from typing import Any, List, Optional
+from typing import Any, List
 
 from interpreter.internal import exceptions
 from interpreter.internal.interfaces import Interpreter, Value, Variable
@@ -615,11 +615,11 @@ class EACH(Token):
             interpreter.run(self.tokens[-1])
             self.collection = interpreter.stack_pop().get_value()
 
-        if self.exhausted:
-            return
-
         try:
             collection_value = self.collection[self._index]
+        except IndexError:
+            self.reset()
+            raise exceptions.BreakIterationException(self) from None
         except TypeError:
             raise exceptions.TypeException(
                 f"Cannot iterate through value of type {self.collection.__class__.__name__}!",
@@ -642,18 +642,6 @@ class EACH(Token):
         self._index = 0
         self.collection = None
 
-    @property
-    def exhausted(self) -> bool:
-        if self.collection is None:
-            return False
-
-        try:
-            return self._index >= len(self.collection)
-        except TypeError:
-            raise exceptions.TypeException(
-                f"Value of type {self.collection.__class__.__name__} has no length!"
-            ) from None
-
 
 class FOR(Token):
 
@@ -664,9 +652,13 @@ class FOR(Token):
     ]
 
     def run(self, interpreter: Interpreter):
-        while not self.extractor.exhausted:
-            for token in self.tokens:
-                interpreter.run(token)
+        while True:
+            try:
+                for token in self.tokens:
+                    interpreter.run(token)
+            except exceptions.BreakIterationException:
+                break
+
             clause = interpreter.stack_pop()
             try:
                 if self._check_condition(interpreter):
@@ -675,23 +667,12 @@ class FOR(Token):
                 pass
             except exceptions.BreakIterationException:
                 break
-        self.extractor.reset()
 
     def _check_condition(self, interpreter: Interpreter) -> bool:
         value = interpreter.stack_pop()
-        if self.condition is None:
+        if not self.has_all_optionals:
             return True
         return value.get_value()
-
-    @property
-    def extractor(self) -> EACH:
-        return self.tokens[0]
-
-    @property
-    def condition(self) -> Optional[CONDITION]:
-        if not isinstance(self.tokens[1], CONDITION):
-            return None
-        return self.tokens[1]
 
 
 class WHILE(Token):
