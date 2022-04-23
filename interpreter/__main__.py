@@ -2,6 +2,8 @@
 """
 The entry point to the Natscript interpreter.
 """
+import os
+
 import interpreter.cli
 from interpreter import interpret
 from interpreter.tokens_ import compiler
@@ -32,4 +34,9 @@ if arguments.debug:
     for token in tokens:
         interpret.print_token_trace(token)
 
-interpret.interpret(tokens, arguments.iterations)
+original_dir = os.getcwd()
+os.chdir(os.path.abspath(os.path.dirname(arguments.filepath)))
+try:
+    interpret.interpret(tokens, arguments.iterations)
+finally:
+    os.chdir(original_dir)
