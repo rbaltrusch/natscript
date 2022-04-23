@@ -907,7 +907,13 @@ class IMPORT(Token):
 
         from interpreter import interpret
 
-        tokens = interpret.construct_tokens(filename)
+        try:
+            tokens = interpret.construct_tokens(filename)
+        except FileNotFoundError:
+            raise exceptions.ImportException(
+                f"Failed to import because file could not be found: {filename}",
+                token=self,
+            ) from None
 
         interpreter.add_stack()
         for token in tokens:
