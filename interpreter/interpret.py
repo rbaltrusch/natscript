@@ -4,6 +4,7 @@ Created on Tue Dec 14 21:51:28 2021
 
 @author: richa
 """
+import os
 from typing import List
 
 from interpreter.internal import interpreter, lexer, parsing, token_
@@ -45,9 +46,27 @@ def interpret(syntax_blocks: List[token_.Token], iterations: int = 1) -> None:
 
 def read_file(filepath: str) -> str:
     """Reads the specified file and returns its contents"""
-    with open(filepath, "r", encoding="utf-8") as file:
-        file_contents = file.read()
-    return file_contents
+    search_paths = get_search_paths()
+    for path in search_paths:
+        full_filepath = os.path.join(path, filepath)
+        if not os.path.isfile(full_filepath):
+            continue
+
+        with open(full_filepath, "r", encoding="utf-8") as file:
+            return file.read()
+    raise FileNotFoundError
+
+
+def get_search_paths() -> List[str]:
+    """Returns a list of the folders in which the interpreter will search for a specified file"""
+    search_paths = [
+        "",
+        os.path.join(os.path.abspath(os.path.dirname(__file__)), "..", "lib"),
+    ]
+    env_path = os.getenv("NATSCRIPT_PATH")
+    if env_path is not None:
+        search_paths.extend(env_path.split(";"))
+    return search_paths
 
 
 def print_token_trace(token: token_.Token, indent: int = 0):
