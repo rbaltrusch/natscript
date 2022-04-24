@@ -3,17 +3,21 @@
 The entry point to the Natscript interpreter.
 """
 import os
+import sys
 
 import interpreter.cli
 from interpreter import interpret
 from interpreter.tokens_ import compiler
 
+# Add Natscript lib to path
+sys.path.insert(
+    1, os.path.join(os.path.abspath(os.path.dirname(__file__)), "..", "lib")
+)
+
 argparser = interpreter.cli.construct_parser()
 arguments = argparser.parse_args()
 
 if not arguments.debug:
-    import sys
-
     sys.tracebacklimit = 0
 
 if arguments.compile == "True":

@@ -7,7 +7,9 @@ Created on Fri Nov 20 13:54:34 2020
 # #pylint: disable=too-many-lines
 
 import codecs
+import importlib
 import operator
+import os
 from typing import Any, List
 
 from interpreter.internal import exceptions
@@ -905,22 +907,18 @@ class IMPORT(Token):
         import_variables = interpreter.stack_pop().value
         filename = self.tokens[-1].value
 
-        from interpreter import interpret
-
+        import_ = (
+            self._import_python_module
+            if filename.endswith(".py")
+            else self._import_tokens
+        )
         try:
-            tokens = interpret.construct_tokens(filename)
-        except FileNotFoundError:
+            import_(interpreter, filename)
+        except (FileNotFoundError, ModuleNotFoundError):
             raise exceptions.ImportException(
                 f"Failed to import because file could not be found: {filename}",
                 token=self,
             ) from None
-
-        interpreter.add_stack()
-        for token in tokens:
-            interpreter.init(token)
-
-        for token in tokens:
-            interpreter.run(token)
 
         variables: List[Variable] = []
         for import_variable in import_variables:
@@ -943,6 +941,48 @@ class IMPORT(Token):
 
         for variable in variables:
             interpreter.set_variable(variable.name, variable)
+
+    def _import_tokens(self, interpreter: Interpreter, filename: str) -> None:
+        from interpreter import interpret
+
+        tokens = interpret.construct_tokens(filename)
+        interpreter.add_stack()
+        for token in tokens:
+            interpreter.init(token)
+
+        for token in tokens:
+            interpreter.run(token)
+
+    def _import_python_module(self, interpreter: Interpreter, filename: str) -> None:
+        module = importlib.import_module(os.path.splitext(filename)[0])
+        interpreter.add_stack()
+        for name, value in module.__dict__.items():
+            if name.startswith("_"):
+                continue
+
+            variable = self.TOKEN_FACTORY.create_variable(name)
+            if callable(value):
+                variable.inputs = self.TOKEN_FACTORY.create_iterable_value(
+                    value=[
+                        self.TOKEN_FACTORY.create_variable(x)
+                        for x in range(value.__code__.co_argcount)
+                    ]
+                )
+                value = self._wrap_python_callable(value)
+            variable.value = value
+            interpreter.set_variable(name, variable)
+            interpreter.set_variable("it", variable)
+
+    def _wrap_python_callable(self, function):
+        def inner(interpreter):
+            args = [
+                interpreter.get_variable(x).get_value()
+                for x in range(function.__code__.co_argcount)
+            ]
+            return_value = function(*args)
+            interpreter.stack_append(self.TOKEN_FACTORY.create_any_value(return_value))
+
+        return inner
 
 
 class SKIP(Token):
