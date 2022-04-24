@@ -982,7 +982,10 @@ class IMPORT(Token):
                 except exceptions.UndefinedVariableException:
                     break
 
-            return_value = function(*args)
+            try:
+                return_value = function(*args)
+            except TypeError as exc:
+                raise exceptions.RunTimeException(token=self) from exc
             interpreter.stack_append(self.TOKEN_FACTORY.create_any_value(return_value))
 
         return inner
