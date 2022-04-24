@@ -1,0 +1,8 @@
+import [
+    lower
+    upper
+    split
+    join
+    trim
+    replace
+] from "_string_nat.py"

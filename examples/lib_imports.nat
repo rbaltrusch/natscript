@@ -1,0 +1,52 @@
+import [product, minimum] from "math.nat"
+call product with [range from 1 to 10] and print result
+call minimum with [range from 1 to 10] and print result
+
+import [find, replace] from "regex.nat"
+call find with ["heh----ello+++here", "\w+"] and print result
+call replace with ["this++isa----test", "\W", ""] and print result
+
+import [bitwise_and, bitshift_left] from "bitwise.nat"
+call bitwise_and with [5, 14] and print result
+call bitshift_left with [101, 3] and print result
+
+import [jsonread, jsonwrite] from "json.nat"
+call jsonwrite with [range from 0 to 10, "test.json"] and print result
+call jsonread with ["test.json"] and print result
+
+import [now, delay, today] from "time.nat"
+call now and print result
+print "start" then call delay with [0.2] and print "end"
+call today with ["%Y-%m-%d"] and print result
+
+import [count, hashmap] from "collections.nat"
+call count with [
+    [0 2 5 34 1 5 2 34 6 2 6 6 3 1]
+] and print result
+call hashmap with [
+    [
+        [1 2]
+        [2 5]
+        [3 1]
+        [4 8]
+    ]
+] and print result
+
+import [system_call, delete_file] from "system.nat"
+call system_call with [
+    ["echo", "hello", "world"],
+    shell defaulting to true
+]
+call delete_file with ["test.json"]
+
+import [lower, upper, join, replace, trim, split] from "string.nat"
+call lower with ["hEllo"] and print result
+call upper with ["hEllo"] and print result
+call join with [
+    ["this", "is", "a", "test"],
+    "-"
+] and print result
+call replace with ["testing","ing","able"] and print result
+call trim with ["\nasa\n"] and print result
+call split with ["he\nh\nh\n\nh\ne\n"] and print result
+call split with ["he-he-he", "-"] and print result

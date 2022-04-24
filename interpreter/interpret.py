@@ -5,6 +5,7 @@ Created on Tue Dec 14 21:51:28 2021
 @author: richa
 """
 import os
+import sys
 from typing import List
 
 from interpreter.internal import interpreter, lexer, parsing, token_
@@ -35,6 +36,11 @@ def interpret(syntax_blocks: List[token_.Token], iterations: int = 1) -> None:
     by reading the source code directly or loading the token tree from a compiled file,
     then runs all tokens in the tree.
     """
+    # Add Natscript lib to path
+    sys.path.insert(
+        1, os.path.join(os.path.abspath(os.path.dirname(__file__)), "..", "lib")
+    )
+
     inter = interpreter.Interpreter()
     for syntax_block in syntax_blocks:
         inter.init(syntax_block)

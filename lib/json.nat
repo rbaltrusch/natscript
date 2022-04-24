@@ -1,0 +1,4 @@
+import [
+    jsonread
+    jsonwrite
+] from "_json_nat.py"

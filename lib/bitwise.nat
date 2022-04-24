@@ -1,0 +1,8 @@
+import [
+    bitwise_and,
+    bitwise_or,
+    bitwise_xor,
+    bitwise_not,
+    bitshift_left,
+    bitshift_right,
+] from "_bitwise_nat.py"

@@ -1,0 +1,5 @@
+import [
+    delay
+    now
+    today
+] from "_time_nat.py"
