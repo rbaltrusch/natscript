@@ -974,11 +974,14 @@ class IMPORT(Token):
             interpreter.set_variable("it", variable)
 
     def _wrap_python_callable(self, function):
-        def inner(interpreter):
-            args = [
-                interpreter.get_variable(x).get_value()
-                for x in range(function.__code__.co_argcount)
-            ]
+        def inner(interpreter: Interpreter):
+            args = []
+            for x in range(function.__code__.co_argcount):
+                try:
+                    args.append(interpreter.get_variable(x).get_value())
+                except exceptions.UndefinedVariableException:
+                    break
+
             return_value = function(*args)
             interpreter.stack_append(self.TOKEN_FACTORY.create_any_value(return_value))
 
