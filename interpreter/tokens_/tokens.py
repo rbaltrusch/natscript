@@ -111,16 +111,19 @@ class VALUE(Token):
 
 
 class INTEGER(VALUE):
-    VALUE_FACTORY = int
+    def _convert_value(self, value):
+        return int(value)
 
 
 class FLOAT(VALUE):
-    VALUE_FACTORY = float
+    def _convert_value(self, value):
+        return float(value)
 
 
 class STRING(VALUE):
-    # for whatever reason python is passing self as first arg
-    VALUE_FACTORY = lambda _, x: codecs.decode(str(x.strip('"')), "unicode_escape")
+    def _convert_value(self, value):
+        string_ = str(value.strip('"'))
+        return codecs.decode(string_, "unicode_escape")
 
 
 class TRUE(VALUE):
@@ -134,7 +137,8 @@ class FALSE(VALUE):
 
 
 class NOTHING(VALUE):
-    VALUE_FACTORY = lambda *_: None
+    def _convert_value(self, value):
+        return None
 
     def _init(self, interpreter: Interpreter):
         # pylint: disable=attribute-defined-outside-init

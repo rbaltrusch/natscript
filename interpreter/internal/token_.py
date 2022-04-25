@@ -9,7 +9,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 from functools import cached_property
-from typing import Any, Callable, Dict, Hashable, Iterable, List, Optional, Tuple, Type
+from typing import Any, Dict, Hashable, Iterable, List, Optional, Tuple, Type
 
 from interpreter.internal import exceptions, tokenvalue
 from interpreter.internal.interfaces import Interpreter
@@ -155,13 +155,12 @@ class Token:
     """
 
     EXPECTED_TOKENS: List[ExpectedToken] = []  # type: ignore
-    VALUE_FACTORY: Optional[Callable[..., Any]] = None
     TOKEN_FACTORY: TokenFactory = TokenFactory()
     functional = True
     must_be_subtoken = False
 
     def __init__(self, value: Optional[Any] = None, line: int = 0):
-        self.value: Optional[Any] = value
+        self.value: Optional[Any] = self._convert_value(value)
         self.line: int = line
         self.tokens: List[Token] = []
         self.run_order: int = 0
@@ -175,6 +174,9 @@ class Token:
         type_ = "Token" if not self.tokens else "SyntaxTree"
         file = "" if not self.filepath else f"File {self.filepath}: "
         return f"{file}Line {self.line}: {type_}({self.__class__.__name__}{value})"
+
+    def _convert_value(self, value: Any) -> Any:
+        return value
 
     def init(self, interpreter: Interpreter):
         """Initialises all subtokens, then itself"""
@@ -246,19 +248,6 @@ class Token:
     def is_subtoken(self) -> bool:
         """Is True if token has a parent"""
         return self.parent is not None
-
-    @property
-    def value(self) -> Any:  # type:ignore
-        """The value of the token"""
-        return self._value
-
-    @value.setter
-    def value(self, value: Any) -> None:  # type:ignore
-        """Sets the value of token, if possible with its VALUE_FACTORY."""
-        if self.VALUE_FACTORY is not None:
-            self._value = self.VALUE_FACTORY(value)  # pylint: disable=not-callable
-        else:
-            self._value: Any = value
 
     @property
     def full(self) -> bool:

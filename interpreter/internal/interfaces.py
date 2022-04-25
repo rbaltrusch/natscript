@@ -6,7 +6,7 @@ Created on Sat Nov  6 13:44:51 2021
 """
 from __future__ import annotations
 
-from typing import Any, Callable, Dict, Iterable, List, Optional, Protocol, Tuple, Type
+from typing import Any, Dict, Iterable, List, Optional, Protocol, Tuple, Type
 
 # type: ignore
 # pylint: disable=duplicate-code
@@ -26,7 +26,6 @@ class Token(Protocol):
     must_be_subtoken: bool
 
     EXPECTED_TOKENS: List[ExpectedToken]  # type: ignore
-    VALUE_FACTORY: Optional[Callable[..., Any]]
     TOKEN_FACTORY: TokenFactory
 
     def init(self, interpreter: Interpreter) -> None:
