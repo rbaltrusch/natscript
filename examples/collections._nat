@@ -1,0 +1,13 @@
+define function a expecting [n] as {n, multiply it by itself then return it}
+set b to [2 3 4 5 6]
+apply a to b, reverse it, then print it
+exclude numbers greater than 16 from it then print it and print numbers
+
+set c to [2 6 3 8 9 12 11 14 13], sort it then print it
+set d to [
+    [2 5],
+    [4 3],
+    [7 8],
+    [5 5],
+]
+sort it then print it
