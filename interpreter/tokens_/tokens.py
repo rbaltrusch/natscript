@@ -1292,6 +1292,65 @@ class WRITE(Token):
             ) from exc
 
 
+class ExceptionToken(Token):
+    """Base class for exception tokens"""
+
+    EXCEPTION = exceptions.RunTimeException
+
+    def _run(self, interpreter: Interpreter):
+        interpreter.stack_append(self.TOKEN_FACTORY.create_value(self.EXCEPTION))
+
+
+class RUN_TIME_EXCEPTION(ExceptionToken):
+    EXCEPTION = exceptions.RunTimeException
+
+
+class TYPE_EXCEPTION(ExceptionToken):
+    EXCEPTION = exceptions.TypeException
+
+
+class VALUE_EXCEPTION(ExceptionToken):
+    EXCEPTION = exceptions.ValueException
+
+
+class IMPORT_EXCEPTION(ExceptionToken):
+    EXCEPTION = exceptions.ImportException
+
+
+class FILE_NOT_FOUND_EXCEPTION(ExceptionToken):
+    EXCEPTION = exceptions.FileNotFoundException
+
+
+class CATCH(Token):
+    EXPECTED_TOKENS = [
+        ExpectedToken((ExceptionToken,), 0),
+        ExpectedToken((THEN,), 1),
+        ExpectedToken((CLAUSE,), 2),
+    ]
+
+    def _run(self, interpreter: Interpreter):
+        try_clause = interpreter.stack_pop().get_value()
+        else_clause = interpreter.stack_pop().get_value()
+        exception = interpreter.stack_pop().get_value()
+
+        try:
+            try_clause(interpreter)
+        except exception:
+            else_clause(interpreter)
+
+
+class TRY(Token):
+    EXPECTED_TOKENS = [ExpectedToken((CLAUSE,), 0), ExpectedToken((CATCH,), 1)]
+
+
+class RAISE(Token):
+    EXPECTED_TOKENS = [ExpectedToken((ExceptionToken))]
+
+    def _run(self, interpreter: Interpreter):
+        exception = interpreter.stack_pop().get_value()
+        raise exception
+
+
 def get_tokens():
     return {
         "set": SET,
@@ -1375,6 +1434,14 @@ def get_tokens():
         "sort": SORT,
         "write": WRITE,
         "content": CONTENT,
+        "try": TRY,
+        "catch": CATCH,
+        "raise": RAISE,
+        "RunTimeException": RUN_TIME_EXCEPTION,
+        "ValueException": VALUE_EXCEPTION,
+        "TypeException": TYPE_EXCEPTION,
+        "FileNotFoundException": FILE_NOT_FOUND_EXCEPTION,
+        "ImportException": IMPORT_EXCEPTION,
     }
 
 

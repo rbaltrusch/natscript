@@ -1,0 +1,36 @@
+set a to [1 2 3]
+try {
+    update a at end to 1
+    print "done1"
+} catch ValueException then {
+    print "saved1"
+}
+
+try {
+    update a at "e" to 1
+    print "done2"
+} catch TypeException then {
+    print "saved2"
+}
+
+set f to {raise RunTimeException}
+try {
+    call f
+    print "called"
+} catch RunTimeException then {
+    print "saved3"
+}
+
+try {
+    import [b] from "nonexistant.nat"
+    print "imported"
+} catch ImportException then {
+    print "couldnt-import"
+}
+
+try {
+    print content of "nonexistant.txt"
+    print "read"
+} catch FileNotFoundException then {
+    print "couldnt-read"
+}
