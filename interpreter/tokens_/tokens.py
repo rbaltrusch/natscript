@@ -21,6 +21,7 @@ from interpreter.internal.token_ import (
     SkipToken,
     Token,
 )
+from interpreter.util import path
 
 # type: ignore
 # pylint: disable=invalid-name
@@ -977,8 +978,9 @@ class IMPORT(Token):
         for token in tokens:
             interpreter.init(token)
 
-        for token in tokens:
-            interpreter.run(token)
+        with path.ChangeDir(os.path.dirname(filename)):
+            for token in tokens:
+                interpreter.run(token)
 
     def _import_python_module(self, interpreter: Interpreter, filename: str) -> None:
         module = importlib.import_module(os.path.splitext(filename)[0])
