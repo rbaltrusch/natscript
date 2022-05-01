@@ -1109,6 +1109,48 @@ class END(VALUE):
         interpreter.stack_append(self.TOKEN_FACTORY.create_value(len_))
 
 
+class APPLY(Token):
+    EXPECTED_TOKENS = [
+        ExpectedToken((VARNAME), 0),
+        ExpectedToken((TO,), 1),
+        ExpectedToken((VALUE,), 2),
+    ]
+
+    def _run(self, interpreter: Interpreter):
+        collection = interpreter.stack_pop()
+        try:
+            list_ = list(collection.get_value())
+        except TypeError:
+            raise exceptions.TypeException(
+                f"Value of type {collection.get_value().__class__.__name__} is not iterable!"
+            ) from None
+
+        function = interpreter.stack_pop()
+        # some functions dont have inputs
+        if (
+            not function.inputs
+            or not function.inputs.value
+            or not len(function.inputs.value) == 1
+        ):
+            raise exceptions.TypeException("Apply function should expect one input!")
+
+        interpreter.add_stack()
+        variable = function.inputs.value[0]
+        interpreter.set_variable(variable.name, variable)
+        for i, value in enumerate(list_):
+            variable.value = value
+            try:
+                function.get_value()(interpreter)
+            except TypeError:
+                raise exceptions.TypeException(
+                    f"Cannot call variable of type {function.get_value().__class__.__name__}!"
+                ) from None
+            except exceptions.ReturnException:
+                pass
+            collection.value[i] = interpreter.stack_pop().get_value()  # return value
+        interpreter.remove_stack()
+
+
 def get_tokens():
     return {
         "set": SET,
@@ -1186,6 +1228,7 @@ def get_tokens():
         "exit": EXIT,
         "slice": SLICE,
         "end": END,
+        "apply": APPLY,
     }
 
 
