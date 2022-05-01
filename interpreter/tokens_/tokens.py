@@ -1164,6 +1164,53 @@ class REVERSE(Token):
             ) from None
 
 
+class EXCLUDE(Token):
+
+    EXPECTED_TOKENS = [
+        ExpectedToken((VARNAME,), 0),
+        ExpectedToken((CONDITION,), 1),
+        ExpectedToken((FROM,), 2),
+        ExpectedToken((VALUE,), 3),
+    ]
+
+    def run(self, interpreter: Interpreter):
+        try:
+            it = interpreter.get_variable("it")
+        except exceptions.UndefinedVariableException:
+            it = None
+
+        for token in self.tokens[2:]:
+            token.run(interpreter)
+        collection = interpreter.stack_pop()
+        collection_list = collection.get_value()
+        self.tokens[0].run(interpreter)
+        variable = interpreter.stack_pop()
+
+        try:
+            collection_value = list(collection.get_value())
+        except TypeError:
+            raise exceptions.TypeException(
+                f"Value of type {collection.get_value().__class__.__name__} is not iterable!"
+            ) from None
+
+        indices = []
+        for i, value in enumerate(collection_value):
+            interpreter.stack_append(self.TOKEN_FACTORY.create_any_value(value))
+            interpreter.run(self.tokens[1])  # type: ignore
+            condition_value = interpreter.stack_pop().get_value()
+            if condition_value:
+                indices.append(i)
+
+        values = []
+        for i, index in enumerate(indices):
+            values.append(collection_list.pop(index - i))
+        variable.value = values
+        interpreter.set_variable(variable.name, variable)
+
+        if it is not None:
+            interpreter.set_variable("it", it)
+
+
 def get_tokens():
     return {
         "set": SET,
@@ -1243,6 +1290,7 @@ def get_tokens():
         "end": END,
         "apply": APPLY,
         "reverse": REVERSE,
+        "exclude": EXCLUDE,
     }
 
 
