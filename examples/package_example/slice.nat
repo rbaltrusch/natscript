@@ -1,4 +1,4 @@
-define function slice expecting [collection, start, end] as {
+define function slice2 expecting [collection, start, end] as {
     # returns a sub-collection containing all elements between indices start and end
     set split_collection to []
     while checked start is less than end {

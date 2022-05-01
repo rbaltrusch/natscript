@@ -1,8 +1,8 @@
 import [sum] from "lib.nat"
-import [slice] from "slice.nat"
+import [slice2] from "slice.nat"
 
 print result of call sum with [
-    result of call slice with [
+    result of call slice2 with [
         [1 2 3]
         0
         2

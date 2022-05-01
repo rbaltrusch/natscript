@@ -14,13 +14,9 @@ from typing import Any, List
 
 from interpreter.internal import exceptions
 from interpreter.internal.interfaces import Interpreter, Value, Variable
-from interpreter.internal.token_ import (
-    ClauseToken,
-    ExpectedToken,
-    ExpectedTokenCombination,
-    SkipToken,
-    Token,
-)
+from interpreter.internal.token_ import (ClauseToken, ExpectedToken,
+                                         ExpectedTokenCombination, SkipToken,
+                                         Token)
 
 # type: ignore
 # pylint: disable=invalid-name
@@ -1057,6 +1053,34 @@ class EXIT(Token):
         raise SystemExit(*values)
 
 
+class SLICE(VALUE):
+    EXPECTED_TOKENS = [
+        ExpectedToken((OF,), 0),
+        ExpectedToken((VALUE,), 1),
+        ExpectedToken((FROM,), 2),
+        ExpectedToken((VALUE,), 3),
+        ExpectedToken((TO,), 4),
+        ExpectedToken((VALUE,), 5),
+    ]
+
+    def _run(self, interpreter: Interpreter):
+        end_index = interpreter.stack_pop().get_value()
+        start_index = interpreter.stack_pop().get_value()
+        collection = interpreter.stack_pop()
+        try:
+            subcollection = collection.get_value()[start_index:end_index]
+        except TypeError:
+            raise exceptions.TypeException(
+                f"Value of type {collection.__class__.__name__} cannot be indexed!"
+            ) from None
+        except IndexError:
+            raise exceptions.ValueException("Index out of range!") from None
+
+        interpreter.stack_append(
+            self.TOKEN_FACTORY.create_iterable_value(subcollection)
+        )
+
+
 def get_tokens():
     return {
         "set": SET,
@@ -1132,6 +1156,7 @@ def get_tokens():
         "range": RANGE,
         "itself": IT,
         "exit": EXIT,
+        "slice": SLICE,
     }
 
 
