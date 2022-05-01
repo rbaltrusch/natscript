@@ -1151,6 +1151,19 @@ class APPLY(Token):
         interpreter.remove_stack()
 
 
+class REVERSE(Token):
+    EXPECTED_TOKENS = [ExpectedToken((VALUE,))]
+
+    def _run(self, interpreter: Interpreter):
+        collection: List[Any] = interpreter.stack_pop().get_value()
+        try:
+            collection.reverse()
+        except AttributeError:
+            raise exceptions.TypeException(
+                f"Cannot reverse value of type {collection.__class__.__name__}!"
+            ) from None
+
+
 def get_tokens():
     return {
         "set": SET,
@@ -1229,6 +1242,7 @@ def get_tokens():
         "slice": SLICE,
         "end": END,
         "apply": APPLY,
+        "reverse": REVERSE,
     }
 
 
