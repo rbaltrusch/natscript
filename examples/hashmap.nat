@@ -1,0 +1,4 @@
+import [hashmap] from "collections.nat"
+set b to result of call hashmap
+update b at end to 1 and print it
+update b at "hello" to 2 and print it
