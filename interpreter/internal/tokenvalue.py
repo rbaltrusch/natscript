@@ -6,7 +6,7 @@ Created on Tue Dec 14 21:51:28 2021
 """
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Any, DefaultDict, Dict, List
+from typing import Any, DefaultDict, List
 
 from interpreter.internal import exceptions
 

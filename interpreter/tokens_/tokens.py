@@ -1049,6 +1049,14 @@ class RANGE(VALUE):
         )
 
 
+class EXIT(Token):
+    EXPECTED_TOKENS = [ExpectedToken((VALUE,), optional=True)]
+
+    def _run(self, interpreter: Interpreter):
+        values = interpreter.stack_pop().get_value() if self.has_all_optionals else []
+        raise SystemExit(*values)
+
+
 def get_tokens():
     return {
         "set": SET,
@@ -1123,6 +1131,7 @@ def get_tokens():
         "constant": CONSTANT,
         "range": RANGE,
         "itself": IT,
+        "exit": EXIT,
     }
 
 

@@ -8,6 +8,7 @@ import sys
 import interpreter.cli
 from interpreter import interpret
 from interpreter.tokens_ import compiler
+from interpreter.util import path
 
 argparser = interpreter.cli.construct_parser()
 arguments = argparser.parse_args()
@@ -33,9 +34,5 @@ if arguments.debug:
     for token in tokens:
         interpret.print_token_trace(token)
 
-original_dir = os.getcwd()
-os.chdir(os.path.abspath(os.path.dirname(arguments.filepath)))
-try:
+with path.ChangeDir(folder=os.path.dirname(arguments.filepath)):
     interpret.interpret(tokens, arguments.iterations)
-finally:
-    os.chdir(original_dir)
