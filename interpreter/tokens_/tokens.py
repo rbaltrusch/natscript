@@ -828,6 +828,29 @@ class GET(Token):
         interpreter.set_variable(variable.name, variable)
 
 
+class UPDATE(Token):
+
+    EXPECTED_TOKENS = [
+        ExpectedToken((VARNAME,), 2),
+        ExpectedToken((AT,), 3),
+        ExpectedToken((TO,), 1),
+        ExpectedToken((VALUE,), 0),
+    ]
+
+    def _run(self, interpreter: Interpreter):
+        index = interpreter.stack_pop().get_value()
+        parent_value = interpreter.stack_pop().get_value()
+        value = interpreter.stack_pop()
+        try:
+            parent_value[index] = value.get_value()
+        except TypeError:
+            raise exceptions.TypeException(
+                f"Value of type {parent_value.__class__.__name__} cannot be indexed!"
+            ) from None
+        except IndexError:
+            raise exceptions.ValueException("Index out of range!") from None
+
+
 class CollectionLogicToken(VALUE):
 
     EXPECTED_TOKENS = [
@@ -1082,6 +1105,7 @@ def get_tokens():
         "remove": REMOVE,
         "pop": POP,
         "round": ROUND,
+        "update": UPDATE,
         "get": GET,
         "at": AT,
         "is": IS,

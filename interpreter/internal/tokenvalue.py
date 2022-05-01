@@ -6,7 +6,7 @@ Created on Tue Dec 14 21:51:28 2021
 """
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Any, DefaultDict, List
+from typing import Any, DefaultDict, Dict, List
 
 from interpreter.internal import exceptions
 
@@ -48,15 +48,16 @@ class IterableValue(Value):
         """Returns a list of actual values contained in the list.
         Converts any contained Value objects into their respective value.
         """
-        values: List[Any] = []
-        for value in self.value:
-            try:
-                value: Value
-                val = value.get_value()
-            except AttributeError:
-                val = value
-            values.append(val)
-        return values
+        if isinstance(self.value, dict):
+            return {k: self._get_item(v) for k, v in self.value.items()}
+        return [self._get_item(x) for x in self.value]
+
+    @staticmethod
+    def _get_item(value: Value):
+        try:
+            return value.get_value()
+        except AttributeError:
+            return value
 
 
 class NoneValue(Value):

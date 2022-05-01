@@ -30,7 +30,8 @@ call hashmap with [
         [3 1]
         [4 8]
     ]
-] and print result
+] and set h to result then print it
+update h at 2 to 64 and print it
 
 import [system_call, delete_file] from "system.nat"
 call system_call with [
