@@ -7,6 +7,7 @@ import sys
 
 import interpreter.cli
 from interpreter import interpret
+from interpreter.internal import token_
 from interpreter.tokens_ import compiler
 from interpreter.util import path
 
@@ -22,6 +23,7 @@ if arguments.compile == "True":
         if arguments.compiled_format == "pickle"
         else compiler.JsonCompiler()
     )
+    token_.Token.TOKEN_COMPILER = compiler_
     try:
         tokens = compiler_.read_compiled_file(arguments.filepath)
     except compiler.CompilerError:

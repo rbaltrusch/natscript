@@ -32,6 +32,8 @@ class CompilerError(Exception):
 class BytecodeCompiler(abc.ABC):
     """Bytecode compiler class, stores token data to bypass lexing and parsing"""
 
+    exception = CompilerError
+
     def write_compiled_file(self, tokens_: List[Token], filename: str) -> None:
         """Traverses all token trees to collect their data, then dumps token data
         to pickle file, along with a current filehash of the source code file specified.

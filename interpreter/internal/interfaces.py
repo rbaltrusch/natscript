@@ -202,3 +202,15 @@ class Interpreter(Protocol):
 
     def remove_variable(self, name: str) -> None:
         """Removes the variable identified by name from the current variable scope"""
+
+
+class TokenCompiler(Protocol):
+    """Protocol for token compiler"""
+
+    exception: Type[Exception]
+
+    def write_compiled_file(self, tokens_: List[Token], filename: str) -> None:
+        """Traverses all token trees to collect their data, then dumps token data to file"""
+
+    def read_compiled_file(self, filename: str) -> List[Token]:
+        """Loads tokens from the corresponding compiled file to the filename specified."""

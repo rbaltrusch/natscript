@@ -12,7 +12,7 @@ from functools import cached_property
 from typing import Any, Dict, Hashable, Iterable, List, Optional, Tuple, Type
 
 from interpreter.internal import exceptions, tokenvalue
-from interpreter.internal.interfaces import Interpreter
+from interpreter.internal.interfaces import Interpreter, TokenCompiler
 
 
 @dataclass
@@ -156,6 +156,7 @@ class Token:
 
     EXPECTED_TOKENS: List[ExpectedToken] = []  # type: ignore
     TOKEN_FACTORY: TokenFactory = TokenFactory()
+    TOKEN_COMPILER: TokenCompiler = None
     functional = True
     must_be_subtoken = False
 
@@ -225,7 +226,7 @@ class Token:
 
     def raise_syntax_exception(self) -> None:
         """Raises SyntaxException"""
-        raise exceptions.SyntaxException(self) from None # type: ignore
+        raise exceptions.SyntaxException(self) from None  # type: ignore
 
     def _check_types(self, token: Token):
         while self.expected_tokens:

@@ -971,9 +971,14 @@ class IMPORT(Token):
             interpreter.set_variable(variable.name, variable)
 
     def _import_tokens(self, interpreter: Interpreter, filename: str) -> None:
-        from interpreter import interpret
+        if self.TOKEN_COMPILER is not None:
+            try:
+                tokens = self.TOKEN_COMPILER.read_compiled_file(filename)
+            except self.TOKEN_COMPILER.exception:
+                tokens = self._construct_tokens(filename)
+        else:
+            tokens = self._construct_tokens(filename)
 
-        tokens = interpret.construct_tokens(filename)
         interpreter.add_stack()
         for token in tokens:
             interpreter.init(token)
@@ -981,6 +986,11 @@ class IMPORT(Token):
         with path.ChangeDir(os.path.dirname(filename)):
             for token in tokens:
                 interpreter.run(token)
+
+    def _construct_tokens(self, filename):
+        from interpreter import interpret
+
+        return interpret.construct_tokens(filename)
 
     def _import_python_module(self, interpreter: Interpreter, filename: str) -> None:
         module = importlib.import_module(os.path.splitext(filename)[0])
