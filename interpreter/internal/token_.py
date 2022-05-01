@@ -239,7 +239,7 @@ class Token:
                 token.run_order = expected_token.run_order
                 return
 
-            if not expected_token.optional:
+            if not expected_token.optional and not self.expected_tokens[0].optional:
                 raise exceptions.ParseTypeError(
                     token, expected_token.types  # type: ignore
                 ) from None
@@ -266,7 +266,8 @@ class Token:
     @cached_property
     def has_all_optionals(self) -> bool:
         """True if length of tokens matches length of expected tokens"""
-        return len(self.tokens) == len(self.EXPECTED_TOKENS)
+        # FIXME: only works for tokens with one or less ExpectedTokenCombination in it
+        return len(self.tokens) >= len(self.EXPECTED_TOKENS)
 
 
 class ClauseToken(Token):

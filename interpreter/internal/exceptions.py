@@ -163,6 +163,10 @@ class ValueException(RunTimeException):
     """Exception to be raised for wrong values"""
 
 
+class FileNotFoundException(RunTimeException):
+    """Exception to be raised for missing files"""
+
+
 class EmptyStackError(RunTimeException):
     """Exception to be raised when trying to access a value from an empty interpreter stack"""
 

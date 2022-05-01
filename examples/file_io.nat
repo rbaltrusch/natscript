@@ -1,0 +1,7 @@
+set file to "output.txt"
+set a to "abc" and write it to file
+write "\nmore" to end of file
+print content of file
+
+import [delete_file] from "system.nat"
+call delete_file with [file]

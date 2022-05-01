@@ -1237,6 +1237,61 @@ class SORT(Token):
             ) from None
 
 
+class CONTENT(VALUE):
+
+    EXPECTED_TOKENS = [ExpectedToken((OF,), 0), ExpectedToken((VALUE,), 1)]
+
+    def _run(self, interpreter: Interpreter):
+        value = interpreter.stack_pop().get_value()
+        if not isinstance(value, str):
+            raise exceptions.TypeException(
+                f"Value of type {value.__class__.__name__} is not a valid file identifier!"
+            )
+
+        try:
+            with open(value, "r", encoding="utf-8") as file:
+                content = file.read()
+        except:
+            raise exceptions.FileNotFoundException(
+                f"File {value} cannot be read!"
+            ) from None
+
+        interpreter.stack_append(self.TOKEN_FACTORY.create_value(content))
+
+
+class WRITE(Token):
+
+    EXPECTED_TOKENS = [
+        ExpectedToken((VALUE,), 0),
+        ExpectedToken((TO,), 1),
+        ExpectedTokenCombination(
+            ExpectedToken((END,), 3), ExpectedToken((OF,), 4), optional=True
+        ),
+        ExpectedToken((VALUE,), 2),
+    ]
+
+    def _run(self, interpreter: Interpreter):
+        mode = "w"
+        if self.has_all_optionals:
+            interpreter.stack_pop()
+            mode = "a"
+
+        filename = interpreter.stack_pop().get_value()
+        if not isinstance(filename, str):
+            raise exceptions.TypeException(
+                f"Value of type {filename.__class__.__name__} is not a valid file identifier!"
+            )
+
+        value = interpreter.stack_pop().get_value()
+        try:
+            with open(filename, mode=mode, encoding="utf-8") as file:
+                file.write(value)
+        except Exception as exc:
+            raise exceptions.RunTimeException(
+                f"Failed to read file {filename}!"
+            ) from exc
+
+
 def get_tokens():
     return {
         "set": SET,
@@ -1318,6 +1373,8 @@ def get_tokens():
         "reverse": REVERSE,
         "exclude": EXCLUDE,
         "sort": SORT,
+        "write": WRITE,
+        "content": CONTENT,
     }
 
 
