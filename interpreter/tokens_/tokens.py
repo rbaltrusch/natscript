@@ -1211,6 +1211,20 @@ class EXCLUDE(Token):
             interpreter.set_variable("it", it)
 
 
+class SORT(Token):
+
+    EXPECTED_TOKENS = [ExpectedToken((VALUE,), 0)]
+
+    def _run(self, interpreter: Interpreter):
+        value: List[Any] = interpreter.stack_pop().get_value()
+        try:
+            value.sort()
+        except AttributeError:
+            raise exceptions.TypeException(
+                f"Cannot sort value of type {value.__class__.__name__}"
+            ) from None
+
+
 def get_tokens():
     return {
         "set": SET,
@@ -1291,6 +1305,7 @@ def get_tokens():
         "apply": APPLY,
         "reverse": REVERSE,
         "exclude": EXCLUDE,
+        "sort": SORT,
     }
 
 
