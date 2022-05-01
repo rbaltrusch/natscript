@@ -225,7 +225,7 @@ class Token:
 
     def raise_syntax_exception(self) -> None:
         """Raises SyntaxException"""
-        raise exceptions.SyntaxException(self)  # type: ignore
+        raise exceptions.SyntaxException(self) from None # type: ignore
 
     def _check_types(self, token: Token):
         while self.expected_tokens:

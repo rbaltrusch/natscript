@@ -14,9 +14,13 @@ from typing import Any, List
 
 from interpreter.internal import exceptions
 from interpreter.internal.interfaces import Interpreter, Value, Variable
-from interpreter.internal.token_ import (ClauseToken, ExpectedToken,
-                                         ExpectedTokenCombination, SkipToken,
-                                         Token)
+from interpreter.internal.token_ import (
+    ClauseToken,
+    ExpectedToken,
+    ExpectedTokenCombination,
+    SkipToken,
+    Token,
+)
 
 # type: ignore
 # pylint: disable=invalid-name
@@ -1056,19 +1060,24 @@ class EXIT(Token):
 class SLICE(VALUE):
     EXPECTED_TOKENS = [
         ExpectedToken((OF,), 0),
-        ExpectedToken((VALUE,), 1),
-        ExpectedToken((FROM,), 2),
-        ExpectedToken((VALUE,), 3),
-        ExpectedToken((TO,), 4),
+        ExpectedToken((VALUE,), 4),
+        ExpectedToken((FROM,), 1),
+        ExpectedToken((VALUE,), 2),
+        ExpectedToken((TO,), 3),
         ExpectedToken((VALUE,), 5),
     ]
 
     def _run(self, interpreter: Interpreter):
         end_index = interpreter.stack_pop().get_value()
+        collection = interpreter.stack_pop().get_value()
         start_index = interpreter.stack_pop().get_value()
-        collection = interpreter.stack_pop()
+        if not isinstance(start_index, int):
+            raise exceptions.ValueException(
+                f"Wrong index of type {start_index.__class__.__name__}!"
+            ) from None
+
         try:
-            subcollection = collection.get_value()[start_index:end_index]
+            subcollection = collection[start_index:end_index]
         except TypeError:
             raise exceptions.TypeException(
                 f"Value of type {collection.__class__.__name__} cannot be indexed!"
@@ -1079,6 +1088,25 @@ class SLICE(VALUE):
         interpreter.stack_append(
             self.TOKEN_FACTORY.create_iterable_value(subcollection)
         )
+
+
+class END(VALUE):
+    def _run(self, interpreter: Interpreter):
+        try:
+            collection = interpreter.stack_pop()
+        except exceptions.EmptyStackError:
+            self.raise_syntax_exception()
+
+        interpreter.stack_append(collection)
+
+        try:
+            len_ = len(collection.get_value())
+        except TypeError:
+            raise exceptions.TypeException(
+                f"Value of type {collection.__class__.__name__} has no length!"
+            ) from None
+
+        interpreter.stack_append(self.TOKEN_FACTORY.create_value(len_))
 
 
 def get_tokens():
@@ -1157,6 +1185,7 @@ def get_tokens():
         "itself": IT,
         "exit": EXIT,
         "slice": SLICE,
+        "end": END,
     }
 
 

@@ -1,7 +1,7 @@
-define function slice2 expecting [collection, start, end] as {
-    # returns a sub-collection containing all elements between indices start and end
+define function slice2 expecting [collection, start, end_] as {
+    # returns a sub-collection containing all elements between indices start and end_
     set split_collection to []
-    while checked start is less than end {
+    while checked start is less than end_ {
         get element from collection at start and append it to split_collection
         add 1 to start
     }
