@@ -11,7 +11,9 @@ def count(x):
     return _Counter(x)
 
 
-def hashmap(x):
+def hashmap(x=None):
+    if x is None:
+        return {}
     return dict(x)
 
 
