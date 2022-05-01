@@ -60,7 +60,7 @@ def read_file(filepath: str) -> str:
 
         with open(full_filepath, "r", encoding="utf-8") as file:
             return file.read()
-    raise FileNotFoundError
+    raise FileNotFoundError from None
 
 
 def get_search_paths() -> List[str]:
