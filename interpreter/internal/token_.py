@@ -276,7 +276,12 @@ class ClauseToken(Token):
     """
 
     CLOSE_TOKEN = Token
-    EXPECTED_TOKENS = [ExpectedToken((Token,))] * 1000
+
+    def check_optional_token(self, token: Token) -> bool:
+        return not self.satisfied
+
+    def _check_types(self, token: Token):
+        pass
 
     def raise_syntax_exception(self):
         """Raises an UnclosedClauseException"""
