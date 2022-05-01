@@ -3,6 +3,7 @@
 
 from collections import Counter as _Counter
 
+# pylint: disable=redefined-builtin
 # pylint: disable=invalid-name
 # pylint: disable=missing-function-docstring
 
@@ -17,4 +18,10 @@ def hashmap(x=None):
     return dict(x)
 
 
-__all__ = ["count", "hashmap"]
+def itemset(x=None):
+    if x is None:
+        return set()
+    return set(x)
+
+
+__all__ = ["count", "hashmap", "itemset"]
