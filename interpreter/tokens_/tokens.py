@@ -330,14 +330,11 @@ class COLLECTION(VALUE, ClauseToken):
         pass
 
     def _run(self, interpreter: Interpreter):
-        # ignore last token, which closes the collection (COLLECTION_END)
-        self.value = []
-        for _ in self.tokens[:-1]:
-            value = interpreter.stack_pop()
-            self.value.append(value)
-        self.value.reverse()
-        value = self.TOKEN_FACTORY.create_iterable_value(self.value)
-        interpreter.stack_append(value)
+        interpreter.stack_append(
+            self.TOKEN_FACTORY.create_iterable_value(
+                [interpreter.stack_pop() for _ in self.sorted_tokens][::-1]
+            )
+        )
 
 
 class APPEND(Token):
