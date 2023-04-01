@@ -5,21 +5,19 @@ Created on Tue Dec 14 21:51:28 2021
 @author: richa
 """
 from collections import defaultdict
-from dataclasses import dataclass
 from typing import Any, DefaultDict, List
 
 from interpreter.internal import exceptions
 
 
-@dataclass
 class Value:
     """Base Value class for values on the interpreter stack"""
 
-    value: Any = None
-    source: Any = None
+    __slots__ = ("value",)
+    inputs = None
 
-    def __post_init__(self):
-        self.inputs = None
+    def __init__(self, value: Any = None):
+        self.value = value
 
     def get_value(self):
         """Returns its value"""
