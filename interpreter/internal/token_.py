@@ -242,6 +242,9 @@ class Token:
                 token.run_order = expected_token.run_order
                 return
 
+            if not self.expected_tokens:
+                break
+
             if not expected_token.optional and not self.expected_tokens[0].optional:
                 raise exceptions.ParseTypeError(
                     token, expected_token.types  # type: ignore
