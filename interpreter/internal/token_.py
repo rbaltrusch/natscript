@@ -167,7 +167,10 @@ class Token:
         self.run_order: int = 0
         self.parent: Optional[Token] = None
         self.expected_tokens = self.EXPECTED_TOKENS[:]
-        self._sorted_tokens = None
+        self.sorted_tokens = None
+        self.runnable = (
+            self.functional and self._run.__code__ is not Token._run.__code__
+        )
         self.filepath: Optional[str] = None
 
     def __repr__(self):
@@ -184,6 +187,10 @@ class Token:
         for token in self.tokens:
             if token.functional:
                 interpreter.init(token)  # type: ignore
+        self.sorted_tokens = sorted(
+            (x for x in self.tokens if x.functional),
+            key=lambda x: x.run_order,
+        )
         self._init(interpreter)
 
     def _init(self, interpreter: Interpreter):
@@ -191,14 +198,10 @@ class Token:
 
     def run(self, interpreter: Interpreter):
         """Runs all subtokens, then itself"""
-        if self._sorted_tokens is None:
-            self._sorted_tokens = sorted(
-                [x for x in self.tokens if x.functional], key=lambda x: x.run_order
-            )
-
-        for token in self._sorted_tokens:
+        for token in self.sorted_tokens:
             interpreter.run(token)  # type: ignore
-        self._run(interpreter)
+        if self.runnable:
+            self._run(interpreter)
 
     def _run(self, interpreter: Interpreter):
         """Runs the token"""
