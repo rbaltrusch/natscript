@@ -12,7 +12,7 @@ import operator
 import os
 from typing import Any, List
 
-from interpreter.internal import exceptions
+from interpreter.internal import exceptions, tokenvalue
 from interpreter.internal.interfaces import Interpreter, Value, Variable
 from interpreter.internal.token_ import (
     ClauseToken,
@@ -602,7 +602,7 @@ class EACH(Token):
     def run(self, interpreter: Interpreter):
         if self.collection is None:
             interpreter.run(self.tokens[-1])
-            self.collection = interpreter.stack_pop().get_value()
+            self.collection = interpreter.stack_pop().value
 
         try:
             collection_value = self.collection[self._index]
@@ -615,7 +615,13 @@ class EACH(Token):
                 token=self,
             ) from None
 
-        value = self.TOKEN_FACTORY.create_any_value(value=collection_value)
+        value = (
+            collection_value
+            if isinstance(collection_value, tokenvalue.Variable)
+            else self.TOKEN_FACTORY.create_any_value(
+                tokenvalue.IterableValue.get_item_value(collection_value)
+            )
+        )
         interpreter.stack_append(value)
         self._index += 1
 
