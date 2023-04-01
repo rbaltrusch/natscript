@@ -294,17 +294,14 @@ class CLAUSE(VALUE, ClauseToken):
 
     def _init(self, interpreter: Interpreter):
         # pylint: disable=attribute-defined-outside-init
-        self._none = self.TOKEN_FACTORY.create_none_value()
-        self._runnable_tokens = self.tokens[:-1]
+        self._value = self.TOKEN_FACTORY.create_value(self.run_tokens)
 
     def run(self, interpreter: Interpreter):
-        value = self.TOKEN_FACTORY.create_value(self._run_tokens)
-        interpreter.stack_append(value)
+        interpreter.stack_append(self._value)
 
-    def _run_tokens(self, interpreter: Interpreter):
-        for token in self._runnable_tokens:
+    def run_tokens(self, interpreter: Interpreter):
+        for token in self.sorted_tokens:
             interpreter.run(token)
-        interpreter.stack_append(self._none)
 
 
 class FUNCTION(Token):
