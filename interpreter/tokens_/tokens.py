@@ -1126,6 +1126,7 @@ class APPLY(Token):
                 pass
             collection.value[i] = interpreter.stack_pop().get_value()  # return value
         interpreter.remove_stack()
+        interpreter.set_variable("result", collection)
 
 
 class REVERSE(Token):
