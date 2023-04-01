@@ -814,7 +814,11 @@ class GET(Token):
         index = interpreter.stack_pop().get_value()
 
         try:
-            variable.value = collection[index]
+            variable.value = (
+                getattr(collection, index)
+                if isinstance(index, str) and hasattr(collection, index)
+                else collection[index]
+            )
         except IndexError:
             raise exceptions.ValueException(
                 f"Collection index {index} out of range!"
