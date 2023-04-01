@@ -315,7 +315,7 @@ class FUNCTION(Token):
         code = interpreter.stack_pop()
         input_parameters = interpreter.stack_pop()
         function.value = code.get_value()
-        function.inputs = input_parameters
+        function.inputs = input_parameters.value
         interpreter.set_variable(function.name, function)
 
 
@@ -485,11 +485,11 @@ class CALL(Token):
 
         interpreter.add_stack()
         # some functions dont have inputs
-        if function.inputs and function.inputs.value:
-            # take input parameters from stack
-            for input_, variable in zip(input_values, function.inputs.value):
+        if function.inputs:
+            # no explicit check for function inputs being matched in case of default args
+            for input_, variable in zip(input_values, function.inputs):
                 variable.value = input_.get_value()
-                variable.inputs = input_.inputs
+                variable.inputs = input_.inputs  # for callable input args
                 interpreter.set_variable(variable.name, variable)
 
         try:
@@ -583,6 +583,7 @@ class IN(Token):
         variable: Variable = interpreter.stack_pop()  # type: ignore
         value = interpreter.stack_pop()
         variable.value = value.get_value()
+        variable.inputs = value.inputs
         interpreter.set_variable(variable.name, variable)
 
 
@@ -973,12 +974,10 @@ class IMPORT(Token):
 
             variable = self.TOKEN_FACTORY.create_variable(name)
             if callable(value):
-                variable.inputs = self.TOKEN_FACTORY.create_iterable_value(
-                    value=[
-                        self.TOKEN_FACTORY.create_variable(x)
-                        for x in range(value.__code__.co_argcount)
-                    ]
-                )
+                variable.inputs = [
+                    self.TOKEN_FACTORY.create_variable(x)
+                    for x in range(value.__code__.co_argcount)
+                ]
                 value = self._wrap_python_callable(value)
             variable.value = value
             interpreter.set_variable(name, variable)
@@ -1110,15 +1109,11 @@ class APPLY(Token):
 
         function = interpreter.stack_pop()
         # some functions dont have inputs
-        if (
-            not function.inputs
-            or not function.inputs.value
-            or not len(function.inputs.value) == 1
-        ):
+        if not function.inputs or not len(function.inputs) == 1:
             raise exceptions.TypeException("Apply function should expect one input!")
 
         interpreter.add_stack()
-        variable = function.inputs.value[0]
+        variable = function.inputs[0]
         interpreter.set_variable(variable.name, variable)
         for i, value in enumerate(list_):
             variable.value = value
