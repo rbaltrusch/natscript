@@ -15,6 +15,7 @@ import hashlib
 import json
 import os
 import pickle
+import re
 from typing import Any, Dict, List, Optional, Tuple, Type
 
 from interpreter.internal.token_ import Token  # type: ignore
@@ -92,7 +93,8 @@ class PickleCompiler(BytecodeCompiler):
 
     def get_compiled_filename(self, filename: str) -> str:
         """Returns the name of the compiled file corresponding to the specified filename"""
-        return filename.replace(".nat", ".natc")
+        _, ext = os.path.splitext(filename)
+        return re.sub(rf"{ext}$", ".natc", filename)
 
 
 class JsonCompiler(BytecodeCompiler):
@@ -111,7 +113,8 @@ class JsonCompiler(BytecodeCompiler):
 
     def get_compiled_filename(self, filename: str) -> str:
         """Returns the name of the compiled file corresponding to the specified filename"""
-        return filename.replace(".nat", ".json")
+        _, ext = os.path.splitext(filename)
+        return re.sub(rf"{ext}$", ".json", filename)
 
 
 def _hash_file(filename: str) -> str:
