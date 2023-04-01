@@ -835,6 +835,13 @@ class CollectionLogicToken(VALUE):
         interpreter.run(self.tokens[0])
         collection = interpreter.stack_pop().get_value()
 
+        try:
+            iter(collection)
+        except TypeError:
+            raise exceptions.TypeException(
+                f"Value {collection} is not iterable!", token=self
+            ) from None
+
         for value in collection:
             result = self._get_condition_result(value, interpreter)
             if self._check_if_should_break(result):  # pylint: disable=no-member
