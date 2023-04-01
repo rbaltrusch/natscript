@@ -203,12 +203,27 @@ class SET(Token):
         ExpectedToken((VALUE,), 0),
     ]
 
-    def _run(self, interpreter: Interpreter):
-        variable = interpreter.stack_pop()
-        value = interpreter.stack_pop()
-        variable.value = value.get_value()
-        interpreter.set_variable(variable.name, variable)
+    def run(self, interpreter: Interpreter):
+        variable_token = self.sorted_tokens[1]
+        variable = (
+            interpreter.get_variable(variable_token.value)
+            if interpreter.check_variable(variable_token.value)
+            else self.TOKEN_FACTORY.create_variable(variable_token.value)
+        )
+        interpreter.stack_append(variable)
+        if self.has_all_optionals:
+            self.sorted_tokens[-1].run(interpreter)
+        value_token = self.sorted_tokens[0]
+        if isinstance(value_token, VARNAME) and not isinstance(value_token, RESULT):
+            value_variable = interpreter.get_variable(value_token.value)
+            variable.value = value_variable.get_value()
+            variable.inputs = value_variable.inputs
+        else:
+            value_token.run(interpreter)
+            variable.value = interpreter.stack_pop().get_value()
 
+        interpreter.set_variable("it", variable)
+        interpreter.set_variable(variable.name, variable)
 
 
 class PRINT(Token):
@@ -280,6 +295,9 @@ class DIVIDE(OperatorToken):
 
 
 class IT(VARNAME):
+    def _init(self, interpreter: Interpreter):
+        self.value = "it"
+
     def _run(self, interpreter: Interpreter):
         variable = interpreter.get_variable("it")
         interpreter.stack_append(variable)
