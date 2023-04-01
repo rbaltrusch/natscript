@@ -17,9 +17,7 @@ define function test expecting [n, f] as {
     print r
 }
 
-call test with [n f1]
-call test with [n f2]
-call test with [n f3]
-call test with [n f4]
-
+for each fun in [f1 f2 f3 f4] {
+    call test with [n fun]
+}
 print all [3, 6, 9] greater than 2
