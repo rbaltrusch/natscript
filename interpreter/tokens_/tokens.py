@@ -649,18 +649,13 @@ class FOR(Token):
 
             clause = interpreter.stack_pop()
             try:
-                if self._check_condition(interpreter):
+                condition = interpreter.stack_pop()
+                if not self.has_all_optionals or condition.get_value():
                     clause.get_value()(interpreter)
             except exceptions.SkipElementException:
                 pass
             except exceptions.BreakIterationException:
                 break
-
-    def _check_condition(self, interpreter: Interpreter) -> bool:
-        value = interpreter.stack_pop()
-        if not self.has_all_optionals:
-            return True
-        return value.get_value()
 
 
 class WHILE(Token):
