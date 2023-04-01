@@ -1155,9 +1155,7 @@ class EXCLUDE(Token):
             it = interpreter.get_variable("it")
         except exceptions.UndefinedVariableException:
             it = None
-
-        for token in self.tokens[2:]:
-            token.run(interpreter)
+        self.tokens[3].run(interpreter)
         collection = interpreter.stack_pop()
         collection_list = collection.get_value()
         self.tokens[0].run(interpreter)
