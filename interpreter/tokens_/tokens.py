@@ -1092,7 +1092,7 @@ class END(VALUE):
 
 class APPLY(Token):
     EXPECTED_TOKENS = [
-        ExpectedToken((VARNAME), 0),
+        ExpectedToken((VARNAME,), 0),
         ExpectedToken((TO,), 1),
         ExpectedToken((VALUE,), 2),
     ]
