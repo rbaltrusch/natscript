@@ -4,8 +4,7 @@ Created on Tue Dec 14 21:51:28 2021
 
 @author: richa
 """
-from collections import defaultdict
-from typing import Any, DefaultDict, List
+from typing import Any, Dict, List, Optional
 
 from interpreter.internal import exceptions
 
@@ -76,11 +75,13 @@ class NoneValue(Value):
 class Variable(Value):
     """Variable class for variables living in interpreter variable scopes"""
 
+    __slots__ = ("name", "inputs", "_qualifiers")
+
     def __init__(self, name: str):  # pylint: disable=super-init-not-called
         self.name = name
+        self.value = None
         self.inputs = None
-        self.source = None
-        self.qualifiers: DefaultDict[str, bool] = defaultdict(bool)
+        self._qualifiers: Optional[Dict[str, bool]] = None
 
     def convert_to_str(self) -> str:
         self.get_value()
@@ -94,11 +95,13 @@ class Variable(Value):
 
     def add_qualifier(self, qualifier: str) -> None:
         """Sets the qualifier specified by name to True"""
-        self.qualifiers[qualifier] = True
+        if self._qualifiers is None:
+            self._qualifiers = {}
+        self._qualifiers[qualifier] = True
 
     def get_qualifier(self, qualifier: str) -> bool:
         """Returns the value of the specified qualifier"""
-        return self.qualifiers[qualifier]
+        return self._qualifiers and self._qualifiers.get(qualifier, False)
 
 
 class Constant(Variable):
