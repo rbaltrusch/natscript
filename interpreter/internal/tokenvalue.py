@@ -46,11 +46,12 @@ class IterableValue(Value):
         Converts any contained Value objects into their respective value.
         """
         if isinstance(self.value, dict):
-            return {k: self._get_item(v) for k, v in self.value.items()}
-        return [self._get_item(x) for x in self.value]
+            return {k: self.get_item_value(v) for k, v in self.value.items()}
+        return [self.get_item_value(x) for x in self.value]
 
     @staticmethod
-    def _get_item(value: Value):
+    def get_item_value(value: Value):
+        """Returns value.get_value if possible, else value"""
         try:
             return value.get_value()
         except AttributeError:
