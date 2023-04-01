@@ -30,12 +30,12 @@ class Value:
         if isinstance(self.value, bool):
             return str(self.value).lower()
         if callable(self.value):
-            return f"function {self.value.__name__}"
+            return f"inline function {self.value}"
         return str(self.value)
 
     def convert_to_str(self) -> str:
         """Converts the value of the object to str"""
-        return self.__repr__()
+        return repr(self)
 
 
 class IterableValue(Value):
@@ -85,6 +85,8 @@ class Variable(Value):
 
     def convert_to_str(self) -> str:
         self.get_value()
+        if callable(self.value):
+            return f"function {self.name}"
         return super().__repr__()
 
     def get_value(self) -> Any:
