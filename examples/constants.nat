@@ -1,3 +1,10 @@
 set constant a to 2
 define function f expecting [b] as {set c to 1, multiply it by b then return it}
 call f with [a] then print result
+
+
+define function a expecting [c defaulting to 2] as {
+    set b to 3 and print b
+}
+# b is only constant in the current scope
+set constant b to 1 call a with [b] then print b

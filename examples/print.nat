@@ -1,0 +1,14 @@
+print "a"
+set a to 1 then print it
+print 1
+print -1
+print 1.0
+print [1 2 3]
+print nothing
+print true
+print false
+print nothing
+print [1.1 2 "2323", a]
+print {1}
+define function a as {} and print a
+print [result of call {1} and it it it]

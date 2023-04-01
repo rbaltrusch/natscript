@@ -1,0 +1,15 @@
+# assigning a declared function to a variable
+define function f as {print 1}
+set f2 to f and call f2
+
+# calling an inline function assigned to variable
+set b to {2} and print result of call b
+
+# calling an inline function returning a function
+set a to {
+    define function f expecting [b] as {
+        multiply b by 2 then return it
+    }
+    return f
+}
+call a and print result of call result with [10]

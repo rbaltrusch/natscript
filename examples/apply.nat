@@ -1,0 +1,7 @@
+define function a expecting [x] as {add 1 to x and return it}
+# returns the result of applying function a to each element in the supplied list. note: this is an in-place operation
+apply a to [1 2 3] and print result
+set arr to [1 2 3]
+apply a to arr and print it
+
+for each _ in range from 0 to 5 { apply a to arr } and print arr
