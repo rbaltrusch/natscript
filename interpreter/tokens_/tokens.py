@@ -498,7 +498,11 @@ class CALL(Token):
             ) from None
         except exceptions.ReturnException:
             pass
-        return_value: Variable = interpreter.stack_pop()  # type: ignore
+
+        try:
+            return_value: Variable = interpreter.stack_pop()  # type: ignore
+        except exceptions.EmptyStackError:
+            return_value: Variable = self.TOKEN_FACTORY.create_none_value()
         interpreter.remove_stack()
         interpreter.set_variable("result", return_value)
 
