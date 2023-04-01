@@ -286,7 +286,7 @@ class IT(VARNAME):
 
 
 class CLAUSE_END(Token):
-    pass
+    functional = False
 
 
 class CLAUSE(VALUE, ClauseToken):
@@ -320,7 +320,7 @@ class FUNCTION(Token):
 
 
 class COLLECTION_END(Token):
-    pass
+    functional = False
 
 
 class COLLECTION(VALUE, ClauseToken):
