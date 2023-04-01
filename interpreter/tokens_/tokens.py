@@ -1000,16 +1000,22 @@ class IMPORT(Token):
             if name.startswith("_"):
                 continue
 
-            variable = self.TOKEN_FACTORY.create_variable(name)
-            if callable(value):
-                variable.inputs = [
-                    self.TOKEN_FACTORY.create_variable(x)
-                    for x in range(value.__code__.co_argcount)
-                ]
-                value = self._wrap_python_callable(value)
-            variable.value = value
-            interpreter.set_variable(name, variable)
-            interpreter.set_variable("it", variable)
+            try:
+                self._set_variable(interpreter, name, value)
+            except Exception:  # pylint: disable=broad-except
+                continue
+
+    def _set_variable(self, interpreter: Interpreter, name: str, value: Any):
+        variable = self.TOKEN_FACTORY.create_variable(name)
+        if hasattr(value, "__code__"):
+            variable.inputs = [
+                self.TOKEN_FACTORY.create_variable(x)
+                for x in range(value.__code__.co_argcount)
+            ]
+            value = self._wrap_python_callable(value)
+        variable.value = value
+        interpreter.set_variable(name, variable)
+        interpreter.set_variable("it", variable)
 
     def _wrap_python_callable(self, function):
         def inner(interpreter: Interpreter):
