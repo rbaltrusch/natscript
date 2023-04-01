@@ -150,13 +150,8 @@ class DEFAULTING(Token):
     must_be_subtoken = True
     EXPECTED_TOKENS = [ExpectedToken((TO,), 0), ExpectedToken((VALUE,), 1)]
 
-    def run(self, interpreter: Interpreter):
-        for token in self.tokens:
-            interpreter.run(token)
-
 
 class VARNAME(VALUE):
-
     EXPECTED_TOKENS = [ExpectedToken((DEFAULTING,), optional=True)]
 
     def _run(self, interpreter: Interpreter):
@@ -200,7 +195,6 @@ class CONSTANT(QualifierToken):
 
 
 class SET(Token):
-
     EXPECTED_TOKENS = [
         ExpectedToken((QualifierToken), 3, optional=True),
         ExpectedToken((VARNAME,), 2),
@@ -215,8 +209,8 @@ class SET(Token):
         interpreter.set_variable(variable.name, variable)
 
 
-class PRINT(Token):
 
+class PRINT(Token):
     EXPECTED_TOKENS = [ExpectedToken((Token,))]
 
     def _run(self, interpreter: Interpreter):
@@ -239,7 +233,6 @@ class OperatorToken(Token):
 
 
 class ADD(OperatorToken):
-
     EXPECTED_TOKENS = [
         ExpectedToken((VALUE,), 0),
         ExpectedToken((TO,), 1),
@@ -251,7 +244,6 @@ class ADD(OperatorToken):
 
 
 class SUBTRACT(OperatorToken):
-
     EXPECTED_TOKENS = [
         ExpectedToken((VALUE,), 0),
         ExpectedToken((FROM,), 1),
@@ -263,7 +255,6 @@ class SUBTRACT(OperatorToken):
 
 
 class MULTIPLY(OperatorToken):
-
     EXPECTED_TOKENS = [
         ExpectedToken((VARNAME,), 2),
         ExpectedToken((BY,), 1),
@@ -275,7 +266,6 @@ class MULTIPLY(OperatorToken):
 
 
 class DIVIDE(OperatorToken):
-
     EXPECTED_TOKENS = [
         ExpectedToken((VARNAME,), 2),
         ExpectedToken((BY,), 1),
@@ -299,7 +289,6 @@ class CLAUSE_END(Token):
 
 
 class CLAUSE(VALUE, ClauseToken):
-
     CLOSE_TOKEN = CLAUSE_END
 
     def _init(self, interpreter: Interpreter):
@@ -334,7 +323,6 @@ class COLLECTION_END(Token):
 
 
 class COLLECTION(VALUE, ClauseToken):
-
     CLOSE_TOKEN = COLLECTION_END
 
     def _init(self, interpreter: Interpreter):
@@ -352,7 +340,6 @@ class COLLECTION(VALUE, ClauseToken):
 
 
 class APPEND(Token):
-
     EXPECTED_TOKENS = [
         ExpectedToken((VALUE,), 0),
         ExpectedToken((TO,), 1),
@@ -400,7 +387,6 @@ class POP(Token):
 
 
 class REMOVE(Token):
-
     EXPECTED_TOKENS = [
         ExpectedToken((VALUE,), 0),
         ExpectedToken((FROM,), 1),
@@ -425,7 +411,6 @@ class REMOVE(Token):
 
 
 class LENGTH(VALUE):
-
     EXPECTED_TOKENS = [ExpectedToken((OF,), 0), ExpectedToken((VALUE,), 1)]
 
     def _run(self, interpreter: Interpreter):
@@ -540,7 +525,6 @@ class ELSE(Token):
 
 
 class CONDITION(VALUE, ClauseToken):
-
     OPERATOR = operator.eq
     CLOSE_TOKEN = VALUE
 
@@ -564,7 +548,6 @@ class NOT(CONDITION):
 
 
 class CHECK(VALUE):
-
     EXPECTED_TOKENS = [
         ExpectedToken((VALUE,), 0),
         ExpectedToken((CONDITION,), 1),
@@ -651,7 +634,6 @@ class EACH(Token):
 
 
 class FOR(Token):
-
     EXPECTED_TOKENS = [
         ExpectedToken((EACH,), 0),
         ExpectedToken((CONDITION,), 1, optional=True),
@@ -683,7 +665,6 @@ class FOR(Token):
 
 
 class WHILE(Token):
-
     EXPECTED_TOKENS = [
         ExpectedToken((VALUE,), 0),
         ExpectedToken((CLAUSE,), 1),
@@ -742,7 +723,6 @@ class IDENTICAL(CONDITION):
 
 
 class FIRST(VALUE):
-
     EXPECTED_TOKENS = [
         ExpectedToken((VARNAME,), 1),
         ExpectedToken((IN,), 2),
@@ -802,7 +782,6 @@ class AT(Token):
 
 
 class GET(Token):
-
     EXPECTED_TOKENS = [
         ExpectedToken((VARNAME), 3),
         ExpectedToken((FROM,), 1),
@@ -830,7 +809,6 @@ class GET(Token):
 
 
 class UPDATE(Token):
-
     EXPECTED_TOKENS = [
         ExpectedToken((VARNAME,), 2),
         ExpectedToken((AT,), 3),
@@ -853,7 +831,6 @@ class UPDATE(Token):
 
 
 class CollectionLogicToken(VALUE):
-
     EXPECTED_TOKENS = [
         ExpectedToken((VALUE,), 0),
         ExpectedToken((CONDITION,), 1, optional=True),
@@ -885,7 +862,6 @@ class CollectionLogicToken(VALUE):
 
 
 class ALL(CollectionLogicToken):
-
     initial_condition_value = True
 
     def _check_if_should_break(self, result: bool):
@@ -893,7 +869,6 @@ class ALL(CollectionLogicToken):
 
 
 class ANY(CollectionLogicToken):
-
     initial_condition_value = False
 
     def _check_if_should_break(self, result: bool):
@@ -901,7 +876,6 @@ class ANY(CollectionLogicToken):
 
 
 class SOME(CollectionLogicToken):
-
     initial_condition_value = False
 
     def run(self, interpreter: Interpreter):
@@ -915,7 +889,6 @@ class SOME(CollectionLogicToken):
 
 
 class NONE(CollectionLogicToken):
-
     initial_condition_value = True
 
     def _check_if_should_break(self, result: bool):
@@ -923,7 +896,6 @@ class NONE(CollectionLogicToken):
 
 
 class IMPORT(Token):
-
     EXPECTED_TOKENS = [
         ExpectedToken((COLLECTION,), 2),
         ExpectedToken((FROM,), 1),
@@ -950,7 +922,6 @@ class IMPORT(Token):
 
         variables: List[Variable] = []
         for import_variable in import_variables:
-
             try:
                 variable = interpreter.get_variable(import_variable.name)
             except AttributeError:
@@ -1045,7 +1016,6 @@ class BREAK(Token):
 
 
 class RANGE(VALUE):
-
     EXPECTED_TOKENS = [
         ExpectedToken((FROM,), 0),
         ExpectedToken((VALUE,), 1),
@@ -1177,7 +1147,6 @@ class REVERSE(Token):
 
 
 class EXCLUDE(Token):
-
     EXPECTED_TOKENS = [
         ExpectedToken((VARNAME,), 0),
         ExpectedToken((CONDITION,), 1),
@@ -1224,7 +1193,6 @@ class EXCLUDE(Token):
 
 
 class SORT(Token):
-
     EXPECTED_TOKENS = [ExpectedToken((VALUE,), 0)]
 
     def _run(self, interpreter: Interpreter):
@@ -1238,7 +1206,6 @@ class SORT(Token):
 
 
 class CONTENT(VALUE):
-
     EXPECTED_TOKENS = [ExpectedToken((OF,), 0), ExpectedToken((VALUE,), 1)]
 
     def _run(self, interpreter: Interpreter):
@@ -1260,7 +1227,6 @@ class CONTENT(VALUE):
 
 
 class WRITE(Token):
-
     EXPECTED_TOKENS = [
         ExpectedToken((VALUE,), 0),
         ExpectedToken((TO,), 1),
