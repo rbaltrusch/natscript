@@ -1,0 +1,32 @@
+define function slice_ expecting [collection start end_] as {
+    set split_collection to []
+    for each index in range from start to end_ {
+        get element from collection at index
+        append it to split_collection
+    }
+    return split_collection
+}
+
+define function binary_search expecting [collection target] as {
+    set index to length of collection
+    divide it by 2 round it
+
+    get number from collection at index
+    if checked number equal to target then {
+        return index
+    }
+
+    if checked target greater than number then {
+        call slice_ with [collection index length of collection] and set split_collection to result
+        call binary_search with [split_collection target]
+        add result to index return it
+    }
+
+    call slice_ with [collection 0 index] and set split_collection to result
+    return result of call binary_search with [split_collection target]
+}
+
+set collection to [1 3 5 8 13 14, 17, 19, 25, 26 27 34 37 39 40 44 49 52 53 76 88 135 268 377 416 529 876 1000]
+for each _ in range from 0 to 100 {
+    for each target in collection { call binary_search with [collection target] }
+}

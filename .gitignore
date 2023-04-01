@@ -15,6 +15,7 @@ dist
 *.nat
 !examples/*.nat
 !lib/*.nat
+!tools/benchmarking/*.nat
 **/*.natc
 
 # work files
