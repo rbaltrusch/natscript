@@ -45,9 +45,31 @@ def interpret(syntax_blocks: List[token_.Token], iterations: int = 1) -> None:
     for syntax_block in syntax_blocks:
         inter.init(syntax_block)
 
+    runnables = flatten_syntax_blocks(syntax_blocks)
     for _ in range(iterations):
-        for syntax_block in syntax_blocks:
+        for syntax_block in runnables:
             inter.run(syntax_block)
+
+
+def flatten_syntax_blocks(syntax_blocks: List[token_.Token]) -> List[token_.Token]:
+    """Flattens token structure where possible to avoid deep nesting and improve performance"""
+
+    def flatten(syntax_block: token_.Token):
+        # skip tokens overriding the Token.run method
+        if syntax_block.run.__code__ is not token_.Token.run.__code__:
+            flattened.append(syntax_block)
+            return
+
+        for child in syntax_block.sorted_tokens:
+            flatten(child)
+        if syntax_block.runnable:
+            syntax_block.run = syntax_block._run  # pylint: disable=protected-access
+            flattened.append(syntax_block)
+
+    flattened = []
+    for syntax_block in syntax_blocks:
+        flatten(syntax_block)
+    return flattened
 
 
 def read_file(filepath: str) -> str:
