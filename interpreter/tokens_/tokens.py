@@ -322,18 +322,6 @@ class CLAUSE(VALUE, ClauseToken):
             interpreter.run(token)
 
 
-class FUNCTION(Token):
-    must_be_subtoken = True
-
-    def _run(self, interpreter: Interpreter):
-        function = interpreter.stack_pop()
-        code = interpreter.stack_pop()
-        input_parameters = interpreter.stack_pop()
-        function.value = code.get_value()
-        function.inputs = input_parameters.value
-        interpreter.set_variable(function.name, function)
-
-
 class COLLECTION_END(Token):
     functional = False
 
@@ -445,30 +433,37 @@ class EXPECTING(Token):
     must_be_subtoken = True
     EXPECTED_TOKENS = [ExpectedToken((COLLECTION,), 0)]
 
-    def _run(self, interpreter: Interpreter):
-        collection = interpreter.stack_pop()
-        interpreter.stack_pop()  # default empty args
-        interpreter.stack_append(collection)
-
 
 class WITH(Token):
     must_be_subtoken = True
     EXPECTED_TOKENS = [ExpectedToken((COLLECTION,), 0)]
 
 
-class DEFINE(Token):
+class FUNCTION(Token):
+    must_be_subtoken = True
     EXPECTED_TOKENS = [
-        ExpectedToken((PRIVATE), 4, optional=True),
-        ExpectedToken((FUNCTION,), 5),
         ExpectedToken((VARNAME,), 3),
         ExpectedToken((EXPECTING,), 0, optional=True),
         ExpectedToken((AS,), 2),
         ExpectedToken((CLAUSE,), 1),
     ]
 
-    def run(self, interpreter: Interpreter):
-        interpreter.stack_append(self.TOKEN_FACTORY.create_iterable_value(value=[]))
-        super().run(interpreter)
+    def _run(self, interpreter: Interpreter):
+        function = interpreter.stack_pop()
+        code = interpreter.stack_pop()
+        function.value = code.get_value()
+        function.inputs = (
+            interpreter.stack_pop().value if self.has_all_optionals else []
+        )
+        interpreter.set_variable(function.name, function)
+        interpreter.stack_append(function)
+
+
+class DEFINE(Token):
+    EXPECTED_TOKENS = [
+        ExpectedToken((PRIVATE), 1, optional=True),
+        ExpectedToken((FUNCTION,), 0),
+    ]
 
 
 class RETURN(Token):
