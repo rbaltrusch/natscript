@@ -8,6 +8,7 @@
 import os as _os
 import shutil as _shutil
 import subprocess as _subprocess
+import sys as _sys
 
 
 def join_path(paths):
@@ -58,13 +59,17 @@ def copy_folder(source, destination):
     return _shutil.copy(source, destination)
 
 
-def system_call(args, shell=False, timeout=None):
+def system_call(
+    args, shell=False, timeout=None  # pylint: disable=redefined-outer-name
+):
     return _subprocess.check_call(args, timeout=timeout, shell=shell)
 
 
 def get_env(variable):
     return _os.getenv(variable)
 
+
+args = _sys.argv
 
 __all__ = [
     "join_path",
@@ -81,4 +86,5 @@ __all__ = [
     "move_folder",
     "system_call",
     "get_env",
+    "args",
 ]

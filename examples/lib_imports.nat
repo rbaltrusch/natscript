@@ -35,12 +35,13 @@ call hashmap with [
 update h at 2 to 64 and print it
 call itemset with [[1 1 2 3 3]] and print result
 
-import [system_call, delete_file] from "system.nat"
+import [system_call, delete_file, args] from "system.nat"
 call system_call with [
     ["echo", "hello", "world"],
     shell defaulting to true
 ]
 call delete_file with ["test.json"]
+print args
 
 import [lower, upper, join, replace, trim, split] from "string.nat"
 call lower with ["hEllo"] and print result

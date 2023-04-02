@@ -16,8 +16,9 @@ def construct_parser() -> argparse.ArgumentParser:
     )
 
     parser.add_argument(
-        "filepath",
-        help="The path of the Natscript file to be run",
+        "args",
+        help="The path of the Natscript file to be run and any arguments for it",
+        nargs=argparse.REMAINDER,
     )
 
     parser.add_argument(
