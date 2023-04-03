@@ -702,11 +702,11 @@ class EACH(Token):
     def run(self, interpreter: Interpreter):
         if self.collection is None:
             interpreter.run(self.tokens[-1])
-            self.collection = interpreter.stack_pop().value
+            self.collection = iter(interpreter.stack_pop().value)
 
         try:
-            collection_value = self.collection[self._index]
-        except IndexError:
+            collection_value = next(self.collection)
+        except StopIteration:
             self.reset()
             raise exceptions.BreakIterationException(self) from None
         except TypeError:
@@ -723,7 +723,6 @@ class EACH(Token):
             )
         )
         interpreter.stack_append(value)
-        self._index += 1
 
         # ignore collection (last token), as it was previously run
         for token in self.tokens[:-1]:
@@ -734,7 +733,6 @@ class EACH(Token):
         interpreter.stack_append(value)
 
     def reset(self):
-        self._index = 0
         self.collection = None
 
 
