@@ -76,16 +76,19 @@ class NoneValue(Value):
 class Variable(Value):
     """Variable class for variables living in interpreter variable scopes"""
 
-    __slots__ = ("name", "inputs", "_qualifiers")
+    __slots__ = ("name", "inputs", "is_structure", "_qualifiers")
 
     def __init__(self, name: str):  # pylint: disable=super-init-not-called
         self.name = name
         self.value = None
         self.inputs = None
+        self.is_structure = False
         self._qualifiers: Optional[Dict[str, bool]] = None
 
     def convert_to_str(self) -> str:
         self.get_value()
+        if self.is_structure:
+            return f"structure {self.name}"
         if callable(self.value):
             return f"function {self.name}"
         return super().__repr__()

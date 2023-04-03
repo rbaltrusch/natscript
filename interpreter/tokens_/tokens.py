@@ -459,11 +459,97 @@ class FUNCTION(Token):
         interpreter.stack_append(function)
 
 
+class STRUCTURE(Token):
+    must_be_subtoken = True
+    EXPECTED_TOKENS = [
+        ExpectedToken((VARNAME,), 3),
+        ExpectedToken((AS,), 2),
+        ExpectedToken((CLAUSE,), 1),
+    ]
+
+    def _run(self, interpreter: Interpreter):
+        variable = interpreter.stack_pop()
+        _ = interpreter.stack_pop()  # clause
+
+        clause = self.tokens[2]
+        interpreter.add_stack()
+        # sorts the variable fields with default values to the back
+        variable.value = {
+            x.value: self._get_variable(interpreter, x)
+            for x in sorted(
+                (x for x in clause.sorted_tokens if isinstance(x, (VARNAME, DEFINE))),
+                key=lambda x: x.has_all_optionals,
+            )
+        }
+        interpreter.remove_stack()
+
+        variable.is_structure = True
+        interpreter.set_variable(variable.name, variable)
+        interpreter.stack_append(variable)
+
+    def _get_variable(self, interpreter: Interpreter, x: Token):
+        interpreter.run(x)
+        return interpreter.stack_pop()
+
+
 class DEFINE(Token):
     EXPECTED_TOKENS = [
         ExpectedToken((PRIVATE), 1, optional=True),
-        ExpectedToken((FUNCTION,), 0),
+        ExpectedToken((FUNCTION, STRUCTURE), 0),
     ]
+
+
+class NEW(VALUE):
+    EXPECTED_TOKENS = [
+        ExpectedToken((VARNAME,), 1),
+        ExpectedToken((WITH,), 0, optional=True),
+    ]
+
+    def _run(self, interpreter: Interpreter):
+        structure = interpreter.stack_pop()
+        if not structure.is_structure:
+            raise exceptions.TypeException(
+                f"Cannot instantiate non-structure {structure}", token=structure
+            )
+
+        def create_variable_from(x):
+            variable = self.TOKEN_FACTORY.create_variable(x.name)
+            variable.value = x.value
+            variable.inputs = x.inputs  # for callable input args
+            return variable
+
+        input_values: List[Any]
+        if self.has_all_optionals:
+            inputs = interpreter.stack_pop()
+            inputs.get_value()  # check defined
+            input_values = inputs.value
+        else:
+            input_values = []
+
+        fields = list(structure.value.values())
+        try:
+            dict_ = {x.name: create_variable_from(x) for x in fields}
+        except AttributeError:
+            raise exceptions.TypeException(
+                "Invalid structure field supplied!"
+            ) from None
+
+        for value, variable in zip(input_values, fields):
+            new_variable = self.TOKEN_FACTORY.create_variable(variable.name)
+            new_variable.value = value
+            new_variable.inputs = variable.inputs  # for callable input args
+            dict_[variable.name] = new_variable
+
+        missing_args = [k for k, v in dict_.items() if v.value is None]
+        if missing_args:
+            plural = "s" if len(missing_args) > 1 else ""
+            raise exceptions.TypeException(
+                "Not enough arguments supplied to instantiate structure: "
+                f"missing {len(missing_args)} argument{plural} ({', '.join(missing_args)})!"
+            )
+
+        instance = self.TOKEN_FACTORY.create_any_value(value=dict_)
+        interpreter.stack_append(instance)
 
 
 class RETURN(Token):
@@ -809,7 +895,7 @@ class GET(Token):
         index = interpreter.stack_pop().get_value()
 
         try:
-            variable.value = (
+            value = (
                 getattr(collection, index)
                 if isinstance(index, str) and hasattr(collection, index)
                 else collection[index]
@@ -818,11 +904,20 @@ class GET(Token):
             raise exceptions.ValueException(
                 f"Collection index {index} out of range!"
             ) from None
+        except KeyError:
+            raise exceptions.ValueException(
+                f"Collection does not contain key {index}!"
+            ) from None
         except TypeError:
             raise exceptions.TypeException(
                 f"Cannot index value of type {collection.__class__.__name__}!"
             ) from None
 
+        if isinstance(value, tokenvalue.Value):
+            variable.value = value.get_value()
+            variable.inputs = value.inputs  # for callable args
+        else:
+            variable.value = value
         interpreter.set_variable(variable.name, variable)
 
 
@@ -1363,6 +1458,8 @@ def get_tokens():
         "]": COLLECTION_END,
         "define": DEFINE,
         "function": FUNCTION,
+        "structure": STRUCTURE,
+        "new": NEW,
         "as": AS,
         "{": CLAUSE,
         "}": CLAUSE_END,
