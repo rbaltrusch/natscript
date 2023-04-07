@@ -10,21 +10,25 @@ from interpreter.internal.interfaces import Token
 from interpreter.util.pattern_matching import determine_patterns
 
 
-class LexError(Exception):
+class TokenizationError(Exception):
+    """Generic base exception for lex and parse exceptions"""
+
+
+class LexError(TokenizationError):
     """Exception raised by Lexer"""
 
     def __init__(self, string: str, line_number: int):
         super().__init__(f"Line {line_number}: {string} was not expected at this time!")
 
 
-class ParseException(Exception):
+class ParseException(TokenizationError):
     """Exception raised by Parser"""
 
     def __init__(self, token: Token):
         super().__init__(f"{token} was not expected at this location!")
 
 
-class ParseTypeError(Exception):
+class ParseTypeError(TokenizationError):
     """Raised for mismatching token types"""
 
     def __init__(self, token: Token, types: Tuple[Type[Token], ...]):
@@ -34,7 +38,7 @@ class ParseTypeError(Exception):
         )
 
 
-class InternalFullTokenParseError(Exception):
+class InternalFullTokenParseError(TokenizationError):
     """Internal exception - should only occur when a programming mistake was made"""
 
     def __init__(self, token: Token):
