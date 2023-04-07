@@ -46,8 +46,9 @@ python -m pip install -r requirements.txt
 python -m pip install -e .
 ```
 
-To run the interpreter, run the interpreter package, specifying a Natscript file to be executed:
+To run the interpreter, run the interpreter package, specifying a Natscript file to be executed, or nothing to enter an interactive shell session:
 ```batch
+python -m interpreter
 python -m interpreter examples\helloworld.nat
 ```
 
