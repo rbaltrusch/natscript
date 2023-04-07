@@ -32,7 +32,7 @@ class Lexer:
         string_uuids = {x: str(uuid.uuid4()).replace("-", "") for x in strings}
         uuid_strings = {v: k for k, v in string_uuids.items()}
         for str_, uuid_ in string_uuids.items():
-            string = string.replace(str_, uuid_)
+            string = string.replace(str_, f" {uuid_} ")
 
         string = string.replace("\n", " \n ")
 
