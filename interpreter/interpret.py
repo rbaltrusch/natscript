@@ -9,10 +9,10 @@ import sys
 from dataclasses import dataclass, field
 from typing import List, Optional
 
+from interpreter import VERSION
 from interpreter.internal import exceptions, lexer, parsing, token_, tokenvalue
 from interpreter.internal.interpreter import Interpreter
 from interpreter.tokens_ import tokens
-from setup import VERSION
 
 
 def construct_tokens_from_string(code: str) -> List[token_.Token]:

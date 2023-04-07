@@ -4,12 +4,12 @@
 
 from pathlib import Path
 
-VERSION = "0.1.0"
-
 if __name__ == "__main__":
     project_dir = Path(__file__).parent
 
     import setuptools
+
+    from interpreter import VERSION
 
     setuptools.setup(
         name="interpreter",
