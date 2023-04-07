@@ -1154,11 +1154,15 @@ class RANGE(VALUE):
 
 
 class EXIT(Token):
-    EXPECTED_TOKENS = [ExpectedToken((VALUE,), optional=True)]
+    EXPECTED_TOKENS = [ExpectedToken((WITH,), optional=True)]
 
     def _run(self, interpreter: Interpreter):
-        values = interpreter.stack_pop().get_value() if self.has_all_optionals else []
-        raise SystemExit(*values)
+        collection = (
+            interpreter.stack_pop().get_value() or [0]
+            if self.has_all_optionals
+            else [0]
+        )
+        raise SystemExit(collection[0])
 
 
 class SLICE(VALUE):
