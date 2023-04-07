@@ -5,6 +5,7 @@ Created on Fri Nov 20 13:51:53 2020
 @author: Korean_Crimson
 """
 import re
+import uuid
 from typing import Generator, List
 
 from interpreter.internal.interfaces import Token, TokenFactory
@@ -26,13 +27,18 @@ class Lexer:
 
     @staticmethod
     def _split(string: str) -> List[str]:
-        string = string.replace("\n", " \n ")
+        # find all strings inside the input string and replace them by unique identifiers
+        strings = re.findall(r'".*?"', string, flags=re.DOTALL)
+        string_uuids = {x: str(uuid.uuid4()).replace("-", "") for x in strings}
+        uuid_strings = {v: k for k, v in string_uuids.items()}
+        for str_, uuid_ in string_uuids.items():
+            string = string.replace(str_, uuid_)
 
-        # matches non-word characters (i.e. punctuation) and adds whitespace around them
-        # ignore dot (.) and quotation marks (""), needed for float and string values.
-        # string = re.sub(r'(?P<match>[^\w\."])', r" \g<match> ", string).strip()
+        string = string.replace("\n", " \n ")
 
         # add whitespace around [] {} , #
         string = re.sub(r"(?P<match>[\[\]\{\}\,\#])", r" \g<match> ", string).strip()
-        string_tokens = [s for s in string.split(" ") if s != ""]
+
+        # split unless surrounded by double quotes (i.e. a string)
+        string_tokens = [uuid_strings.get(s, s) for s in string.split(" ") if s != ""]
         return string_tokens
