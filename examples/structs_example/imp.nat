@@ -1,0 +1,12 @@
+define private structure B as {n}
+
+define structure A as {n hi}
+
+define function create_A expecting [n] as {
+    define private function hi expecting [self, offs defaulting to 0] as {
+        for each _ in range from 0 to 10 {
+            get n from self at "n", add offs to n and print it
+        }
+    }
+    return new A with [n, hi]
+}

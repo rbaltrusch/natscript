@@ -1,0 +1,25 @@
+import [A, create_A] from "imp.nat"
+set b to result of call create_A with [123] get hi from it at "hi" and call hi with [b, 2]
+
+define function f2 as { print 1}
+define structure A as {
+    n1
+    n2
+    n3 defaulting to f2
+}
+print A
+set a to new A with [1 2]
+get func from a at "n3" and call it
+set a to new A with [1 2 3] and print it
+
+try {
+    get n1 from A at "a"
+} catch ValueException then {
+    print "A does not have a field a"
+}
+
+define function f expecting [str] as {print str}
+set b to new A with [f 2]
+get n1 from b at "n1" and call it with ["hi"]
+
+update b at "n2" to 26 and print it
