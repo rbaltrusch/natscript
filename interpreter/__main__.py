@@ -2,7 +2,6 @@
 """
 The entry point to the Natscript interpreter.
 """
-import argparse
 import os
 import sys
 
@@ -14,16 +13,15 @@ from interpreter.util import path
 
 argparser = interpreter.cli.construct_parser()
 arguments = argparser.parse_args()
-if not arguments.args:
-    raise argparse.ArgumentError(
-        argument="args", message="Filepath of script to be run needs to be supplied!"
-    )
-
-filepath = arguments.args[0]
-sys.argv = arguments.args
 
 if not arguments.debug:
     sys.tracebacklimit = 0
+
+if not arguments.args:
+    interpret.run_interactive_shell()
+
+filepath = arguments.args[0]
+sys.argv = arguments.args
 
 if arguments.compile == "True":
     compiler_ = (
