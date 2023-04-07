@@ -269,6 +269,11 @@ class Token:
         ]
         return not mandatory_tokens
 
+    @property
+    def fully_satisfied(self) -> bool:
+        """True if self.satisfied and all children are fully satisfied"""
+        return self.satisfied and all(x.fully_satisfied for x in self.tokens)
+
     @cached_property
     def has_all_optionals(self) -> bool:
         """True if length of tokens matches length of expected tokens"""
