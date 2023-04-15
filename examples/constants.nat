@@ -1,5 +1,5 @@
-set constant a to 2
-define function f expecting [b] as {set c to 1, multiply it by b then return it}
+set private constant a to 2
+define private function f expecting [b] as {set c to 1, multiply it by b then return it}
 call f with [a] then print result
 
 
