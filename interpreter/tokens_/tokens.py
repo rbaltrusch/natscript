@@ -1536,9 +1536,9 @@ def get_tokens():
 
 def get_regex_tokens():
     return {
-        r"^[-]*\d+$": INTEGER,
+        r"^(-)?\d+$": INTEGER,
         r'^".*"': STRING,
         r"^\w+$": VARNAME,
-        r"^\d+\.\d+": FLOAT,
+        r"^(-)?\d+\.\d+": FLOAT,
         r".": ANY_CHARACTER,
     }
