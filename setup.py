@@ -34,6 +34,7 @@ if __name__ == "__main__":
         license="MIT",
         classifiers=[
             "Development Status :: 4 - Beta",
+            "Environment :: Console",
             "Intended Audience :: Developers",
             "License :: OSI Approved :: MIT License",
             "Programming Language :: Python",
@@ -42,6 +43,8 @@ if __name__ == "__main__":
             "Programming Language :: Python :: 3.8",
             "Programming Language :: Python :: 3.9",
             "Programming Language :: Python :: 3.10",
+            "Topic :: Software Development",
+            "Topic :: Software Development :: Interpreters",
             "Typing :: Typed",
         ],
     )
