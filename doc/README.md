@@ -120,8 +120,8 @@ All operations:
 TODO
 
 ```powershell
-condition = true
-# condition = 2 greater than 1
+set condition to true
+# set condition to 3 greater than 1
 if checked condition then {
     # runs if condition is true
 } else {
