@@ -9,7 +9,7 @@ import os
 from interpreter import interpret
 
 original_dir = os.getcwd()
-for filepath in glob.glob("examples/**/*.nat", recursive=True):
+for filepath in glob.glob("doc/examples/**/*.nat", recursive=True):
     # skipping constants because they cannot be run more than once
     # skipping lib import file due to time delay
     if filepath.endswith("constants.nat") or filepath.endswith("lib_imports.nat"):

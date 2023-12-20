@@ -19,13 +19,13 @@ def test_examples():
 
 
 def _delete_compiled_files():
-    compiled_filepaths = glob.glob("../examples/**/*.natc", recursive=True)
+    compiled_filepaths = glob.glob("../doc/examples/**/*.natc", recursive=True)
     for filepath in compiled_filepaths:
         os.unlink(filepath)
 
 
 def _run_test_():
-    filepaths = glob.glob("../examples/**/*.nat", recursive=True)
+    filepaths = glob.glob("../doc/examples/**/*.nat", recursive=True)
     original_dir = os.getcwd()
     compiler_ = compiler.PickleCompiler()
     for filepath in filepaths:
