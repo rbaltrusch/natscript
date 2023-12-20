@@ -18,7 +18,7 @@ define function main as {
 print result of call main
 ```
 
-The main implementation of the Natscript interpreter is currently written in Python, but may be shifted to [C++](https://github.com/rbaltrusch/python_interpreter/tree/main/README.md#1-c-implementation) in the future for improved performance.
+The main implementation of the Natscript interpreter is currently written in Python, but may be shifted to [C++](https://github.com/rbaltrusch/python_interpreter/tree/main/README.md#c-implementation) in the future for improved performance.
 
 ## Available functionality
 
