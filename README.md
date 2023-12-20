@@ -3,7 +3,7 @@
 
 # Natscript Interpreter
 
-This is Natscript, a custom interpreted language with a free, natural language-like syntax that lends itself to prosaic code, such as:
+This is Natscript, a custom cross-platform, dynamic interpreted language with a free, natural language-like syntax that lends itself to prosaic code, such as:
 
 ```powershell
 define function main as {
