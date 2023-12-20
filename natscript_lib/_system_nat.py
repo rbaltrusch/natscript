@@ -70,6 +70,7 @@ def get_env(variable):
 
 
 args = _sys.argv
+path = _sys.path
 
 __all__ = [
     "join_path",
@@ -87,4 +88,5 @@ __all__ = [
     "system_call",
     "get_env",
     "args",
+    "path",
 ]

@@ -24,7 +24,9 @@ if __name__ == "__main__":
         package_dir={"": "."},
         python_requires=">=3.8",
         include_package_data=True,
-        package_data={"natscript": ["py.typed"]},  # for mypy
+        package_data={
+            "natscript": ["py.typed", "../natscript_lib/*"]
+        },  # py.typed for mypy
         # This is a trick to avoid duplicating dependencies in both setup.py and requirements.txt.
         # requirements.txt must be included in MANIFEST.in for this to work.
         install_requires=project_dir.joinpath("requirements.txt")

@@ -86,10 +86,9 @@ def run_tokens(
 
 
 def add_lib_to_path():
-    """Adds Natscript lib to path"""
-    sys.path.insert(
-        1, os.path.join(os.path.abspath(os.path.dirname(__file__)), "..", "lib")
-    )
+    """Adds all Natscript search paths to sys.path."""
+    for index, directory in enumerate(get_search_paths(), start=1):
+        sys.path.insert(index, directory)
 
 
 def flatten_syntax_blocks(syntax_blocks: List[token_.Token]) -> List[token_.Token]:
@@ -127,10 +126,13 @@ def read_file(filepath: str) -> str:
 
 
 def get_search_paths() -> List[str]:
-    """Returns a list of the folders in which the interpreter will search for a specified file"""
+    """Returns a list of the folders in which the interpreter will search for a specified file.
+
+    Note: additional search paths can be specified using the environment variable NATSCRIPT_PATH
+    (semi-colon separated list of paths)."""
     search_paths = [
         "",
-        os.path.join(os.path.abspath(os.path.dirname(__file__)), "..", "lib"),
+        os.path.join(os.path.abspath(os.path.dirname(__file__)), "..", "natscript_lib"),
     ]
     env_path = os.getenv("NATSCRIPT_PATH")
     if env_path is not None:
