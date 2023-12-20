@@ -48,7 +48,7 @@ set myVar to 2
 set myVar to "something else"
 ```
 
-Note also that there are no operators in the language, only statements (whose tokens cannot be redeclared, so they act as keywords). In fact, the only special punctuation are special syntax in the language are optional commas, strings (`"hello"`), floats (`1.0`) and clauses (`if checked true then { }`).
+Note also that there are no operators in the language, only statements (whose tokens cannot be redeclared, so they act as keywords). In fact, the only special punctuation/syntax in the language are optional commas, strings (`"hello"`), floats (`1.0`) and clauses (`if checked true then { }`).
 
 #### Special variables
 
