@@ -6,7 +6,7 @@ Created on Tue Dec 14 21:51:28 2021
 """
 from typing import Any, Dict, List, Optional
 
-from interpreter.internal import exceptions
+from natscript.internal import exceptions
 
 
 class Value:

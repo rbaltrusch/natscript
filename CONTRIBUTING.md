@@ -13,7 +13,7 @@ Simply submit an issue that details your contribution idea and submit a pull req
 To setup your local development environment, open a terminal and run the following:
 
 ```
-git clone https://github.com/rbaltrusch/python_interpreter
+git clone https://github.com/rbaltrusch/natscript
 python -m pip install -r requirements.txt
 python -m pip install -r tests/requirements.txt
 ```

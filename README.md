@@ -1,4 +1,4 @@
-[![Unit tests](https://github.com/rbaltrusch/python_interpreter/actions/workflows/pytest-unit-tests.yml/badge.svg)](https://github.com/rbaltrusch/python_interpreter/actions/workflows/pytest-unit-tests.yml)
+[![Unit tests](https://github.com/rbaltrusch/natscript/actions/workflows/pytest-unit-tests.yml/badge.svg)](https://github.com/rbaltrusch/natscript/actions/workflows/pytest-unit-tests.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg)](https://opensource.org/licenses/MIT)
 
 # Natscript Interpreter
@@ -18,7 +18,7 @@ define function main as {
 print result of call main
 ```
 
-The main implementation of the Natscript interpreter is currently written in Python, but may be shifted to [C++](https://github.com/rbaltrusch/python_interpreter/tree/main/README.md#c-implementation) in the future for improved performance.
+The main implementation of the Natscript interpreter is currently written in Python, but may be shifted to [C++](https://github.com/rbaltrusch/natscript/tree/main/README.md#c-implementation) in the future for improved performance.
 
 ## Available functionality
 
@@ -33,23 +33,23 @@ Currently available functionality includes:
 - a bytecode compiler to speed up module loading
 - precise stack traces for run-time exceptions
 
-Language documentation can be found in the [doc](https://github.com/rbaltrusch/python_interpreter/tree/main/doc) folder.
+Language documentation can be found in the [doc](https://github.com/rbaltrusch/natscript/tree/main/doc) folder.
 
 ## Getting started
 
-To get a copy of this repository, clone it using git, then install all dependencies (currently none), as well as the interpreter package itself:
+To get a copy of this repository, clone it using git, then install all dependencies (currently none), as well as the natscript package itself:
 
 ```batch
-git clone https://github.com/rbaltrusch/python_interpreter
-cd python_interpreter
+git clone https://github.com/rbaltrusch/natscript
+cd natscript
 python -m pip install -r requirements.txt
 python -m pip install -e .
 ```
 
-To run the interpreter, run the interpreter package, specifying a Natscript file to be executed, or nothing to enter an interactive shell session:
+To run the interpreter, run the natscript Python package, specifying a Natscript file to be executed, or nothing to enter an interactive shell session:
 ```batch
-python -m interpreter
-python -m interpreter examples\helloworld.nat
+python -m natscript
+python -m natscript examples\helloworld.nat
 ```
 
 ## Syntax highlighting
@@ -64,11 +64,11 @@ Language support in VS Code is in work, but not available yet. An early-stage VS
 
 ### Notepad++
 
-The syntax highlighting file for Natscript in Notepad++ can be found [here](https://github.com/rbaltrusch/python_interpreter/tree/main/tools/syntax_highlighting/notepad++/natscript.xml). It can be imported to Notepad++ in the Languages menu (Languages -> User Language -> Define Your Language... -> Import).
+The syntax highlighting file for Natscript in Notepad++ can be found [here](https://github.com/rbaltrusch/natscript/tree/main/tools/syntax_highlighting/notepad++/natscript.xml). It can be imported to Notepad++ in the Languages menu (Languages -> User Language -> Define Your Language... -> Import).
 
 ## Documentation
 
-Language documentation, including examples and tutorials, can be found in the [doc](https://github.com/rbaltrusch/python_interpreter/tree/main/doc) folder. It is currently a work in progress.
+Language documentation, including examples and tutorials, can be found in the [doc](https://github.com/rbaltrusch/natscript/tree/main/doc) folder. It is currently a work in progress.
 
 ### Examples
 
@@ -96,18 +96,18 @@ define function main as {
 call main and print result
 ```
 
-A full list of code examples can be found [here](https://github.com/rbaltrusch/python_interpreter/tree/main/doc/examples).
+A full list of code examples can be found [here](https://github.com/rbaltrusch/natscript/tree/main/doc/examples).
 
 ### Tutorials
 
-Tutorials can be found in the [doc](https://github.com/rbaltrusch/python_interpreter/tree/main/doc) folder.
+Tutorials can be found in the [doc](https://github.com/rbaltrusch/natscript/tree/main/doc) folder.
 
 ### Interpreter CLI
 
 The Natscript interpreter CLI has several configureable options:
 
 ```
-usage: interpreter [-h] [--debug] [--compile COMPILE] [--compiled-format {pickle,json}]
+usage: natscript [-h] [--debug] [--compile COMPILE] [--compiled-format {pickle,json}]
                              [--iterations ITERATIONS]
                              filepath
 
@@ -129,7 +129,7 @@ optional arguments:
 
 The interpreter CLI help message can be shown by running:
 ```batch
-python -m interpreter -h
+python -m natscript -h
 ```
 
 ## Pyinstaller
@@ -137,10 +137,10 @@ python -m interpreter -h
 Packaging the interpreter using pyinstaller can speed up execution time of Natscript code by a factor of 2x. Simply bundle it using the command:
 
 ```batch
-pyinstaller -n interpreter interpreter/__main__.py
+pyinstaller -n natscript natscript/__main__.py
 ```
 
-This will generate an executable file called interpreter.exe (with the same CLI as the python package) in the dist/interpreter folder.
+This will generate an executable file called natscript.exe (with the same CLI as the python package) in the dist/natscript folder.
 
 ## C++ Implementation
 
@@ -156,7 +156,7 @@ Written in Python 3.8.3.
 
 ## License
 
-This repository is open-source software available under the [MIT license](https://github.com/rbaltrusch/python_interpreter/blob/main/LICENSE).
+This repository is open-source software available under the [MIT license](https://github.com/rbaltrusch/natscript/blob/main/LICENSE).
 
 ## Contact
 

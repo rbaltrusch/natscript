@@ -6,11 +6,11 @@ Created on Fri Nov 20 17:17:11 2020
 """
 from typing import Dict, List
 
-from interpreter.internal import exceptions
-from interpreter.internal.interfaces import Value, Variable
+from natscript.internal import exceptions
+from natscript.internal.interfaces import Value, Variable
 
 # Cant use Token interface because of bugged typechecking for reassigned class variables
-from interpreter.internal.token_ import Token
+from natscript.internal.token_ import Token
 
 
 class Interpreter:

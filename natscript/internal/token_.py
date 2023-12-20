@@ -11,8 +11,8 @@ from dataclasses import dataclass, field
 from functools import cached_property
 from typing import Any, Dict, Hashable, Iterable, List, Optional, Tuple, Type
 
-from interpreter.internal import exceptions, tokenvalue
-from interpreter.internal.interfaces import Interpreter, TokenCompiler
+from natscript.internal import exceptions, tokenvalue
+from natscript.internal.interfaces import Interpreter, TokenCompiler
 
 
 @dataclass

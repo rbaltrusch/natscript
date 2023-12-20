@@ -12,16 +12,16 @@ import operator
 import os
 from typing import Any, List
 
-from interpreter.internal import exceptions, tokenvalue
-from interpreter.internal.interfaces import Interpreter, Value, Variable
-from interpreter.internal.token_ import (
+from natscript.internal import exceptions, tokenvalue
+from natscript.internal.interfaces import Interpreter, Value, Variable
+from natscript.internal.token_ import (
     ClauseToken,
     ExpectedToken,
     ExpectedTokenCombination,
     SkipToken,
     Token,
 )
-from interpreter.util import path
+from natscript.util import path
 
 # type: ignore
 # pylint: disable=invalid-name
@@ -1077,7 +1077,7 @@ class IMPORT(Token):
                 interpreter.run(token)
 
     def _construct_tokens(self, filename):
-        from interpreter import interpret
+        from natscript import interpret
 
         return interpret.construct_tokens(filename)
 

@@ -7,8 +7,8 @@ Created on Fri Nov 20 14:34:15 2020
 from dataclasses import dataclass
 from typing import Generator, List
 
-from interpreter.internal import exceptions
-from interpreter.internal.interfaces import Token
+from natscript.internal import exceptions
+from natscript.internal.interfaces import Token
 
 
 @dataclass

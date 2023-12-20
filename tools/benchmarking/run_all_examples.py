@@ -6,7 +6,7 @@ Run from root directory using e.g. python -m cProfile -o o tools/benchmarking/ru
 import glob
 import os
 
-from interpreter import interpret
+from natscript import interpret
 
 original_dir = os.getcwd()
 for filepath in glob.glob("doc/examples/**/*.nat", recursive=True):

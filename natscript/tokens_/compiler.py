@@ -18,8 +18,8 @@ import pickle
 import re
 from typing import Any, Dict, List, Optional, Tuple, Type
 
-from interpreter.internal.token_ import Token  # type: ignore
-from interpreter.tokens_ import tokens
+from natscript.internal.token_ import Token  # type: ignore
+from natscript.tokens_ import tokens
 
 TokenData = Tuple[int, str, Any, int, Optional[int], int]
 

@@ -8,7 +8,7 @@ import re
 import uuid
 from typing import Generator, List
 
-from interpreter.internal.interfaces import Token, TokenFactory
+from natscript.internal.interfaces import Token, TokenFactory
 
 
 # pylint: disable=too-few-public-methods

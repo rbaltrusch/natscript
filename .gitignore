@@ -20,8 +20,8 @@ dist
 
 # work files
 .vscode/
-interpreter/algo
-interpreter/_experimental
+natscript/algo
+natscript/_experimental
 todo.txt
 
 # cProfile output file

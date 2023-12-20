@@ -6,8 +6,8 @@ Created on Wed Nov  3 22:59:11 2021
 """
 from typing import List, Optional, Tuple, Type
 
-from interpreter.internal.interfaces import Token
-from interpreter.util.pattern_matching import determine_patterns
+from natscript.internal.interfaces import Token
+from natscript.util.pattern_matching import determine_patterns
 
 
 class TokenizationError(Exception):

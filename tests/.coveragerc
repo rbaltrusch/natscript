@@ -2,6 +2,6 @@
 
 [run]
 omit =
-    ../interpreter/__main__.py,
-    ../interpreter/cli.py
+    ../natscript/__main__.py,
+    ../natscript/cli.py
     ../setup.py
