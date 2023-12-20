@@ -14,7 +14,7 @@ dist
 # Natscript files
 *.nat
 !doc/**/*.nat
-!lib/*.nat
+!natscript_lib/*.nat
 !tools/benchmarking/*.nat
 **/*.natc
 
