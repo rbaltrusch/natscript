@@ -5,13 +5,13 @@ The entry point to the Natscript interpreter.
 import os
 import sys
 
-import interpreter.cli
-from interpreter import interpret
-from interpreter.internal import token_
-from interpreter.tokens_ import compiler
-from interpreter.util import path
+import natscript.cli
+from natscript import interpret
+from natscript.internal import token_
+from natscript.tokens_ import compiler
+from natscript.util import path
 
-argparser = interpreter.cli.construct_parser()
+argparser = natscript.cli.construct_parser()
 arguments = argparser.parse_args()
 
 if not arguments.debug:

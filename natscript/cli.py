@@ -10,7 +10,7 @@ import argparse
 def construct_parser() -> argparse.ArgumentParser:
     """Returns the cli argument parser"""
     parser = argparse.ArgumentParser(
-        "interpreter",
+        "natscript",
         description="CLI for the Natscript interpreter",
         allow_abbrev=True,
     )

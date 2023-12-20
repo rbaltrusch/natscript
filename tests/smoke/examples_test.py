@@ -8,8 +8,8 @@ Created on Tue Dec 14 21:40:44 2021
 import glob
 import os
 
-from interpreter import interpret
-from interpreter.tokens_ import compiler
+from natscript import interpret
+from natscript.tokens_ import compiler
 
 
 def test_examples():

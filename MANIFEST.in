@@ -1,5 +1,5 @@
 include README.md
 include LICENSE
 include requirements.txt
-include interpreter/py.typed
+include natscript/py.typed
 recursive-exclude tests *
