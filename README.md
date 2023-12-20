@@ -18,7 +18,7 @@ define function main as {
 print result of call main
 ```
 
-The main implementation Natscript interpreter is currently written in Python, but may be shifted to [C++](https://github.com/rbaltrusch/python_interpreter/tree/main/README.md#1-c-implementation) in the future for improved performance.
+The main implementation of the Natscript interpreter is currently written in Python, but may be shifted to [C++](https://github.com/rbaltrusch/python_interpreter/tree/main/README.md#1-c-implementation) in the future for improved performance.
 
 ## Available functionality
 
@@ -27,13 +27,13 @@ Currently available functionality includes:
 - conditionals
 - loops (for-each, while)
 - first-order functions
-- module imports
+- module declarations and imports
 - access modifiers (private, constant)
 - recursion
 - a bytecode compiler to speed up module loading
 - precise stack traces for run-time exceptions
 
-A complete list of the currently available Natscript commands will soon be added to the [wiki](https://github.com/rbaltrusch/python_interpreter/wiki).
+Language documentation can be found in the [doc](https://github.com/rbaltrusch/python_interpreter/tree/main/doc) folder.
 
 ## Getting started
 
@@ -60,13 +60,15 @@ Currently, Natscript is in its early stages and not supported yet by Linguist (w
 
 ### Visual Studio Code
 
-Language support in VS Code is planned, but not available yet.
+Language support in VS Code is in work, but not available yet. An early-stage VS Code extension with static syntax highlighting can be found [here](https://github.com/rbaltrusch/natscript-vscode), but at the moment needs to be manually added to the VS Code extensions folder.
 
 ### Notepad++
 
 The syntax highlighting file for Natscript in Notepad++ can be found [here](https://github.com/rbaltrusch/python_interpreter/tree/main/tools/syntax_highlighting/notepad++/natscript.xml). It can be imported to Notepad++ in the Languages menu (Languages -> User Language -> Define Your Language... -> Import).
 
 ## Documentation
+
+Language documentation, including examples and tutorials, can be found in the [doc](https://github.com/rbaltrusch/python_interpreter/tree/main/doc) folder. It is currently a work in progress.
 
 ### Examples
 
@@ -94,8 +96,11 @@ define function main as {
 call main and print result
 ```
 
-A full list of code examples can be found [here](https://github.com/rbaltrusch/python_interpreter/tree/main/examples).
+A full list of code examples can be found [here](https://github.com/rbaltrusch/python_interpreter/tree/main/doc/examples).
 
+### Tutorials
+
+Tutorials can be found in the [doc](https://github.com/rbaltrusch/python_interpreter/tree/main/doc) folder.
 
 ### Interpreter CLI
 
@@ -127,10 +132,6 @@ The interpreter CLI help message can be shown by running:
 python -m interpreter -h
 ```
 
-### Tutorials
-
-Tutorials will be written once more commands are supported by Natscript.
-
 ## Pyinstaller
 
 Packaging the interpreter using pyinstaller can speed up execution time of Natscript code by a factor of 2x. Simply bundle it using the command:
@@ -141,13 +142,13 @@ pyinstaller -n interpreter interpreter/__main__.py
 
 This will generate an executable file called interpreter.exe (with the same CLI as the python package) in the dist/interpreter folder.
 
+## C++ Implementation
+
+The C++ implementation (work in progress) of the Natscript interpreter can be found [here](https://github.com/rbaltrusch/cpp-natscript). This may be abandoned in the future in favour of LLVM-based JIT acceleration for the Python implementation of Natscript.
+
 ## Contributions
 
 Contributions are welcome! For more details, please read the [contribution guidelines](CONTRIBUTING.md).
-
-## C++ Implementation
-
-The C++ implementation of this interpreter can be found [here](https://github.com/rbaltrusch/cpp_interpreter).
 
 ## Python
 
