@@ -49,7 +49,7 @@ python -m pip install -e .
 To run the interpreter, run the natscript Python package, specifying a Natscript file to be executed, or nothing to enter an interactive shell session:
 ```batch
 python -m natscript
-python -m natscript examples\helloworld.nat
+python -m natscript doc\examples\helloworld.nat
 ```
 
 ## Syntax highlighting
