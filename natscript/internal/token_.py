@@ -67,10 +67,7 @@ class TokenFactory:
         """Returns a new Value object if value cannot be found in the value cache,
         otherwise returns the existing Value from the cache.
         """
-        try:
-            return self._value_cache.get(value, tokenvalue.Value(value))
-        except TypeError:  # unhashable
-            return tokenvalue.Value(value)
+        return self._value_cache.get(value, tokenvalue.Value(value))
 
     @staticmethod
     def create_iterable_value(value: Iterable[Any]) -> tokenvalue.IterableValue:
