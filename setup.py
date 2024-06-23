@@ -25,7 +25,7 @@ if __name__ == "__main__":
         python_requires=">=3.8",
         include_package_data=True,
         package_data={
-            "natscript": ["py.typed", "../natscript_lib/*"]
+            "natscript": ["py.typed", "../natscript_lib/*.py", "../natscript_lib/*.nat"]
         },  # py.typed for mypy
         # This is a trick to avoid duplicating dependencies in both setup.py and requirements.txt.
         # requirements.txt must be included in MANIFEST.in for this to work.
