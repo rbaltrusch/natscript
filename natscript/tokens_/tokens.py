@@ -702,7 +702,8 @@ class EACH(Token):
     def run(self, interpreter: Interpreter):
         if self.collection is None:
             interpreter.run(self.tokens[-1])
-            self.collection = iter(interpreter.stack_pop().value)
+            val = interpreter.stack_pop().value
+            self.collection = iter(val)
 
         try:
             collection_value = next(self.collection)
@@ -1101,6 +1102,12 @@ class IMPORT(Token):
                 for x in range(value.__code__.co_argcount)
             ]
             value = self._wrap_python_callable(value)
+        elif (
+            callable(value) and value.__class__.__name__ == "builtin_function_or_method"
+        ):
+            variable.inputs = [self.TOKEN_FACTORY.create_iterable_value("args")]
+            value = self._wrap_python_builtin_callable(value)
+
         variable.value = value
         interpreter.set_variable(name, variable)
         interpreter.set_variable("it", variable)
@@ -1113,6 +1120,21 @@ class IMPORT(Token):
                     args.append(interpreter.get_variable(x).get_value())
                 except exceptions.UndefinedVariableException:
                     break
+
+            try:
+                return_value = function(*args)
+            except TypeError as exc:
+                raise exceptions.RunTimeException(token=self) from exc
+            interpreter.stack_append(self.TOKEN_FACTORY.create_any_value(return_value))
+
+        return inner
+
+    def _wrap_python_builtin_callable(self, function):
+        def inner(interpreter: Interpreter):
+            try:
+                args = interpreter.get_variable("args").get_value()
+            except exceptions.UndefinedVariableException:
+                return
 
             try:
                 return_value = function(*args)
