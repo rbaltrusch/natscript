@@ -59,9 +59,10 @@ class TokenFactory:
             return self.create_none_value()
 
         try:
-            return self.create_value(value)
-        except TypeError:
+            iter(value)
             return self.create_iterable_value(value)
+        except TypeError:
+            return self.create_value(value)
 
     def create_value(self, value: Hashable) -> tokenvalue.Value:
         """Returns a new Value object if value cannot be found in the value cache,
